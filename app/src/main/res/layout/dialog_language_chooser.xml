@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dialog_language_chooser.xml — used as a Dialog/BottomSheet content -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_modal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Choose a language"
+                    android:textColor="@color/text_dark" android:textSize="20sp" android:textStyle="bold"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Which language do you want to practice today?"
+                    android:textColor="@color/text_muted" android:textSize="13sp"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="20dp"/>
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnClose"
+                android:layout_width="28dp" android:layout_height="28dp"
+                android:background="@drawable/bg_tab_inactive"
+                android:text="✕" android:textColor="@color/text_muted" android:textSize="14sp"
+                android:padding="0dp" />
+        </LinearLayout>
+
+        <!-- Language Grid -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginBottom="10dp">
+            <LinearLayout android:id="@+id/langEnglish" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginEnd="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="US" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="English" android:textColor="@color/text_dark" android:textSize="14sp" />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/langVietnamese" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginStart="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="VN" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Tiếng Việt" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginBottom="10dp">
+            <LinearLayout android:id="@+id/langJapanese" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginEnd="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="JP" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="日本語" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/langKorean" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginStart="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="KR" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="한국어" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginBottom="10dp">
+            <LinearLayout android:id="@+id/langChinese" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginEnd="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="CN" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="中文" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/langFrench" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginStart="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="FR" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Français" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginBottom="20dp">
+            <LinearLayout android:id="@+id/langGerman" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginEnd="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="DE" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Deutsch" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/langSpanish" android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:background="@drawable/bg_lang_option"
+                android:gravity="center_vertical" android:orientation="horizontal" android:padding="12dp"
+                android:layout_marginStart="5dp" android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="ES" android:textColor="@color/text_dark" android:textSize="11sp" android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Español" android:textColor="@color/text_dark" android:textSize="14sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Actions -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnCancel"
+                android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1"
+                android:background="@drawable/bg_btn_outline"
+                android:text="Cancel" android:textColor="@color/text_mid" android:textSize="14sp"
+                android:layout_marginEnd="5dp" />
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnStartMatching"
+                android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1"
+                android:background="@drawable/bg_btn_primary"
+                android:text="Start matching" android:textColor="@color/white" android:textSize="14sp"
+                android:textStyle="bold" android:layout_marginStart="5dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

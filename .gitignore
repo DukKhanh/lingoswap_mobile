@@ -1,0 +1,139 @@
+# ══════════════════════════════════════════════════════════════
+#  .gitignore – LingoSwap Android Project
+#  Đặt file này ở ROOT của project (cùng cấp với settings.gradle)
+# ══════════════════════════════════════════════════════════════
+
+
+# ──────────────────────────────────────────────────────────────
+# 1. BUILD OUTPUT
+#    File tự sinh ra mỗi lần build, rất nặng, không cần track
+# ──────────────────────────────────────────────────────────────
+/build/
+app/build/
+**/build/
+
+
+# ──────────────────────────────────────────────────────────────
+# 2. GRADLE
+#    Cache & wrapper tự download lại được, không cần commit
+# ──────────────────────────────────────────────────────────────
+.gradle/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+
+# ──────────────────────────────────────────────────────────────
+# 3. LOCAL CONFIG  ⚠️ QUAN TRỌNG
+#    Chứa đường dẫn Android SDK riêng của từng máy
+#    Mỗi dev có đường dẫn khác nhau → không được commit
+# ──────────────────────────────────────────────────────────────
+local.properties
+
+
+# ──────────────────────────────────────────────────────────────
+# 4. SECRETS & API KEYS  🔐 BẮT BUỘC IGNORE
+#    Tuyệt đối không push lên GitHub dù repo private
+# ──────────────────────────────────────────────────────────────
+# Firebase / Google Services
+google-services.json
+
+# Keystore – dùng để ký APK release
+*.jks
+*.keystore
+keystore.properties
+release.keystore
+debug.keystore
+
+# File chứa key nếu tách riêng
+secrets.properties
+api_keys.properties
+
+
+# ──────────────────────────────────────────────────────────────
+# 5. ANDROID STUDIO / IntelliJ IDEA
+#    Cấu hình IDE cá nhân, không liên quan đến code
+# ──────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Trừ file cấu hình code style nếu muốn share với team
+# (bỏ dấu # để bật)
+# !.idea/codeStyles/
+# !.idea/inspectionProfiles/
+
+
+# ──────────────────────────────────────────────────────────────
+# 6. GENERATED CODE (Hilt / Kapt / KSP)
+#    Dagger Hilt tự sinh ra các file này lúc compile
+# ──────────────────────────────────────────────────────────────
+app/src/main/java/com/lingoswap/di/generated/
+**/generated/
+**/*_Factory.java
+**/*_MembersInjector.java
+**/*Module_*.java
+**/Hilt_*.java
+
+
+# ──────────────────────────────────────────────────────────────
+# 7. APK / AAB / MAPPING
+#    File output của build – không commit vào source control
+# ──────────────────────────────────────────────────────────────
+*.apk
+*.aab
+*.ap_
+*.dex
+proguard/
+mapping.txt
+missing_rules.txt
+seeds.txt
+usage.txt
+
+
+# ──────────────────────────────────────────────────────────────
+# 8. TEST OUTPUT
+# ──────────────────────────────────────────────────────────────
+captures/
+*.hprof
+lint/
+**/lint-results*
+**/lint.xml
+
+
+# ──────────────────────────────────────────────────────────────
+# 9. HỆ ĐIỀU HÀNH
+# ──────────────────────────────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+
+# ──────────────────────────────────────────────────────────────
+# 10. VISUAL STUDIO CODE (nếu có dev dùng VSCode)
+# ──────────────────────────────────────────────────────────────
+.vscode/
+*.code-workspace
+
+
+# ──────────────────────────────────────────────────────────────
+# 11. MISC
+# ──────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+*.swp
+*.bak
+.navigation/

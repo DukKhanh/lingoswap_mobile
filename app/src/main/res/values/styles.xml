@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LingoSwap" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blue_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Theme.LingoSwap.Auth" parent="Theme.LingoSwap">
+        <item name="android:windowBackground">@color/bg</item>
+    </style>
+
+    <style name="Theme.LingoSwap.VideoCall" parent="Theme.LingoSwap">
+        <item name="android:windowBackground">@color/video_bg</item>
+        <item name="android:statusBarColor">@color/video_bg</item>
+    </style>
+
+    <!-- Base Style for Widget.LingoSwap -->
+    <!-- Added explicit parent to avoid AAPT trying to inherit from non-existent 'Widget' style -->
+    <style name="Widget.LingoSwap" parent="android:Widget" />
+
+    <!-- Button Styles -->
+    <style name="Widget.LingoSwap.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="Widget.LingoSwap.Button.Primary">
+        <item name="android:background">@drawable/bg_btn_primary</item>
+    </style>
+
+    <style name="Widget.LingoSwap.Button.Outline">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/bg_btn_outline</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- Input Styles -->
+    <style name="Widget.LingoSwap.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingStart">44dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:inputType">text</item>
+    </style>
+
+    <!-- Label Small -->
+    <style name="Widget.LingoSwap.LabelSmall">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_muted</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
+    <!-- Card style via elevation -->
+    <style name="Widget.LingoSwap.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+</resources>

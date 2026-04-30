@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue">#3B82F6</color>
+    <color name="blue_dark">#2563EB</color>
+    <color name="blue_light">#EFF6FF</color>
+    <color name="blue_muted">#BFDBFE</color>
+    <color name="bg">#EBF1FB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="text_dark">#111827</color>
+    <color name="text_mid">#374151</color>
+    <color name="text_muted">#6B7280</color>
+    <color name="text_light">#9CA3AF</color>
+    <color name="border">#E5E7EB</color>
+    <color name="border_light">#F3F4F6</color>
+    <color name="red">#EF4444</color>
+    <color name="green">#10B981</color>
+    <color name="orange">#F97316</color>
+    <color name="yellow">#F59E0B</color>
+    <color name="input_bg">#F1F5F9</color>
+    <color name="body_bg">#D1DCF0</color>
+    <color name="video_bg">#0F172A</color>
+    <color name="video_main_bg">#1E293B</color>
+    <color name="success_bg">#ECFDF5</color>
+    <color name="success_text">#059669</color>
+    <color name="otp_banner_bg">#ECFDF5</color>
+    <color name="btn_disabled">#93B4D8</color>
+    <color name="pip_bg">#374151</color>
+    <color name="ctrl_label_color">#94A3B8</color>
+    <color name="dark_surface">#1E293B</color>
+</resources>

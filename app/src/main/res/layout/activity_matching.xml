@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <!-- Radar Animation (concentric rings + center) -->
+    <!-- NOTE: Animate rings via ObjectAnimator in Java code -->
+    <FrameLayout
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="32dp">
+
+        <!-- Outer ring -->
+        <View android:id="@+id/radarRing3"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_radar_ring"
+            android:alpha="0.2"/>
+
+        <!-- Mid ring -->
+        <View android:id="@+id/radarRing2"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_radar_ring"
+            android:alpha="0.4"/>
+
+        <!-- Inner ring -->
+        <View android:id="@+id/radarRing1"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_radar_ring"
+            android:alpha="0.6"/>
+
+        <!-- Center button -->
+        <FrameLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_radar_center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="VN"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Finding a match…"
+        android:textColor="@color/text_dark"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Looking for someone to practice Tiếng Việt with"
+        android:textColor="@color/text_muted"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:id="@+id/tvWaitTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Waiting 1s"
+        android:textColor="@color/text_light"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Tip Box -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:text="💡 Tip: Get ready to start a conversation!"
+        android:textColor="@color/text_mid"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Cancel -->
+    <Button
+        android:id="@+id/btnCancelSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_btn_outline"
+        android:text="Cancel search"
+        android:textColor="@color/text_mid"
+        android:textSize="14sp"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"/>
+</LinearLayout>

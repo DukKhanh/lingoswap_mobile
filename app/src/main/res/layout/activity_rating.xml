@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <!-- Title -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rate your conversation"
+                    android:textColor="@color/text_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Share your experience to help us improve"
+                    android:textColor="@color/text_muted"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Session Timer -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center" android:orientation="horizontal" android:layout_marginBottom="20dp">
+                    <ImageView android:layout_width="12dp" android:layout_height="12dp"
+                        android:src="@android:drawable/ic_menu_recent_history" android:tint="@color/text_light"
+                        android:layout_marginEnd="4dp"/>
+                    <TextView android:id="@+id/tvSessionTime"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0:16" android:textColor="@color/text_light" android:textSize="12sp"/>
+                </LinearLayout>
+
+                <!-- Rating Section 1: Overall -->
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/border_light"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:paddingTop="16dp" android:paddingBottom="16dp"
+                    android:layout_marginBottom="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="Overall experience" android:textColor="@color/text_mid"
+                        android:textSize="14sp" android:gravity="center" android:layout_marginBottom="10dp"/>
+                    <LinearLayout android:id="@+id/starsOverall"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:gravity="center" android:orientation="horizontal">
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Rating Section 2: Partner Skills -->
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/border_light"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:paddingTop="16dp" android:paddingBottom="16dp"
+                    android:layout_marginBottom="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="Partner's language skills" android:textColor="@color/text_mid"
+                        android:textSize="14sp" android:gravity="center" android:layout_marginBottom="10dp"/>
+                    <LinearLayout android:id="@+id/starsPartner"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:gravity="center" android:orientation="horizontal">
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                        <TextView android:layout_width="40dp" android:layout_height="40dp"
+                            android:text="★" android:textSize="32sp" android:textColor="@color/border"
+                            android:gravity="center" android:clickable="true" android:focusable="true"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Chips: What stood out -->
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="WHAT STOOD OUT?" android:textColor="@color/text_muted"
+                    android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Flexbox-like flow for chips -->
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="4dp">
+
+                    <TextView android:id="@+id/chipFriendly"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Friendly"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                    <TextView android:id="@+id/chipPatient"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Patient"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                    <TextView android:id="@+id/chipPronunciation"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Good pronunciation"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                    <TextView android:id="@+id/chipVocabulary"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Rich vocabulary"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                    <TextView android:id="@+id/chipEasyToUnderstand"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Easy to understand"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                    <TextView android:id="@+id/chipEnthusiastic"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip" android:text="Enthusiastic"
+                        android:textColor="@color/text_mid" android:textSize="12sp"
+                        android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+                        android:clickable="true" android:focusable="true"/>
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Comments -->
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="ADDITIONAL COMMENTS (OPTIONAL)"
+                    android:textColor="@color/text_muted" android:textSize="11sp"
+                    android:textStyle="bold" android:letterSpacing="0.08"
+                    android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/etComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_input"
+                    android:padding="12dp"
+                    android:hint="Share more about the conversation…"
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_dark"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Action Buttons -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnSkip"
+                        android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1"
+                        android:background="@drawable/bg_btn_outline"
+                        android:text="Skip" android:textColor="@color/text_mid" android:textSize="14sp"
+                        android:layout_marginEnd="5dp" />
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnSubmitReview"
+                        android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1.5"
+                        android:background="@drawable/bg_btn_primary"
+                        android:text="Submit review" android:textColor="@color/white"
+                        android:textSize="14sp" android:textStyle="bold"
+                        android:layout_marginStart="5dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</ScrollView>

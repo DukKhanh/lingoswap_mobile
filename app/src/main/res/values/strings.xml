@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LingoSwap</string>
+    <!-- Auth -->
+    <string name="welcome_back">WELCOME BACK</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email">EMAIL</string>
+    <string name="password">PASSWORD</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="already_account">Already have an account?</string>
+    <string name="full_name">FULL NAME</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="terms_text">By signing up, you agree to our Terms of Service and Privacy Policy.</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="back_to_sign_in">← Back to sign in</string>
+    <string name="otp_code">OTP CODE</string>
+    <string name="new_password">NEW PASSWORD</string>
+    <string name="confirm_new_password">CONFIRM NEW PASSWORD</string>
+    <string name="reset_password">Reset password</string>
+    <string name="otp_sent">📧 OTP has been sent to your email</string>
+    <string name="resend_in">Resend in 04:53</string>
+    <string name="resend_code">Resend code</string>
+    <string name="password_reset_title">Password reset successfully!</string>
+    <string name="password_reset_sub">You can now sign in with your new password.</string>
+    <!-- Home -->
+    <string name="lingoswap">LingoSwap</string>
+    <string name="search_friends">Search friends…</string>
+    <string name="friends">Friends</string>
+    <string name="online_count">2 online</string>
+    <string name="tab_all">All</string>
+    <string name="tab_online">Online</string>
+    <string name="find_partner">Find a partner</string>
+    <string name="find_partner_sub">Choose a language and start practicing</string>
+    <string name="recent_matches">Recent Matches</string>
+    <string name="see_all">5 sessions</string>
+    <string name="today">TODAY</string>
+    <string name="yesterday">YESTERDAY</string>
+    <!-- Matching -->
+    <string name="finding_match">Finding a match…</string>
+    <string name="matching_sub">Looking for someone to practice Tiếng Việt with</string>
+    <string name="waiting">Waiting 1s</string>
+    <string name="tip_text">💡 Tip: Get ready to start a conversation!</string>
+    <string name="cancel_search">Cancel search</string>
+    <!-- Modal -->
+    <string name="choose_language">Choose a language</string>
+    <string name="choose_language_sub">Which language do you want to practice today?</string>
+    <string name="cancel">Cancel</string>
+    <string name="start_matching">Start matching</string>
+    <!-- Video Call -->
+    <string name="mute">Mute</string>
+    <string name="stop_video">Stop video</string>
+    <string name="chat">Chat</string>
+    <string name="end_call">End call</string>
+    <string name="no_messages">No messages yet</string>
+    <string name="type_message">Type a message…</string>
+    <!-- Rating -->
+    <string name="rate_conversation">Rate your conversation</string>
+    <string name="rating_sub">Share your experience to help us improve</string>
+    <string name="overall_experience">Overall experience</string>
+    <string name="partner_skills">Partner\'s language skills</string>
+    <string name="stood_out">What stood out?</string>
+    <string name="comments_hint">Share more about the conversation…</string>
+    <string name="skip">Skip</string>
+    <string name="submit_review">Submit review</string>
+    <!-- Profile -->
+    <string name="my_profile">My Profile</string>
+    <string name="back_home">Back to home</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="bio">BIO</string>
+    <string name="country">COUNTRY</string>
+    <string name="save_changes">Save changes</string>
+    <string name="general_settings">General settings</string>
+    <string name="appearance">APPEARANCE</string>
+    <string name="default_language">DEFAULT LANGUAGE</string>
+    <string name="save_settings">Save settings</string>
+    <string name="change_password">Change password</string>
+    <string name="current_password">CURRENT PASSWORD</string>
+    <string name="update_password">Update password</string>
+    <!-- Nav -->
+    <string name="nav_home">Home</string>
+    <string name="nav_friends">Friends</string>
+    <string name="nav_match">Match</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_profile">Profile</string>
+</resources>
