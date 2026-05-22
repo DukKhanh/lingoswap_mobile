@@ -1,22 +1,35 @@
 package com.lingoswap.activities;
 
+import android.Manifest;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.pm.PackageManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.lingoswap.R;
-import com.lingoswap.presentation.friends.FriendsActivity;
+import com.lingoswap.databinding.ActivityHomeBinding;
+import com.lingoswap.presentation.base.BaseActivity;
 import com.lingoswap.presentation.chat.ChatActivity;
+import com.lingoswap.presentation.friends.FriendsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
+
+    private String pendingLanguage;
 
     // ── Mô hình dữ liệu người bạn ──────────────────────────────────
     static class Friend {
@@ -30,14 +43,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private final List<Friend> allFriends = new ArrayList<>();
-    private LinearLayout llFriendList;
-    private TextView tabAll, tabOnline;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+    protected ActivityHomeBinding inflateBinding(LayoutInflater inflater) {
+        return ActivityHomeBinding.inflate(inflater);
+    }
 
+    @Override
+    protected void setupViews() {
         // ── Dữ liệu mẫu (thay bằng API call sau) ──────────────────
         allFriends.add(new Friend("Mia Chen",    "English",    "online",  12));
         allFriends.add(new Friend("Ryo Tanaka",  "Japanese",   "offline",  8));
@@ -45,92 +58,112 @@ public class HomeActivity extends AppCompatActivity {
         allFriends.add(new Friend("Carlos Ruiz", "Spanish",    "away",     3));
         allFriends.add(new Friend("Ji-woo Kim",  "Korean",     "online",  20));
 
-        llFriendList = findViewById(R.id.llFriendList);
-        tabAll       = findViewById(R.id.tabAll);
-        tabOnline    = findViewById(R.id.tabOnline);
-
-        Button   btnFindPartner = findViewById(R.id.btnFindPartner);
-        LinearLayout navHome    = findViewById(R.id.navHome);
-        LinearLayout navFriends = findViewById(R.id.navFriends);
-        LinearLayout navMatch   = findViewById(R.id.navMatch);
-        LinearLayout navChat    = findViewById(R.id.navChat);
-        LinearLayout navProfile = findViewById(R.id.navProfile);
-
         // ── Hiển thị mặc định: tất cả ─────────────────────────────
         renderFriendList(allFriends);
 
         // ── Tab filter ─────────────────────────────────────────────
-        if (tabAll != null) {
-            tabAll.setOnClickListener(v -> {
-                setTabActive(tabAll, tabOnline);
-                renderFriendList(allFriends);
-            });
-        }
-        if (tabOnline != null) {
-            tabOnline.setOnClickListener(v -> {
-                setTabActive(tabOnline, tabAll);
-                List<Friend> online = new ArrayList<>();
-                for (Friend f : allFriends) if (f.isOnline()) online.add(f);
-                renderFriendList(online);
-            });
-        }
+        binding.tabAll.setOnClickListener(v -> {
+            setTabActive(binding.tabAll, binding.tabOnline);
+            renderFriendList(allFriends);
+        });
+
+        binding.tabOnline.setOnClickListener(v -> {
+            setTabActive(binding.tabOnline, binding.tabAll);
+            List<Friend> online = new ArrayList<>();
+            for (Friend f : allFriends) if (f.isOnline()) online.add(f);
+            renderFriendList(online);
+        });
 
         // ── Find partner ───────────────────────────────────────────
-        if (btnFindPartner != null) {
-            btnFindPartner.setOnClickListener(v -> showLanguageChooser());
-        }
+        binding.btnFindPartner.setOnClickListener(v -> showLanguageChooser());
 
         // ── Bottom nav ─────────────────────────────────────────────
-        if (navHome != null) navHome.setOnClickListener(v -> { /* đang ở Home */ });
-        if (navFriends != null) {
-            navFriends.setOnClickListener(v ->
-                startActivity(new Intent(this, FriendsActivity.class))
-            );
+        binding.navHome.setOnClickListener(v -> { /* đang ở Home */ });
+        binding.navFriends.setOnClickListener(v ->
+            startActivity(new Intent(this, FriendsActivity.class))
+        );
+        binding.navMatch.setOnClickListener(v -> showLanguageChooser());
+        binding.navChat.setOnClickListener(v ->
+            startActivity(new Intent(this, ChatActivity.class))
+        );
+        binding.navProfile.setOnClickListener(v ->
+            startActivity(new Intent(this, ProfileActivity.class))
+        );
+    }
+
+    @Override
+    protected void observeViewModel() { }
+
+    public void startMatching(String language) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            pendingLanguage = language;
+            ActivityCompat.requestPermissions(this,
+                new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO
+                }, 100);
+        } else {
+            launchMatchingActivity(language);
         }
-        if (navMatch != null) navMatch.setOnClickListener(v -> showLanguageChooser());
-        if (navChat != null) {
-            navChat.setOnClickListener(v ->
-                startActivity(new Intent(this, ChatActivity.class))
-            );
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100) {
+            boolean ok = true;
+            if (grantResults.length > 0) {
+                for (int r : grantResults) {
+                    if (r != PackageManager.PERMISSION_GRANTED) {
+                        ok = false;
+                        break;
+                    }
+                }
+            } else {
+                ok = false;
+            }
+            if (ok) launchMatchingActivity(pendingLanguage);
+            else Toast.makeText(this, "Cần cấp quyền Camera và Mic để gọi video", Toast.LENGTH_LONG).show();
         }
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class))
-            );
-        }
+    }
+
+    private void launchMatchingActivity(String language) {
+        Intent intent = new Intent(this, MatchingActivity.class);
+        intent.putExtra("language", language);
+        startActivity(intent);
     }
 
     /** Chuyển trạng thái tab active / inactive */
     private void setTabActive(TextView active, TextView inactive) {
-        if (active != null) {
-            active.setBackgroundResource(R.drawable.bg_tab_active);
-            active.setTextColor(getColor(R.color.white));
-            active.setTypeface(null, android.graphics.Typeface.BOLD);
-        }
-        if (inactive != null) {
-            inactive.setBackgroundResource(android.R.color.transparent);
-            inactive.setTextColor(getColor(R.color.text_muted));
-            inactive.setTypeface(null, android.graphics.Typeface.NORMAL);
-        }
+        active.setBackgroundResource(R.drawable.bg_tab_active);
+        active.setTextColor(getResources().getColor(R.color.white, getTheme()));
+        active.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        inactive.setBackgroundResource(android.R.color.transparent);
+        inactive.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
+        inactive.setTypeface(null, android.graphics.Typeface.NORMAL);
     }
 
     /** Render danh sách bạn bè vào container */
     private void renderFriendList(List<Friend> friends) {
-        if (llFriendList == null) return;
-        llFriendList.removeAllViews();
+        binding.llFriendList.removeAllViews();
 
         if (friends.isEmpty()) {
             TextView empty = new TextView(this);
-            empty.setText("Không có bạn bè nào trong danh sách này");
-            empty.setTextColor(getColor(R.color.text_muted));
+            empty.setText(R.string.home_empty_friends);
+            empty.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
             empty.setPadding(0, 24, 0, 24);
-            llFriendList.addView(empty);
+            binding.llFriendList.addView(empty);
             return;
         }
 
         for (Friend friend : friends) {
             View item = buildFriendItem(friend);
-            llFriendList.addView(item);
+            binding.llFriendList.addView(item);
         }
     }
 
@@ -151,7 +184,7 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView avatarText = new TextView(this);
         avatarText.setText(String.valueOf(friend.name.charAt(0)));
-        avatarText.setTextColor(getColor(R.color.white));
+        avatarText.setTextColor(getResources().getColor(R.color.white, getTheme()));
         avatarText.setTextSize(18);
         avatarText.setGravity(android.view.Gravity.CENTER);
         FrameLayout.LayoutParams tvParams =
@@ -186,13 +219,13 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView tvName = new TextView(this);
         tvName.setText(friend.name);
-        tvName.setTextColor(getColor(R.color.text_dark));
+        tvName.setTextColor(getResources().getColor(R.color.text_dark, getTheme()));
         tvName.setTextSize(14);
         tvName.setTypeface(null, android.graphics.Typeface.BOLD);
 
         TextView tvLang = new TextView(this);
-        tvLang.setText(friend.language + " · " + friend.sessions + " sessions");
-        tvLang.setTextColor(getColor(R.color.text_muted));
+        tvLang.setText(getString(R.string.home_sessions_count, friend.language, friend.sessions));
+        tvLang.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
         tvLang.setTextSize(12);
 
         info.addView(tvName);
@@ -204,10 +237,7 @@ public class HomeActivity extends AppCompatActivity {
         btnCall.setText("📹");
         btnCall.setBackgroundResource(R.drawable.bg_btn_outline);
         btnCall.setOnClickListener(v -> {
-            Intent intent = new Intent(this, VideoCallActivity.class);
-            intent.putExtra("language", friend.language);
-            intent.putExtra("partnerName", friend.name);
-            startActivity(intent);
+            startMatching(friend.language);
         });
         row.addView(btnCall);
 
@@ -216,11 +246,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void showLanguageChooser() {
         try {
-            androidx.fragment.app.DialogFragment dialog = (androidx.fragment.app.DialogFragment) 
-                Class.forName("com.lingoswap.activities.LanguageChooserDialog").newInstance();
-            dialog.show(getSupportFragmentManager(), "LanguageChooserDialog");
+            LanguageChooserDialog.newInstance().show(getSupportFragmentManager(), "LanguageChooserDialog");
         } catch (Exception e) {
-            Toast.makeText(this, "Không thể mở hộp thoại chọn ngôn ngữ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_open_lang_chooser, Toast.LENGTH_SHORT).show();
         }
     }
 }

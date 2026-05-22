@@ -29,7 +29,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rate your conversation"
+                    android:text="@string/rating_title"
                     android:textColor="@color/text_dark"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -39,7 +39,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Share your experience to help us improve"
+                    android:text="@string/rating_sub"
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:gravity="center"
@@ -63,7 +63,7 @@
                     android:orientation="vertical" android:paddingTop="16dp" android:paddingBottom="16dp"
                     android:layout_marginBottom="16dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:text="Overall experience" android:textColor="@color/text_mid"
+                        android:text="@string/rating_overall" android:textColor="@color/text_mid"
                         android:textSize="14sp" android:gravity="center" android:layout_marginBottom="10dp"/>
                     <LinearLayout android:id="@+id/starsOverall"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                     android:orientation="vertical" android:paddingTop="16dp" android:paddingBottom="16dp"
                     android:layout_marginBottom="16dp">
                     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:text="Partner's language skills" android:textColor="@color/text_mid"
+                        android:text="@string/rating_partner" android:textColor="@color/text_mid"
                         android:textSize="14sp" android:gravity="center" android:layout_marginBottom="10dp"/>
                     <LinearLayout android:id="@+id/starsPartner"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
 
                 <!-- Chips: What stood out -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="WHAT STOOD OUT?" android:textColor="@color/text_muted"
+                    android:text="@string/rating_what_stood_out" android:textColor="@color/text_muted"
                     android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08"
                     android:layout_marginBottom="12dp"/>
 
@@ -132,42 +132,42 @@
 
                     <TextView android:id="@+id/chipFriendly"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Friendly"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_friendly"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
 
                     <TextView android:id="@+id/chipPatient"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Patient"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_patient"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
 
                     <TextView android:id="@+id/chipPronunciation"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Good pronunciation"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_pronunciation"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
 
                     <TextView android:id="@+id/chipVocabulary"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Rich vocabulary"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_vocabulary"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
 
                     <TextView android:id="@+id/chipEasyToUnderstand"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Easy to understand"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_easy"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
 
                     <TextView android:id="@+id/chipEnthusiastic"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip" android:text="Enthusiastic"
+                        android:background="@drawable/bg_chip" android:text="@string/rating_chip_enthusiastic"
                         android:textColor="@color/text_mid" android:textSize="12sp"
                         android:paddingHorizontal="12dp" android:paddingVertical="8dp"
                         android:clickable="true" android:focusable="true"/>
@@ -176,7 +176,7 @@
 
                 <!-- Comments -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="ADDITIONAL COMMENTS (OPTIONAL)"
+                    android:text="@string/rating_label_comments"
                     android:textColor="@color/text_muted" android:textSize="11sp"
                     android:textStyle="bold" android:letterSpacing="0.08"
                     android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
@@ -187,7 +187,7 @@
                     android:layout_height="80dp"
                     android:background="@drawable/bg_input"
                     android:padding="12dp"
-                    android:hint="Share more about the conversation…"
+                    android:hint="@string/rating_hint_comments"
                     android:inputType="textMultiLine"
                     android:gravity="top"
                     android:textSize="13sp"
@@ -200,12 +200,12 @@
                     <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnSkip"
                         android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1"
                         android:background="@drawable/bg_btn_outline"
-                        android:text="Skip" android:textColor="@color/text_mid" android:textSize="14sp"
+                        android:text="@string/skip" android:textColor="@color/text_mid" android:textSize="14sp"
                         android:layout_marginEnd="5dp" />
                     <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnSubmitReview"
                         android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1.5"
                         android:background="@drawable/bg_btn_primary"
-                        android:text="Submit review" android:textColor="@color/white"
+                        android:text="@string/rating_btn_submit" android:textColor="@color/white"
                         android:textSize="14sp" android:textStyle="bold"
                         android:layout_marginStart="5dp" />
                 </LinearLayout>

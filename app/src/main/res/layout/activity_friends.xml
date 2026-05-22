@@ -21,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Bạn bè"
+            android:text="@string/friends_title"
             android:textColor="@color/text_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:hint="Tìm bạn bè..."
+                android:hint="@string/friends_search_hint"
                 android:textColor="@color/text_dark"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp"
@@ -95,7 +95,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_active"
             android:gravity="center"
-            android:text="Tất cả"
+            android:text="@string/friends_tab_all"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:textStyle="bold"
@@ -109,7 +109,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center"
-            android:text="Online"
+            android:text="@string/friends_tab_online"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
             android:clickable="true"
@@ -122,72 +122,85 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center"
-            android:text="Lời mời"
+            android:text="@string/friends_tab_requests"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- ── Friends List (RecyclerView) ──────────────────────────── -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFriends"
+    <!-- ── Content Area ────────────────────────────────────────── -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp" />
+        android:layout_weight="1">
 
-    <!-- ── Empty State (hiển thị khi không có bạn bè) ───────────── -->
-    <LinearLayout
-        android:id="@+id/layoutEmptyFriends"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        <!-- ── Friends List (RecyclerView) ──────────────────────────── -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFriends"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="👥"
-            android:textSize="48sp"
-            android:layout_marginBottom="12dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chưa có bạn bè nào"
-            android:textColor="@color/text_dark"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tìm đối tác luyện tập và kết bạn ngay!"
-            android:textColor="@color/text_muted"
-            android:textSize="13sp"
+        <!-- ── Empty State (hiển thị khi không có bạn bè) ───────────── -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyFriends"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_marginBottom="20dp" />
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <Button
-            android:id="@+id/btnFindNow"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👥"
+                android:textSize="48sp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/friends_empty_title"
+                android:textColor="@color/text_dark"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/friends_empty_sub"
+                android:textColor="@color/text_muted"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:layout_marginBottom="20dp" />
+
+            <Button
+                android:id="@+id/btnFindNow"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_btn_primary"
+                android:text="@string/friends_btn_find"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp" />
+        </LinearLayout>
+
+        <!-- ── Loading indicator ────────────────────────────────────── -->
+        <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_btn_primary"
-            android:text="Tìm ngay"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <!-- ── Bottom Navigation ─────────────────────────────────────── -->
     <LinearLayout
@@ -205,7 +218,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="🏠" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Home" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_home" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navFriends"
@@ -215,7 +228,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="👥" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Bạn bè" android:textSize="9sp" android:textColor="@color/blue"/>
+                android:text="@string/nav_friends" android:textSize="9sp" android:textColor="@color/blue"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navMatch"
@@ -225,7 +238,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="🔍" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Match" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_match" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navChat"
@@ -235,7 +248,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="💬" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Chat" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_chat" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navProfile"
@@ -245,7 +258,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="👤" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Hồ sơ" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_profile" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
     </LinearLayout>
 

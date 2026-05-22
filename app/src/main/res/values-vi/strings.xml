@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LingoSwap</string>
+
+    <!-- ── Common ──────────────────────────────── -->
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_ok">OK</string>
+    <string name="label_online">Trực tuyến</string>
+    <string name="label_offline">Ngoại tuyến</string>
+    <string name="lang_toggle_vi">Tiếng Việt</string>
+    <string name="lang_toggle_en">English</string>
+    <string name="cancel">Hủy</string>
+    <string name="skip">Bỏ qua</string>
+    <string name="back_home">Về trang chủ</string>
+    <string name="apply">Áp dụng</string>
+    <string name="coming_soon">Sắp ra mắt!</string>
+
+    <!-- ── Auth ────────────────────────────── -->
+    <string name="welcome_back">CHÀO MỪNG TRỞ LẠI</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="email">EMAIL</string>
+    <string name="password">MẬT KHẨU</string>
+    <string name="full_name">HỌ VÀ TÊN</string>
+    <string name="confirm_password">XÁC NHẬN MẬT KHẨU</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="continue_with_google">Tiếp tục với Google</string>
+    <string name="no_account">Chưa có tài khoản?</string>
+    <string name="already_account">Đã có tài khoản?</string>
+    <string name="terms_text">Khi đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư của chúng tôi.</string>
+
+    <string name="sign_in_welcome">CHÀO MỪNG TRỞ LẠI</string>
+    <string name="sign_in_title">Đăng nhập</string>
+    <string name="sign_in_label_email">EMAIL</string>
+    <string name="sign_in_hint_email">you@example.com</string>
+    <string name="sign_in_label_password">MẬT KHẨU</string>
+    <string name="sign_in_hint_password">••••••••</string>
+    <string name="sign_in_forgot">Quên mật khẩu?</string>
+    <string name="sign_in_btn">Đăng nhập</string>
+    <string name="sign_in_google">Tiếp tục với Google</string>
+    <string name="sign_in_or">hoặc</string>
+    <string name="sign_in_no_account">Chưa có tài khoản? </string>
+    <string name="sign_in_go_signup">Đăng ký</string>
+
+    <string name="sign_up_tagline">THAM GIA LINGOSWAP</string>
+    <string name="sign_up_title">Đăng ký</string>
+    <string name="sign_up_label_name">HỌ VÀ TÊN</string>
+    <string name="sign_up_hint_name">Họ và tên của bạn</string>
+    <string name="sign_up_label_email">EMAIL</string>
+    <string name="sign_up_label_password">MẬT KHẨU</string>
+    <string name="sign_up_hint_password">Tối thiểu 8 ký tự</string>
+    <string name="sign_up_label_confirm">XÁC NHẬN MẬT KHẨU</string>
+    <string name="sign_up_hint_confirm">Nhập lại mật khẩu</string>
+    <string name="sign_up_terms">Khi đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư của chúng tôi.</string>
+    <string name="sign_up_btn">Tạo tài khoản</string>
+    <string name="sign_up_google">Tiếp tục với Google</string>
+    <string name="sign_up_have_account">Đã có tài khoản? </string>
+    <string name="sign_up_go_signin">Đăng nhập</string>
+
+    <!-- ── Forgot / Reset Password ──────────────────── -->
+    <string name="forgot_tagline">NHẬP EMAIL ĐỂ NHẬN MÃ OTP</string>
+    <string name="forgot_title">Quên mật khẩu</string>
+    <string name="forgot_label_email">EMAIL</string>
+    <string name="forgot_btn_send">Gửi OTP</string>
+    <string name="forgot_back">← Quay lại đăng nhập</string>
+    <string name="send_otp">Gửi OTP</string>
+    <string name="back_to_sign_in">← Quay lại đăng nhập</string>
+
+    <string name="reset_subtitle">ĐẶT LẠI MẬT KHẨU</string>
+    <string name="reset_otp_sent">📧 OTP đã được gửi đến email của bạn</string>
+    <string name="reset_label_otp">MÃ OTP</string>
+    <string name="reset_hint_otp">Nhập mã 6 chữ số</string>
+    <string name="reset_resend_in">Gửi lại sau</string>
+    <string name="reset_resend">Gửi lại mã</string>
+    <string name="reset_label_new_pw">MẬT KHẨU MỚI</string>
+    <string name="reset_hint_new_pw">Tối thiểu 8 ký tự</string>
+    <string name="reset_label_confirm_pw">XÁC NHẬN MẬT KHẨU</string>
+    <string name="reset_hint_confirm_pw">Nhập lại mật khẩu mới</string>
+    <string name="reset_btn">Đặt lại mật khẩu</string>
+    <string name="reset_back">← Quay lại đăng nhập</string>
+
+    <string name="otp_code">MÃ OTP</string>
+    <string name="new_password">MẬT KHẨU MỚI</string>
+    <string name="confirm_new_password">XÁC NHẬN MẬT KHẨU MỚI</string>
+    <string name="reset_password">Đặt lại mật khẩu</string>
+    <string name="otp_sent">📧 OTP đã được gửi đến email của bạn</string>
+    <string name="resend_in">Gửi lại sau</string>
+    <string name="resend_code">Gửi lại mã</string>
+
+    <string name="reset_success_title">Đặt lại mật khẩu thành công!</string>
+    <string name="reset_success_sub">Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.</string>
+    <string name="reset_success_back">← Quay lại đăng nhập</string>
+    <string name="password_reset_title">Đặt lại mật khẩu thành công!</string>
+    <string name="password_reset_sub">Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.</string>
+
+    <!-- ── Home ──────────────────────────────── -->
+    <string name="home_search_hint">Tìm bạn học…</string>
+    <string name="home_card_find_title">Tìm bạn luyện tập</string>
+    <string name="home_card_find_sub">Chọn ngôn ngữ và bắt đầu luyện tập ngay</string>
+    <string name="home_btn_find">Tìm bạn học</string>
+    <string name="home_friends_title">Bạn bè</string>
+    <string name="home_tab_all">Tất cả</string>
+    <string name="home_tab_online">Trực tuyến</string>
+    <string name="home_empty_friends">Không có bạn bè nào trong danh sách này</string>
+    <string name="home_sessions_count">%1$s · %2$d phiên</string>
+
+    <string name="lingoswap">LingoSwap</string>
+    <string name="search_friends">Tìm bạn bè…</string>
+    <string name="friends">Bạn bè</string>
+    <string name="online_count">trực tuyến</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_online">Trực tuyến</string>
+    <string name="find_partner">Tìm bạn học</string>
+    <string name="find_partner_sub">Chọn ngôn ngữ và bắt đầu luyện tập</string>
+    <string name="recent_matches">Phiên gần đây</string>
+    <string name="see_all">Tất cả</string>
+    <string name="today">HÔM NAY</string>
+    <string name="yesterday">HÔM QUA</string>
+
+    <!-- ── Friends ────────────────────────────── -->
+    <string name="friends_title">Bạn bè</string>
+    <string name="friends_search_hint">Tìm bạn bè…</string>
+    <string name="friends_tab_all">Tất cả</string>
+    <string name="friends_tab_online">Trực tuyến</string>
+    <string name="friends_tab_requests">Lời mời</string>
+    <string name="friends_empty_title">Chưa có bạn bè nào</string>
+    <string name="friends_empty_sub">Tìm bạn luyện tập và kết nối ngay!</string>
+    <string name="friends_btn_find">Tìm ngay</string>
+
+    <!-- ── Bottom Nav ────────────────────────── -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_friends">Bạn bè</string>
+    <string name="nav_match">Ghép đôi</string>
+    <string name="nav_chat">Trò chuyện</string>
+    <string name="nav_profile">Hồ sơ</string>
+
+    <!-- ── Chat ──────────────────────────────── -->
+    <string name="chat_hint">Nhập tin nhắn…</string>
+    <string name="chat_today">Hôm nay</string>
+    <string name="chat_translating">Đang dịch…</string>
+    <string name="chat_translating_msg">Đang dịch: \"%1$s\"</string>
+    <string name="no_messages">Chưa có tin nhắn</string>
+    <string name="type_message">Nhập tin nhắn…</string>
+
+    <!-- ── Matching ───────────────────────────── -->
+    <string name="matching_title">Đang tìm kiếm…</string>
+    <string name="matching_sub">Đang tìm người để luyện tập %1$s cùng</string>
+    <string name="matching_waiting">Đã chờ %1$ss</string>
+    <string name="matching_tip">💡 Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
+    <string name="matching_cancel">Hủy tìm kiếm</string>
+
+    <string name="finding_match">Đang tìm kiếm…</string>
+    <string name="waiting">Đã chờ 1s</string>
+    <string name="tip_text">💡 Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
+    <string name="cancel_search">Hủy tìm kiếm</string>
+
+    <!-- ── Video Call ─────────────────────────── -->
+    <string name="video_connecting">Đang kết nối…</string>
+    <string name="video_camera_off">Camera đang tắt</string>
+    <string name="video_you">Bạn</string>
+    <string name="video_btn_mic">Mic</string>
+    <string name="video_btn_camera">Camera</string>
+    <string name="video_btn_chat">Chat</string>
+    <string name="video_btn_end">Kết thúc</string>
+    <string name="video_chat_hint">Gửi tin nhắn…</string>
+    <string name="mute">Tắt tiếng</string>
+    <string name="stop_video">Dừng video</string>
+    <string name="chat">Trò chuyện</string>
+    <string name="end_call">Kết thúc cuộc gọi</string>
+
+    <!-- ── Rating ─────────────────────────────── -->
+    <string name="rating_title">Đánh giá cuộc trò chuyện</string>
+    <string name="rating_sub">Chia sẻ trải nghiệm để giúp chúng tôi cải thiện</string>
+    <string name="rating_overall">Trải nghiệm tổng thể</string>
+    <string name="rating_partner">Kỹ năng ngôn ngữ của bạn học</string>
+    <string name="rating_what_stood_out">ĐIỂM NỔI BẬT?</string>
+    <string name="rating_chip_friendly">Thân thiện</string>
+    <string name="rating_chip_patient">Kiên nhẫn</string>
+    <string name="rating_chip_pronunciation">Phát âm tốt</string>
+    <string name="rating_chip_vocabulary">Từ vựng phong phú</string>
+    <string name="rating_chip_easy">Dễ hiểu</string>
+    <string name="rating_chip_enthusiastic">Nhiệt tình</string>
+    <string name="rating_label_comments">NHẬN XÉT THÊM (TÙY CHỌN)</string>
+    <string name="rating_hint_comments">Chia sẻ thêm về cuộc trò chuyện…</string>
+    <string name="rating_btn_skip">Bỏ qua</string>
+    <string name="rating_btn_submit">Gửi đánh giá</string>
+    <string name="rate_conversation">Đánh giá cuộc trò chuyện</string>
+    <string name="overall_experience">Trải nghiệm tổng thể</string>
+    <string name="partner_skills">Kỹ năng ngôn ngữ của bạn học</string>
+    <string name="stood_out">Điểm nổi bật?</string>
+    <string name="comments_hint">Chia sẻ thêm về cuộc trò chuyện…</string>
+    <string name="submit_review">Gửi đánh giá</string>
+
+    <!-- ── Profile ────────────────────────────── -->
+    <string name="profile_back">← Về trang chủ</string>
+    <string name="profile_title">Hồ sơ của tôi</string>
+    <string name="profile_photo_hint">Nhấn để đổi ảnh (JPG, PNG, tối đa 2MB)</string>
+    <string name="profile_stat_learning">NGÔN NGỮ ĐANG HỌC</string>
+    <string name="profile_stat_level">TRÌNH ĐỘ</string>
+    <string name="profile_edit_title">Chỉnh sửa hồ sơ</string>
+    <string name="profile_label_name">HỌ VÀ TÊN</string>
+    <string name="profile_label_bio">TIỂU SỬ</string>
+    <string name="profile_label_country">QUỐC GIA</string>
+    <string name="profile_label_email">EMAIL</string>
+    <string name="profile_btn_save">Lưu thay đổi</string>
+    <string name="profile_settings_title">Cài đặt chung</string>
+    <string name="profile_appearance">GIAO DIỆN</string>
+    <string name="profile_light">☀️ Sáng</string>
+    <string name="profile_dark">🌙 Tối</string>
+    <string name="profile_default_lang">NGÔN NGỮ MẶC ĐỊNH</string>
+    <string name="profile_btn_save_settings">Lưu cài đặt</string>
+    <string name="profile_change_pw_title">Đổi mật khẩu</string>
+    <string name="profile_label_current_pw">MẬT KHẨU HIỆN TẠI</string>
+    <string name="profile_label_new_pw">MẬT KHẨU MỚI</string>
+    <string name="profile_label_confirm_pw">XÁC NHẬN MẬT KHẨU MỚI</string>
+    <string name="profile_btn_update_pw">Cập nhật mật khẩu</string>
+    <string name="my_profile">Hồ sơ của tôi</string>
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="bio">TIỂU SỬ</string>
+    <string name="country">QUỐC GIA</string>
+    <string name="save_changes">Lưu thay đổi</string>
+    <string name="general_settings">Cài đặt chung</string>
+    <string name="appearance">GIAO DIỆN</string>
+    <string name="default_language">NGÔN NGỮ MẶC ĐỊNH</string>
+    <string name="save_settings">Lưu cài đặt</string>
+    <string name="current_password">MẬT KHẨU HIỆN TẠI</string>
+    <string name="update_password">Cập nhật mật khẩu</string>
+
+    <!-- ── Modal / Language Chooser ─────────────── -->
+    <string name="lang_chooser_title">Chọn ngôn ngữ</string>
+    <string name="lang_chooser_sub">Bạn muốn luyện tập ngôn ngữ nào hôm nay?</string>
+    <string name="lang_chooser_btn_cancel">Hủy</string>
+    <string name="lang_chooser_btn_start">Bắt đầu ghép đôi</string>
+    <string name="lang_chooser_select_prompt">Vui lòng chọn một ngôn ngữ</string>
+    <string name="choose_language">Chọn ngôn ngữ</string>
+    <string name="choose_language_sub">Bạn muốn luyện tập ngôn ngữ nào hôm nay?</string>
+    <string name="start_matching">Bắt đầu ghép đôi</string>
+
+    <!-- ── Toasts / Others ────────────────────────── -->
+    <string name="toast_settings_saved">Đã lưu cài đặt</string>
+    <string name="toast_profile_saved">Đã lưu hồ sơ</string>
+    <string name="toast_password_updated">Đã cập nhật mật khẩu</string>
+    <string name="error_open_lang_chooser">Không thể mở hộp thoại chọn ngôn ngữ</string>
+</resources>

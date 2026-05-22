@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand (giữ nguyên hoặc điều chỉnh nhẹ) -->
+    <color name="blue">#3B82F6</color>
+    <color name="blue_dark">#2563EB</color>
+    <color name="blue_light">#1E293B</color> <!-- Darker variant for backgrounds -->
+
+    <!-- ── DARK THEME overrides ─────────────────────────────── -->
+    <!-- Backgrounds -->
+    <color name="bg">#0F172A</color>
+    <color name="white">#1E293B</color>
+    <color name="surface">#1E293B</color>
+    <color name="dark_surface">#0F172A</color>
+    <color name="body_bg">#020617</color>
+    <color name="input_bg">#1E293B</color>
+
+    <!-- Text -->
+    <color name="text_dark">#F1F5F9</color>
+    <color name="text_mid">#CBD5E1</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="text_light">#64748B</color>
+
+    <!-- Borders -->
+    <color name="border">#334155</color>
+    <color name="border_light">#1E293B</color>
+
+    <!-- Status / Semantic -->
+    <color name="green">#22C55E</color>
+    <color name="red">#F87171</color>
+    <color name="success_text">#4ADE80</color>
+    <color name="success_bg">#14532D</color>
+
+    <!-- Video call (không thay đổi – đã tối sẵn) -->
+    <color name="video_bg">#020617</color>
+    <color name="video_main_bg">#0F172A</color>
+
+    <!-- Control button label -->
+    <color name="ctrl_label_color">#64748B</color>
+</resources>

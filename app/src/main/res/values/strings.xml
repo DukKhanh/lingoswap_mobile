@@ -1,73 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LingoSwap</string>
-    <!-- Auth -->
+
+    <!-- ── Common ──────────────────────────────── -->
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_ok">OK</string>
+    <string name="label_online">● Online</string>
+    <string name="label_offline">Offline</string>
+    <string name="lang_toggle_vi">Tiếng Việt</string>
+    <string name="lang_toggle_en">English</string>
+    <string name="cancel">Cancel</string>
+    <string name="skip">Skip</string>
+    <string name="back_home">Back to home</string>
+    <string name="apply">Apply</string>
+    <string name="coming_soon">Coming soon!</string>
+
+    <!-- ── Auth ────────────────────────────── -->
     <string name="welcome_back">WELCOME BACK</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="email">EMAIL</string>
     <string name="password">PASSWORD</string>
+    <string name="full_name">FULL NAME</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="already_account">Already have an account?</string>
-    <string name="full_name">FULL NAME</string>
-    <string name="confirm_password">CONFIRM PASSWORD</string>
     <string name="terms_text">By signing up, you agree to our Terms of Service and Privacy Policy.</string>
+
+    <string name="sign_in_welcome">WELCOME BACK</string>
+    <string name="sign_in_title">Sign in</string>
+    <string name="sign_in_label_email">EMAIL</string>
+    <string name="sign_in_hint_email">you@example.com</string>
+    <string name="sign_in_label_password">PASSWORD</string>
+    <string name="sign_in_hint_password">••••••••</string>
+    <string name="sign_in_forgot">Forgot password?</string>
+    <string name="sign_in_btn">Sign in</string>
+    <string name="sign_in_google">Continue with Google</string>
+    <string name="sign_in_or">or</string>
+    <string name="sign_in_no_account">Don\'t have an account? </string>
+    <string name="sign_in_go_signup">Sign up</string>
+
+    <string name="sign_up_tagline">JOIN LINGOSWAP</string>
+    <string name="sign_up_title">Sign up</string>
+    <string name="sign_up_label_name">FULL NAME</string>
+    <string name="sign_up_hint_name">Your full name</string>
+    <string name="sign_up_label_email">EMAIL</string>
+    <string name="sign_up_label_password">PASSWORD</string>
+    <string name="sign_up_hint_password">Min 8 characters</string>
+    <string name="sign_up_label_confirm">CONFIRM PASSWORD</string>
+    <string name="sign_up_hint_confirm">Re-enter password</string>
+    <string name="sign_up_terms">By signing up, you agree to our Terms of Service and Privacy Policy.</string>
+    <string name="sign_up_btn">Create account</string>
+    <string name="sign_up_google">Continue with Google</string>
+    <string name="sign_up_have_account">Already have an account? </string>
+    <string name="sign_up_go_signin">Sign in</string>
+
+    <!-- ── Forgot / Reset Password ──────────────────── -->
+    <string name="forgot_tagline">ENTER EMAIL TO RECEIVE OTP</string>
+    <string name="forgot_title">Forgot password</string>
+    <string name="forgot_label_email">EMAIL</string>
+    <string name="forgot_btn_send">Send OTP</string>
+    <string name="forgot_back">← Back to sign in</string>
     <string name="send_otp">Send OTP</string>
     <string name="back_to_sign_in">← Back to sign in</string>
+
+    <string name="reset_subtitle">RESET PASSWORD</string>
+    <string name="reset_otp_sent">📧 OTP sent to your email</string>
+    <string name="reset_label_otp">OTP CODE</string>
+    <string name="reset_hint_otp">Enter 6-digit code</string>
+    <string name="reset_resend_in">Resend in</string>
+    <string name="reset_resend">Resend code</string>
+    <string name="reset_label_new_pw">NEW PASSWORD</string>
+    <string name="reset_hint_new_pw">Min 8 characters</string>
+    <string name="reset_label_confirm_pw">CONFIRM PASSWORD</string>
+    <string name="reset_hint_confirm_pw">Re-enter new password</string>
+    <string name="reset_btn">Reset password</string>
+    <string name="reset_back">← Back to sign in</string>
+
     <string name="otp_code">OTP CODE</string>
     <string name="new_password">NEW PASSWORD</string>
     <string name="confirm_new_password">CONFIRM NEW PASSWORD</string>
     <string name="reset_password">Reset password</string>
-    <string name="otp_sent">📧 OTP has been sent to your email</string>
-    <string name="resend_in">Resend in 04:53</string>
+    <string name="otp_sent">📧 OTP sent to your email</string>
+    <string name="resend_in">Resend in</string>
     <string name="resend_code">Resend code</string>
-    <string name="password_reset_title">Password reset successfully!</string>
-    <string name="password_reset_sub">You can now sign in with your new password.</string>
-    <!-- Home -->
+
+    <string name="reset_success_title">Password reset successful!</string>
+    <string name="reset_success_sub">Now you can sign in with your new password.</string>
+    <string name="reset_success_back">← Back to sign in</string>
+    <string name="password_reset_title">Password reset successful!</string>
+    <string name="password_reset_sub">Now you can sign in with your new password.</string>
+
+    <!-- ── Home ──────────────────────────────── -->
+    <string name="home_search_hint">Find partners…</string>
+    <string name="home_card_find_title">Find practice partner</string>
+    <string name="home_card_find_sub">Choose language and start practicing now</string>
+    <string name="home_btn_find">Find partner</string>
+    <string name="home_friends_title">Friends</string>
+    <string name="home_tab_all">All</string>
+    <string name="home_tab_online">Online</string>
+    <string name="home_empty_friends">No friends in this list</string>
+    <string name="home_sessions_count">%1$s · %2$d sessions</string>
+
     <string name="lingoswap">LingoSwap</string>
     <string name="search_friends">Search friends…</string>
     <string name="friends">Friends</string>
-    <string name="online_count">2 online</string>
+    <string name="online_count">online</string>
     <string name="tab_all">All</string>
     <string name="tab_online">Online</string>
-    <string name="find_partner">Find a partner</string>
-    <string name="find_partner_sub">Choose a language and start practicing</string>
-    <string name="recent_matches">Recent Matches</string>
-    <string name="see_all">5 sessions</string>
+    <string name="find_partner">Find partner</string>
+    <string name="find_partner_sub">Choose language and start practicing</string>
+    <string name="recent_matches">Recent matches</string>
+    <string name="see_all">See all</string>
     <string name="today">TODAY</string>
     <string name="yesterday">YESTERDAY</string>
-    <!-- Matching -->
-    <string name="finding_match">Finding a match…</string>
-    <string name="matching_sub">Looking for someone to practice Tiếng Việt with</string>
+
+    <!-- ── Friends ────────────────────────────── -->
+    <string name="friends_title">Friends</string>
+    <string name="friends_search_hint">Search friends…</string>
+    <string name="friends_tab_all">All</string>
+    <string name="friends_tab_online">Online</string>
+    <string name="friends_tab_requests">Requests</string>
+    <string name="friends_empty_title">No friends yet</string>
+    <string name="friends_empty_sub">Find practice partners and connect now!</string>
+    <string name="friends_btn_find">Find now</string>
+
+    <!-- ── Bottom Nav ────────────────────────── -->
+    <string name="nav_home">Home</string>
+    <string name="nav_friends">Friends</string>
+    <string name="nav_match">Match</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- ── Chat ──────────────────────────────── -->
+    <string name="chat_hint">Type a message…</string>
+    <string name="chat_today">Today</string>
+    <string name="chat_translating">Translating…</string>
+    <string name="chat_translating_msg">📖 %1$s</string>
+    <string name="no_messages">No messages yet</string>
+    <string name="type_message">Type a message…</string>
+    <string name="chat_send_failed">Message send failed</string>
+
+    <!-- ── Matching ───────────────────────────── -->
+    <string name="matching_title">Finding match…</string>
+    <string name="matching_sub">Looking for someone to practice %1$s with</string>
+    <string name="matching_waiting">Waiting %1$ss</string>
+    <string name="matching_tip">💡 Tip: Be ready to start a conversation!</string>
+    <string name="matching_cancel">Cancel search</string>
+
+    <string name="finding_match">Finding match…</string>
     <string name="waiting">Waiting 1s</string>
-    <string name="tip_text">💡 Tip: Get ready to start a conversation!</string>
+    <string name="tip_text">💡 Tip: Be ready to start a conversation!</string>
     <string name="cancel_search">Cancel search</string>
-    <!-- Modal -->
-    <string name="choose_language">Choose a language</string>
-    <string name="choose_language_sub">Which language do you want to practice today?</string>
-    <string name="cancel">Cancel</string>
-    <string name="start_matching">Start matching</string>
-    <!-- Video Call -->
+
+    <!-- ── Video Call ─────────────────────────── -->
+    <string name="video_connecting">Connecting…</string>
+    <string name="video_camera_off">Camera is off</string>
+    <string name="video_you">You</string>
+    <string name="video_btn_mic">Mic</string>
+    <string name="video_btn_camera">Camera</string>
+    <string name="video_btn_chat">Chat</string>
+    <string name="video_btn_end">End</string>
+    <string name="video_chat_hint">Send a message…</string>
     <string name="mute">Mute</string>
     <string name="stop_video">Stop video</string>
     <string name="chat">Chat</string>
     <string name="end_call">End call</string>
-    <string name="no_messages">No messages yet</string>
-    <string name="type_message">Type a message…</string>
-    <!-- Rating -->
-    <string name="rate_conversation">Rate your conversation</string>
+
+    <!-- ── Rating ─────────────────────────────── -->
+    <string name="rating_title">Rate conversation</string>
     <string name="rating_sub">Share your experience to help us improve</string>
+    <string name="rating_overall">Overall experience</string>
+    <string name="rating_partner">Partner\'s language skills</string>
+    <string name="rating_what_stood_out">WHAT STOOD OUT?</string>
+    <string name="rating_chip_friendly">Friendly</string>
+    <string name="rating_chip_patient">Patient</string>
+    <string name="rating_chip_pronunciation">Good pronunciation</string>
+    <string name="rating_chip_vocabulary">Rich vocabulary</string>
+    <string name="rating_chip_easy">Easy to understand</string>
+    <string name="rating_chip_enthusiastic">Enthusiastic</string>
+    <string name="rating_label_comments">ADDITIONAL COMMENTS (OPTIONAL)</string>
+    <string name="rating_hint_comments">Share more about the conversation…</string>
+    <string name="rating_btn_skip">Skip</string>
+    <string name="rating_btn_submit">Submit review</string>
+    <string name="rate_conversation">Rate conversation</string>
     <string name="overall_experience">Overall experience</string>
     <string name="partner_skills">Partner\'s language skills</string>
     <string name="stood_out">What stood out?</string>
     <string name="comments_hint">Share more about the conversation…</string>
-    <string name="skip">Skip</string>
     <string name="submit_review">Submit review</string>
-    <!-- Profile -->
+
+    <!-- ── Profile ────────────────────────────── -->
+    <string name="profile_back">← Back to home</string>
+    <string name="profile_title">My Profile</string>
+    <string name="profile_photo_hint">Tap to change photo (JPG, PNG, max 2MB)</string>
+    <string name="profile_stat_learning">LEARNING LANGUAGE</string>
+    <string name="profile_stat_level">PROFICIENCY LEVEL</string>
+    <string name="profile_edit_title">Edit Profile</string>
+    <string name="profile_label_name">FULL NAME</string>
+    <string name="profile_label_bio">BIO</string>
+    <string name="profile_label_country">COUNTRY</string>
+    <string name="profile_label_email">EMAIL</string>
+    <string name="profile_btn_save">Save changes</string>
+    <string name="profile_settings_title">General settings</string>
+    <string name="profile_appearance">APPEARANCE</string>
+    <string name="profile_light">☀️ Light</string>
+    <string name="profile_dark">🌙 Dark</string>
+    <string name="profile_default_lang">DEFAULT LANGUAGE</string>
+    <string name="profile_btn_save_settings">Save settings</string>
+    <string name="profile_change_pw_title">Change password</string>
+    <string name="profile_label_current_pw">CURRENT PASSWORD</string>
+    <string name="profile_label_new_pw">NEW PASSWORD</string>
+    <string name="profile_label_confirm_pw">CONFIRM NEW PASSWORD</string>
+    <string name="profile_btn_update_pw">Update password</string>
     <string name="my_profile">My Profile</string>
-    <string name="back_home">Back to home</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="bio">BIO</string>
     <string name="country">COUNTRY</string>
@@ -76,13 +225,47 @@
     <string name="appearance">APPEARANCE</string>
     <string name="default_language">DEFAULT LANGUAGE</string>
     <string name="save_settings">Save settings</string>
-    <string name="change_password">Change password</string>
     <string name="current_password">CURRENT PASSWORD</string>
     <string name="update_password">Update password</string>
-    <!-- Nav -->
-    <string name="nav_home">Home</string>
-    <string name="nav_friends">Friends</string>
-    <string name="nav_match">Match</string>
-    <string name="nav_chat">Chat</string>
-    <string name="nav_profile">Profile</string>
+
+    <!-- ── Modal / Language Chooser ─────────────── -->
+    <string name="lang_chooser_title">Choose language</string>
+    <string name="lang_chooser_sub">Which language do you want to practice today?</string>
+    <string name="lang_chooser_btn_cancel">Cancel</string>
+    <string name="lang_chooser_btn_start">Start matching</string>
+    <string name="lang_chooser_select_prompt">Please select a language</string>
+    <string name="choose_language">Choose language</string>
+    <string name="choose_language_sub">Which language do you want to practice today?</string>
+    <string name="start_matching">Start matching</string>
+
+    <!-- ── Countries ───────────────────────────── -->
+    <string-array name="countries_array">
+        <item>🇻🇳 Vietnam</item>
+        <item>🇺🇸 United States</item>
+        <item>🇯🇵 Japan</item>
+        <item>🇰🇷 Korea</item>
+        <item>🇫🇷 France</item>
+        <item>🇩🇪 Germany</item>
+        <item>🇪🇸 Spain</item>
+    </string-array>
+
+    <!-- ── Toasts / Others ────────────────────────── -->
+    <string name="toast_settings_saved">Settings saved</string>
+    <string name="toast_profile_saved">Profile saved</string>
+    <string name="toast_password_updated">Password updated</string>
+    <string name="error_open_lang_chooser">Cannot open language chooser dialog</string>
+
+    <!-- ── Friends Merge ────────────────────────── -->
+    <string name="tab_requests">Requests</string>
+    <string name="tab_requests_with_count">Requests (%d)</string>
+    <string name="status_online">Online</string>
+    <string name="status_offline">Offline</string>
+    <string name="friend_request_pending">Friend Request</string>
+    <string name="action_chat">Chat</string>
+    <string name="action_call">Video Call</string>
+    <string name="action_remove_friend">Remove Friend</string>
+    <string name="action_accept">Accept</string>
+    <string name="action_reject">Reject</string>
+    <string name="empty_friends">No friends yet</string>
+    <string name="empty_friend_requests">No friend requests</string>
 </resources>

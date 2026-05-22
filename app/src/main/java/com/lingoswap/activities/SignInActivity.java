@@ -5,113 +5,120 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.LayoutInflater;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.lifecycle.ViewModelProvider;
+
 import com.lingoswap.R;
-import com.lingoswap.presentation.auth.forgotpassword.ForgotPasswordActivity;
+import com.lingoswap.databinding.ActivitySignInBinding;
+import com.lingoswap.presentation.auth.signin.SignInViewModel;
+import com.lingoswap.presentation.base.BaseActivity;
+import com.lingoswap.utils.HeartbeatManager;
+import com.lingoswap.utils.SocketManager;
 
-public class SignInActivity extends AppCompatActivity {
+import javax.inject.Inject;
 
-    private EditText etEmail, etPassword;
-    private ImageView ivTogglePassword;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
+
+    @Inject SocketManager socketManager;
+    @Inject HeartbeatManager heartbeatManager;
+
     private boolean passwordVisible = false;
+    private SignInViewModel viewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+    protected ActivitySignInBinding inflateBinding(LayoutInflater inflater) {
+        return ActivitySignInBinding.inflate(inflater);
+    }
 
-        etEmail    = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+    @Override
+    protected void setupViews() {
+        viewModel = new ViewModelProvider(this).get(SignInViewModel.class);
 
-        Button   btnSignIn       = findViewById(R.id.btnSignIn);
-        Button   btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
-        TextView btnLangVI       = findViewById(R.id.btnLangVI);
-        TextView btnLangEN       = findViewById(R.id.btnLangEN);
-        TextView tvForgotPw      = findViewById(R.id.tvForgotPassword);
-        TextView tvSignUp        = findViewById(R.id.tvSignUp);
+        setupObservers();
 
-        // ── Hiện / ẩn mật khẩu ─────────────────────────────────────
-        ivTogglePassword.setOnClickListener(v -> {
+        binding.ivTogglePassword.setOnClickListener(v -> {
             passwordVisible = !passwordVisible;
-            etPassword.setInputType(passwordVisible
+            binding.etPassword.setInputType(passwordVisible
                     ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                     : InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            etPassword.setSelection(etPassword.getText().length());
-            ivTogglePassword.setImageResource(passwordVisible
+            binding.etPassword.setSelection(binding.etPassword.getText().length());
+            binding.ivTogglePassword.setImageResource(passwordVisible
                     ? android.R.drawable.ic_menu_view
                     : android.R.drawable.ic_secure);
         });
 
-        // ── Đăng nhập ───────────────────────────────────────────────
-        btnSignIn.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String pw    = etPassword.getText().toString();
+        binding.btnSignIn.setOnClickListener(v -> {
+            String email = binding.etEmail.getText().toString().trim();
+            String pw    = binding.etPassword.getText().toString();
 
-            if (TextUtils.isEmpty(email)) {
-                etEmail.setError("Email không được để trống");
-                etEmail.requestFocus();
-                return;
+            if (validateInput(email, pw)) {
+                viewModel.login(email, pw);
             }
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                etEmail.setError("Email không hợp lệ");
-                etEmail.requestFocus();
-                return;
-            }
-            if (TextUtils.isEmpty(pw)) {
-                etPassword.setError("Mật khẩu không được để trống");
-                etPassword.requestFocus();
-                return;
-            }
-            if (pw.length() < 8) {
-                etPassword.setError("Mật khẩu phải ít nhất 8 ký tự");
-                etPassword.requestFocus();
-                return;
-            }
-
-            // TODO: gọi API xác thực thực tế ở đây
-            // Hiện tại chuyển thẳng vào HomeActivity
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
         });
 
-        // ── Google Sign-In ──────────────────────────────────────────
-        btnGoogleSignIn.setOnClickListener(v ->
+        binding.btnGoogleSignIn.setOnClickListener(v ->
             Toast.makeText(this, "Google Sign-In — chưa tích hợp", Toast.LENGTH_SHORT).show()
         );
 
-        // ── Quên mật khẩu ──────────────────────────────────────────
-        tvForgotPw.setOnClickListener(v ->
+        binding.tvForgotPassword.setOnClickListener(v ->
             startActivity(new Intent(this, ForgotPasswordActivity.class))
         );
 
-        // ── Đăng ký ────────────────────────────────────────────────
-        tvSignUp.setOnClickListener(v ->
+        binding.tvSignUp.setOnClickListener(v ->
             startActivity(new Intent(this, SignUpActivity.class))
         );
-
-        // ── Ngôn ngữ giao diện ─────────────────────────────────────
-        btnLangVI.setOnClickListener(v -> setAppLanguage("vi",   btnLangVI, btnLangEN));
-        btnLangEN.setOnClickListener(v -> setAppLanguage("en",   btnLangVI, btnLangEN));
     }
 
-    /**
-     * Chuyển ngôn ngữ ứng dụng (locale).
-     */
-    private void setAppLanguage(String lang, TextView btnVI, TextView btnEN) {
-        boolean isVI = "vi".equals(lang);
-        btnVI.setBackgroundResource(isVI  ? R.drawable.bg_tab_active   : android.R.color.transparent);
-        btnVI.setTextColor(getColor(isVI  ? R.color.white              : R.color.text_muted));
-        btnEN.setBackgroundResource(!isVI ? R.drawable.bg_tab_active   : android.R.color.transparent);
-        btnEN.setTextColor(getColor(!isVI ? R.color.white              : R.color.text_muted));
-        Toast.makeText(this,
-                isVI ? "Đã chọn Tiếng Việt" : "English selected",
-                Toast.LENGTH_SHORT).show();
+    private void setupObservers() {
+        viewModel.getLoginResult().observe(this, resource -> {
+            if (resource == null) return;
+            switch (resource.getStatus()) {
+                case LOADING:
+                    // TODO: show progress bar
+                    break;
+                case SUCCESS:
+                    socketManager.connect();
+                    heartbeatManager.start();
+                    startActivity(new Intent(this, HomeActivity.class));
+                    finish();
+                    break;
+                case ERROR:
+                    Toast.makeText(this, resource.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
+    }
+
+    private boolean validateInput(String email, String pw) {
+        if (TextUtils.isEmpty(email)) {
+            binding.etEmail.setError(getString(R.string.sign_in_label_email) + " empty");
+            binding.etEmail.requestFocus();
+            return false;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.etEmail.setError("Email invalid");
+            binding.etEmail.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(pw)) {
+            binding.etPassword.setError(getString(R.string.sign_in_label_password) + " empty");
+            binding.etPassword.requestFocus();
+            return false;
+        }
+        if (pw.length() < 8) {
+            binding.etPassword.setError("Min 8 chars");
+            binding.etPassword.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void observeViewModel() {
     }
 }

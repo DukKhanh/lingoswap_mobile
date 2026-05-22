@@ -1,89 +1,76 @@
 package com.lingoswap.activities;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.LayoutInflater;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import com.lingoswap.R;
 
-public class ResetPasswordActivity extends AppCompatActivity {
+import com.lingoswap.databinding.ActivityResetPasswordBinding;
+import com.lingoswap.presentation.base.BaseActivity;
 
-    private EditText etOtp, etNewPassword, etConfirmNewPw;
-    private TextView tvResendIn, tvResendCode;
+import java.util.Locale;
+
+public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBinding> {
+
     private CountDownTimer countDownTimer;
     private String email;
-    private static final long OTP_TIMEOUT_MS = 5 * 60 * 1000; // 5 phút
+    private static final long OTP_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reset_password);
+    protected ActivityResetPasswordBinding inflateBinding(LayoutInflater inflater) {
+        return ActivityResetPasswordBinding.inflate(inflater);
+    }
 
+    @Override
+    protected void setupViews() {
         email = getIntent().getStringExtra("email");
 
-        etOtp         = findViewById(R.id.etOtp);
-        etNewPassword = findViewById(R.id.etNewPassword);
-        etConfirmNewPw = findViewById(R.id.etConfirmNewPw);
-        tvResendIn    = findViewById(R.id.tvResendIn);
-        tvResendCode  = findViewById(R.id.tvResendCode);
-
-        Button btnResetPassword = findViewById(R.id.btnResetPassword);
-        TextView tvBackToSignIn = findViewById(R.id.tvBackToSignIn);
-
-        // ── Khởi động đếm ngược ────────────────────────────────────
         startCountDown();
 
-        // ── Gửi lại OTP ────────────────────────────────────────────
-        tvResendCode.setOnClickListener(v -> {
-            if (tvResendCode.isEnabled()) {
-                // TODO: gọi API gửi lại OTP cho email
-                Toast.makeText(this, "Đã gửi lại OTP tới " + email, Toast.LENGTH_SHORT).show();
-                startCountDown(); // reset bộ đếm
+        binding.tvResendCode.setOnClickListener(v -> {
+            if (binding.tvResendCode.isEnabled()) {
+                // TODO: Call API to resend OTP
+                Toast.makeText(this, "OTP resent to " + email, Toast.LENGTH_SHORT).show();
+                startCountDown();
             }
         });
 
-        // ── Reset mật khẩu ─────────────────────────────────────────
-        btnResetPassword.setOnClickListener(v -> {
-            String otp     = etOtp.getText().toString().trim();
-            String newPw   = etNewPassword.getText().toString();
-            String confirm = etConfirmNewPw.getText().toString();
+        binding.btnResetPassword.setOnClickListener(v -> {
+            String otp = binding.etOtp.getText().toString().trim();
+            String newPw = binding.etNewPassword.getText().toString();
+            String confirm = binding.etConfirmNewPw.getText().toString();
 
             if (TextUtils.isEmpty(otp) || otp.length() < 4) {
-                etOtp.setError("Mã OTP không hợp lệ");
-                etOtp.requestFocus();
+                binding.etOtp.setError("Invalid OTP");
+                binding.etOtp.requestFocus();
                 return;
             }
             if (TextUtils.isEmpty(newPw)) {
-                etNewPassword.setError("Mật khẩu không được để trống");
-                etNewPassword.requestFocus();
+                binding.etNewPassword.setError("Password required");
+                binding.etNewPassword.requestFocus();
                 return;
             }
             if (newPw.length() < 8) {
-                etNewPassword.setError("Mật khẩu phải ít nhất 8 ký tự");
-                etNewPassword.requestFocus();
+                binding.etNewPassword.setError("Min 8 characters");
+                binding.etNewPassword.requestFocus();
                 return;
             }
             if (!newPw.equals(confirm)) {
-                etConfirmNewPw.setError("Mật khẩu xác nhận không khớp");
-                etConfirmNewPw.requestFocus();
+                binding.etConfirmNewPw.setError("Passwords do not match");
+                binding.etConfirmNewPw.requestFocus();
                 return;
             }
 
-            // TODO: gọi API xác thực OTP + đặt lại mật khẩu
+            // TODO: Call API to verify OTP + reset password
 
             if (countDownTimer != null) countDownTimer.cancel();
             startActivity(new Intent(this, ResetSuccessActivity.class));
             finish();
         });
 
-        tvBackToSignIn.setOnClickListener(v -> {
+        binding.tvBackToSignIn.setOnClickListener(v -> {
             if (countDownTimer != null) countDownTimer.cancel();
-            // Quay về SignIn (xóa toàn bộ stack)
             Intent intent = new Intent(this, SignInActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -91,27 +78,29 @@ public class ResetPasswordActivity extends AppCompatActivity {
         });
     }
 
-    /** Bắt đầu (hoặc reset) bộ đếm ngược 5 phút */
+    @Override
+    protected void observeViewModel() {
+    }
+
     private void startCountDown() {
         if (countDownTimer != null) countDownTimer.cancel();
 
-        // Vô hiệu hoá nút "Resend" trong khi đếm
-        tvResendCode.setEnabled(false);
-        tvResendCode.setAlpha(0.4f);
+        binding.tvResendCode.setEnabled(false);
+        binding.tvResendCode.setAlpha(0.4f);
 
         countDownTimer = new CountDownTimer(OTP_TIMEOUT_MS, 1000) {
             @Override
             public void onTick(long millisLeft) {
                 long mins = millisLeft / 60000;
                 long secs = (millisLeft % 60000) / 1000;
-                tvResendIn.setText(String.format("Resend in %02d:%02d", mins, secs));
+                binding.tvResendIn.setText(String.format(Locale.getDefault(), "Resend in %02d:%02d", mins, secs));
             }
 
             @Override
             public void onFinish() {
-                tvResendIn.setText("OTP đã hết hạn");
-                tvResendCode.setEnabled(true);
-                tvResendCode.setAlpha(1f);
+                binding.tvResendIn.setText("OTP expired");
+                binding.tvResendCode.setEnabled(true);
+                binding.tvResendCode.setAlpha(1f);
             }
         }.start();
     }

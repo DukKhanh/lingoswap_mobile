@@ -8,7 +8,6 @@
     android:padding="24dp">
 
     <!-- Radar Animation (concentric rings + center) -->
-    <!-- NOTE: Animate rings via ObjectAnimator in Java code -->
     <FrameLayout
         android:layout_width="220dp"
         android:layout_height="220dp"
@@ -46,6 +45,7 @@
             android:layout_gravity="center"
             android:background="@drawable/bg_radar_center">
             <TextView
+                android:id="@+id/tvTargetLang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -60,7 +60,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Finding a match…"
+        android:text="@string/matching_title"
         android:textColor="@color/text_dark"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -68,9 +68,10 @@
         android:layout_marginBottom="6dp"/>
 
     <TextView
+        android:id="@+id/tvMatchingSub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Looking for someone to practice Tiếng Việt with"
+        android:text="@string/matching_sub"
         android:textColor="@color/text_muted"
         android:textSize="14sp"
         android:gravity="center"
@@ -80,7 +81,7 @@
         android:id="@+id/tvWaitTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Waiting 1s"
+        android:text="@string/waiting"
         android:textColor="@color/text_light"
         android:textSize="12sp"
         android:gravity="center"
@@ -92,7 +93,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:padding="16dp"
-        android:text="💡 Tip: Get ready to start a conversation!"
+        android:text="@string/matching_tip"
         android:textColor="@color/text_mid"
         android:textSize="14sp"
         android:gravity="center"
@@ -104,7 +105,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@drawable/bg_btn_outline"
-        android:text="Cancel search"
+        android:text="@string/matching_cancel"
         android:textColor="@color/text_mid"
         android:textSize="14sp"
         android:paddingStart="40dp"

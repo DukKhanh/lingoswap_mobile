@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="@color/bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,345 +12,598 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Top row: back + lang toggle -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:gravity="center_vertical" android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
+        <TextView
+            android:id="@+id/tvBackHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_back"
+            android:textColor="@color/blue"
+            android:textSize="13sp"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"/>
 
-            <TextView android:id="@+id/tvBackHome"
-                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:text="← Back to home"
-                android:textColor="@color/blue" android:textSize="13sp"
-                android:clickable="true" android:focusable="true"/>
-
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="36dp"
-                android:background="@drawable/bg_toggle_group" android:gravity="center_vertical"
-                android:orientation="horizontal" android:paddingStart="4dp" android:paddingEnd="4dp"
-                android:layout_marginEnd="8dp">
-                <TextView android:id="@+id/btnLangVI" android:layout_width="wrap_content" android:layout_height="28dp"
-                    android:background="@android:color/transparent" android:text="Tiếng Việt"
-                    android:textColor="@color/text_muted" android:textSize="10sp"
-                    android:gravity="center" android:paddingStart="8dp" android:paddingEnd="8dp"
-                    android:clickable="true" android:focusable="true"/>
-                <TextView android:id="@+id/btnLangEN" android:layout_width="wrap_content" android:layout_height="28dp"
-                    android:background="@drawable/bg_tab_active" android:text="English"
-                    android:textColor="@color/white" android:textSize="10sp" android:textStyle="bold"
-                    android:gravity="center" android:paddingStart="12dp" android:paddingEnd="12dp"
-                    android:clickable="true" android:focusable="true"/>
-            </LinearLayout>
-
-            <TextView android:layout_width="28dp" android:layout_height="28dp"
-                android:background="@drawable/bg_toggle_group" android:gravity="center"
-                android:text="🌙" android:textSize="14sp"/>
-        </LinearLayout>
-
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="My Profile" android:textColor="@color/text_dark"
-            android:textSize="22sp" android:textStyle="bold"
-            android:layout_marginBottom="16dp" android:layout_marginTop="4dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_title"
+            android:textColor="@color/text_dark"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
 
         <!-- Profile Hero Card -->
-        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/white"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_marginBottom="16dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:gravity="center" android:padding="24dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp">
 
-                <!-- Avatar -->
-                <FrameLayout android:layout_width="80dp" android:layout_height="80dp"
-                    android:background="@drawable/bg_avatar" android:layout_marginBottom="12dp">
-                    <TextView android:id="@+id/tvHeroInitial"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_gravity="center" android:text="T"
-                        android:textColor="@color/white" android:textSize="32sp" android:textStyle="bold"/>
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_avatar"
+                    android:layout_marginBottom="12dp">
+                    <TextView
+                        android:id="@+id/tvHeroInitial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="T"
+                        android:textColor="@color/white"
+                        android:textSize="32sp"
+                        android:textStyle="bold"/>
                 </FrameLayout>
 
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Tap to change photo (JPG, PNG, max 2MB)"
-                    android:textColor="@color/text_light" android:textSize="11sp"
-                    android:gravity="center" android:layout_marginBottom="10dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_photo_hint"
+                    android:textColor="@color/text_light"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"/>
 
-                <TextView android:id="@+id/tvHeroName"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="TruongKAr" android:textColor="@color/text_dark"
-                    android:textSize="18sp" android:textStyle="bold" android:layout_marginBottom="2dp"/>
+                <TextView
+                    android:id="@+id/tvHeroName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TruongKAr"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
 
-                <TextView android:id="@+id/tvHeroEmail"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="baotruong11298@gmail.com" android:textColor="@color/text_muted"
-                    android:textSize="13sp" android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/tvHeroEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="user@gmail.com"
+                    android:textColor="@color/text_muted"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="16dp"/>
 
-                <!-- Stats -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="LEARNING LANGUAGE" android:textColor="@color/text_light"
-                            android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_stat_learning"
+                            android:textColor="@color/text_light"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.06"
                             android:layout_marginBottom="3dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="—" android:textColor="@color/text_muted"
-                            android:textSize="15sp" android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@color/text_muted"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
                     </LinearLayout>
-                    <View android:layout_width="1dp" android:layout_height="match_parent"
-                        android:background="@color/border" android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="PROFICIENCY LEVEL" android:textColor="@color/text_light"
-                            android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06"
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/border"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_stat_level"
+                            android:textColor="@color/text_light"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.06"
                             android:layout_marginBottom="3dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="—" android:textColor="@color/text_muted"
-                            android:textSize="15sp" android:textStyle="bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@color/text_muted"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Edit Profile Card -->
-        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/white"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_marginBottom="16dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:padding="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Edit Profile" android:textColor="@color/text_dark"
-                    android:textSize="15sp" android:textStyle="bold" android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_title"
+                    android:textColor="@color/text_dark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
 
-                <!-- Full Name -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="FULL NAME" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <EditText android:id="@+id/etFullName"
-                    android:layout_width="match_parent" android:layout_height="48dp"
-                    android:background="@drawable/bg_input" android:paddingStart="14dp" android:paddingEnd="14dp"
-                    android:text="TruongKAr" android:textSize="14sp" android:textColor="@color/text_dark"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_name"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <EditText
+                    android:id="@+id/etFullName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_dark"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Bio -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="BIO" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <EditText android:id="@+id/etBio"
-                    android:layout_width="match_parent" android:layout_height="80dp"
-                    android:background="@drawable/bg_input" android:padding="14dp"
-                    android:text="Truong" android:textSize="14sp" android:textColor="@color/text_dark"
-                    android:inputType="textMultiLine" android:gravity="top"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_bio"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <EditText
+                    android:id="@+id/etBio"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_input"
+                    android:padding="14dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_dark"
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
                     android:layout_marginBottom="14dp"/>
 
-                <!-- Country -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="COUNTRY" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <FrameLayout android:layout_width="match_parent" android:layout_height="48dp"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_country"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
                     android:layout_marginBottom="14dp">
-                    <Spinner android:id="@+id/spinnerCountry"
-                        android:layout_width="match_parent" android:layout_height="match_parent"
-                        android:background="@drawable/bg_input" android:paddingStart="14dp" android:paddingEnd="14dp"/>
+                    <Spinner
+                        android:id="@+id/spinnerCountry"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"/>
                 </FrameLayout>
 
-                <!-- Email -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="EMAIL" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <EditText android:id="@+id/etEmail"
-                    android:layout_width="match_parent" android:layout_height="48dp"
-                    android:background="@drawable/bg_input" android:paddingStart="14dp" android:paddingEnd="14dp"
-                    android:text="baotruong11298@gmail.com" android:textSize="14sp"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_email"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textSize="14sp"
                     android:textColor="@color/text_dark"
                     android:layout_marginBottom="16dp"/>
 
-                <Button android:id="@+id/btnSaveProfile"
-                    android:layout_width="wrap_content" android:layout_height="44dp"
+                <Button
+                    android:id="@+id/btnSaveProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Save changes" android:textColor="@color/white"
-                    android:textSize="14sp" android:textStyle="bold"
-                    android:paddingStart="20dp" android:paddingEnd="20dp"
+                    android:text="@string/profile_btn_save"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     style="?android:attr/borderlessButtonStyle"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- General Settings Card -->
-        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/white"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_marginBottom="16dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:padding="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="General settings" android:textColor="@color/text_dark"
-                    android:textSize="15sp" android:textStyle="bold" android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_settings_title"
+                    android:textColor="@color/text_dark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
 
                 <!-- Appearance -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="APPEARANCE" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_appearance"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="8dp"/>
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="16dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp"
                     android:baselineAligned="false">
 
-                    <!-- Light option (active) -->
-                    <LinearLayout android:id="@+id/appearLight"
-                        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    <!-- Light option -->
+                    <LinearLayout
+                        android:id="@+id/appearLight"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical"
                         android:background="@drawable/bg_lang_option_selected"
                         android:layout_marginEnd="5dp"
-                        android:clickable="true" android:focusable="true">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="48dp"
-                            android:background="#F8FAFC" android:orientation="vertical"
-                            android:padding="10dp" android:gravity="center_vertical">
-                            <View android:layout_width="80dp" android:layout_height="5dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="#F8FAFC"
+                            android:orientation="vertical"
+                            android:padding="10dp"
+                            android:gravity="center_vertical">
+                            <View
+                                android:layout_width="80dp"
+                                android:layout_height="5dp"
                                 android:background="@color/blue"/>
-                            <View android:layout_width="60dp" android:layout_height="5dp"
-                                android:background="#CBD5E1" android:layout_marginTop="4dp"/>
+                            <View
+                                android:layout_width="60dp"
+                                android:layout_height="5dp"
+                                android:background="#CBD5E1"
+                                android:layout_marginTop="4dp"/>
                         </LinearLayout>
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:orientation="horizontal" android:gravity="center_vertical"
-                            android:padding="8dp" android:background="@color/white">
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                                android:layout_weight="1" android:text="☀️ Light"
-                                android:textColor="@color/blue" android:textSize="12sp"/>
-                            <FrameLayout android:layout_width="14dp" android:layout_height="14dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:background="@color/white">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/profile_light"
+                                android:textColor="@color/blue"
+                                android:textSize="12sp"/>
+                            <FrameLayout
+                                android:id="@+id/frameLightCheck"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
                                 android:background="@drawable/bg_ctrl_btn">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                    android:layout_gravity="center" android:text="✓"
-                                    android:textColor="@color/white" android:textSize="8sp"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="✓"
+                                    android:textColor="@color/white"
+                                    android:textSize="8sp"/>
                             </FrameLayout>
                         </LinearLayout>
                     </LinearLayout>
 
                     <!-- Dark option -->
-                    <LinearLayout android:id="@+id/appearDark"
-                        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    <LinearLayout
+                        android:id="@+id/appearDark"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical"
                         android:background="@drawable/bg_lang_option"
                         android:layout_marginStart="5dp"
-                        android:clickable="true" android:focusable="true">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="48dp"
-                            android:background="@color/dark_surface" android:orientation="vertical"
-                            android:padding="10dp" android:gravity="center_vertical">
-                            <View android:layout_width="80dp" android:layout_height="5dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@color/dark_surface"
+                            android:orientation="vertical"
+                            android:padding="10dp"
+                            android:gravity="center_vertical">
+                            <View
+                                android:layout_width="80dp"
+                                android:layout_height="5dp"
                                 android:background="@color/blue"/>
-                            <View android:layout_width="60dp" android:layout_height="5dp"
-                                android:background="#475569" android:layout_marginTop="4dp"/>
+                            <View
+                                android:layout_width="60dp"
+                                android:layout_height="5dp"
+                                android:background="#475569"
+                                android:layout_marginTop="4dp"/>
                         </LinearLayout>
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:orientation="horizontal" android:gravity="center_vertical"
-                            android:padding="8dp" android:background="@color/white">
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                                android:layout_weight="1" android:text="🌙 Dark"
-                                android:textColor="@color/text_muted" android:textSize="12sp"/>
-                            <View android:layout_width="14dp" android:layout_height="14dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:background="@color/white">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/profile_dark"
+                                android:textColor="@color/text_muted"
+                                android:textSize="12sp"/>
+                            <FrameLayout
+                                android:id="@+id/frameDarkCheck"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="✓"
+                                    android:textColor="@color/white"
+                                    android:textSize="8sp"
+                                    android:visibility="gone"/>
+                            </FrameLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
                 <!-- Default Language -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="DEFAULT LANGUAGE" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_default_lang"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="8dp"/>
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="44dp"
-                    android:background="@drawable/bg_toggle_group" android:orientation="horizontal"
-                    android:padding="4dp" android:layout_marginBottom="16dp">
-                    <Button android:id="@+id/btnDefaultVI"
-                        android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:text="Tiếng Việt" android:textColor="@color/text_muted" android:textSize="13sp"
-                        style="?android:attr/borderlessButtonStyle"/>
-                    <Button android:id="@+id/btnDefaultEN"
-                        android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                        android:background="@drawable/bg_tab_active"
-                        android:text="English" android:textColor="@color/white" android:textSize="13sp"
-                        android:textStyle="bold" style="?android:attr/borderlessButtonStyle"/>
-                </LinearLayout>
-
-                <Button android:id="@+id/btnSaveSettings"
-                    android:layout_width="wrap_content" android:layout_height="44dp"
+                <Button
+                    android:id="@+id/btnChangeLanguage"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Save settings" android:textColor="@color/white"
-                    android:textSize="14sp" android:textStyle="bold"
-                    android:paddingStart="20dp" android:paddingEnd="20dp"
+                    android:text="🌐 English"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical|start"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textAllCaps="false"
+                    android:layout_marginBottom="16dp"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+                <Button
+                    android:id="@+id/btnSaveSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_btn_primary"
+                    android:text="@string/profile_btn_save_settings"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     style="?android:attr/borderlessButtonStyle"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Change Password Card -->
-        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/white"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
             android:layout_marginBottom="20dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:padding="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Change password" android:textColor="@color/text_dark"
-                    android:textSize="15sp" android:textStyle="bold" android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_change_pw_title"
+                    android:textColor="@color/text_dark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
 
-                <!-- Current Password -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="CURRENT PASSWORD" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_current_pw"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp">
-                    <EditText android:id="@+id/etCurrentPw"
-                        android:layout_width="match_parent" android:layout_height="50dp"
-                        android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="44dp"
-                        android:inputType="textPassword" android:textSize="15sp" android:textColor="@color/text_dark"/>
-                    <ImageView android:layout_width="20dp" android:layout_height="20dp"
-                        android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
-                        android:src="@android:drawable/ic_lock_lock" android:tint="@color/text_light"/>
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp"
-                        android:layout_gravity="center_vertical|end" android:layout_marginEnd="12dp"
-                        android:src="@android:drawable/ic_menu_view" android:tint="@color/text_light"
-                        android:clickable="true" android:focusable="true"/>
+                    <EditText
+                        android:id="@+id/etCurrentPw"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="44dp"
+                        android:paddingEnd="44dp"
+                        android:inputType="textPassword"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_dark"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="13dp"
+                        android:src="@android:drawable/ic_lock_lock"
+                        android:tint="@color/text_light"/>
                 </FrameLayout>
 
-                <!-- New Password -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="NEW PASSWORD" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_new_pw"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp">
-                    <EditText android:id="@+id/etNewPw"
-                        android:layout_width="match_parent" android:layout_height="50dp"
-                        android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="44dp"
-                        android:inputType="textPassword" android:textSize="15sp" android:textColor="@color/text_dark"/>
-                    <ImageView android:layout_width="20dp" android:layout_height="20dp"
-                        android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
-                        android:src="@android:drawable/ic_lock_lock" android:tint="@color/text_light"/>
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp"
-                        android:layout_gravity="center_vertical|end" android:layout_marginEnd="12dp"
-                        android:src="@android:drawable/ic_menu_view" android:tint="@color/text_light"
-                        android:clickable="true" android:focusable="true"/>
+                    <EditText
+                        android:id="@+id/etNewPw"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="44dp"
+                        android:paddingEnd="44dp"
+                        android:inputType="textPassword"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_dark"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="13dp"
+                        android:src="@android:drawable/ic_lock_lock"
+                        android:tint="@color/text_light"/>
                 </FrameLayout>
 
-                <!-- Confirm New Password -->
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="CONFIRM NEW PASSWORD" android:textColor="@color/text_muted" android:textSize="11sp"
-                    android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
-                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_label_confirm_pw"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp">
-                    <EditText android:id="@+id/etConfirmNewPw"
-                        android:layout_width="match_parent" android:layout_height="50dp"
-                        android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="44dp"
-                        android:inputType="textPassword" android:textSize="15sp" android:textColor="@color/text_dark"/>
-                    <ImageView android:layout_width="20dp" android:layout_height="20dp"
-                        android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
-                        android:src="@android:drawable/ic_lock_lock" android:tint="@color/text_light"/>
+                    <EditText
+                        android:id="@+id/etConfirmNewPw"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="44dp"
+                        android:paddingEnd="44dp"
+                        android:inputType="textPassword"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_dark"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="13dp"
+                        android:src="@android:drawable/ic_lock_lock"
+                        android:tint="@color/text_light"/>
                 </FrameLayout>
 
-                <Button android:id="@+id/btnUpdatePassword"
-                    android:layout_width="wrap_content" android:layout_height="44dp"
+                <Button
+                    android:id="@+id/btnUpdatePassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Update password" android:textColor="@color/white"
-                    android:textSize="14sp" android:textStyle="bold"
-                    android:paddingStart="20dp" android:paddingEnd="20dp"
+                    android:text="@string/profile_btn_update_pw"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     style="?android:attr/borderlessButtonStyle"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
     </LinearLayout>
 </ScrollView>

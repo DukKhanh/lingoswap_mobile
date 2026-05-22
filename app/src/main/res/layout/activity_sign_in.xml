@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="34dp"
                     android:gravity="center"
-                    android:text="Tiếng Việt"
+                    android:text="@string/lang_toggle_vi"
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:paddingStart="16dp"
@@ -51,7 +51,7 @@
                     android:layout_height="34dp"
                     android:background="@drawable/bg_tab_active"
                     android:gravity="center"
-                    android:text="English"
+                    android:text="@string/lang_toggle_en"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -62,13 +62,16 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvDarkToggle"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:background="@drawable/bg_toggle_group"
                 android:gravity="center"
                 android:layout_marginStart="8dp"
                 android:text="🌙"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
 
         <!-- Auth Card -->
@@ -92,7 +95,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="WELCOME BACK"
+                    android:text="@string/welcome_back"
                     android:textColor="@color/blue"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -102,7 +105,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign in"
+                    android:text="@string/sign_in"
                     android:textColor="@color/text_dark"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -112,7 +115,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="EMAIL"
+                    android:text="@string/email"
                     android:textColor="@color/text_muted"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -149,7 +152,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="PASSWORD"
+                    android:text="@string/password"
                     android:textColor="@color/text_muted"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -196,7 +199,7 @@
                     android:id="@+id/tvForgotPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Forgot password?"
+                    android:text="@string/forgot_password"
                     android:textColor="@color/blue"
                     android:textSize="13sp"
                     android:gravity="end"
@@ -210,7 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Sign in"
+                    android:text="@string/sign_in"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -252,7 +255,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_btn_outline"
-                    android:text="Continue with Google"
+                    android:text="@string/continue_with_google"
                     android:textColor="@color/text_dark"
                     android:textSize="15sp"
                     android:textAllCaps="false"/>
@@ -267,15 +270,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Don't have an account? "
+                        android:text="@string/no_account"
                         android:textColor="@color/text_muted"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:layout_marginEnd="4dp"/>
 
                     <TextView
                         android:id="@+id/tvSignUp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sign up"
+                        android:text="@string/sign_up"
                         android:textColor="@color/blue"
                         android:textSize="14sp"
                         android:textStyle="bold"

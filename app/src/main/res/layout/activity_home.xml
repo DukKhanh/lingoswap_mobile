@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LingoSwap"
+            android:text="@string/lingoswap"
             android:textColor="@color/text_dark"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -45,7 +45,7 @@
             android:layout_height="36dp"
             android:layout_weight="1"
             android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp">
+            android:layout_marginEnd="8dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -56,16 +56,30 @@
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@android:drawable/ic_menu_search"/>
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="@color/text_muted"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tìm bạn..."
+                    android:text="@string/home_search_hint"
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:layout_marginStart="6dp"/>
             </LinearLayout>
         </FrameLayout>
+
+        <!-- Dark Toggle -->
+        <TextView
+            android:id="@+id/tvDarkToggle"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_toggle_group"
+            android:gravity="center"
+            android:text="🌙"
+            android:textSize="16sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
     </LinearLayout>
 
     <!-- ── Nội dung chính (cuộn được) ───────────────────────────── -->
@@ -94,7 +108,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tìm đối tác luyện tập"
+                    android:text="@string/home_card_find_title"
                     android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
@@ -102,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chọn ngôn ngữ và bắt đầu luyện tập ngay"
+                    android:text="@string/home_card_find_sub"
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:layout_marginTop="4dp"
@@ -113,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Tìm đối tác"
+                    android:text="@string/home_btn_find"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -141,7 +155,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Bạn bè"
+                        android:text="@string/home_friends_title"
                         android:textColor="@color/text_dark"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -160,7 +174,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:background="@drawable/bg_tab_active"
-                            android:text="Tất cả"
+                            android:text="@string/home_tab_all"
                             android:textColor="@color/white"
                             android:textSize="12sp"
                             android:textStyle="bold"
@@ -175,7 +189,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:background="@android:color/transparent"
-                            android:text="Online"
+                            android:text="@string/home_tab_online"
                             android:textColor="@color/text_muted"
                             android:textSize="12sp"
                             android:gravity="center"
@@ -187,7 +201,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Danh sách bạn bè (được fill bởi HomeActivity.renderFriendList) -->
+                <!-- Danh sách bạn bè -->
                 <LinearLayout
                     android:id="@+id/llFriendList"
                     android:layout_width="match_parent"
@@ -213,7 +227,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="🏠" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Home" android:textSize="9sp" android:textColor="@color/blue"/>
+                android:text="@string/nav_home" android:textSize="9sp" android:textColor="@color/blue"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navFriends"
@@ -223,7 +237,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="👥" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Bạn bè" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_friends" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navMatch"
@@ -233,7 +247,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="🔍" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Match" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_match" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navChat"
@@ -243,7 +257,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="💬" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Chat" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_chat" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navProfile"
@@ -253,7 +267,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="👤" android:textSize="18sp"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Hồ sơ" android:textSize="9sp" android:textColor="@color/text_muted"/>
+                android:text="@string/nav_profile" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

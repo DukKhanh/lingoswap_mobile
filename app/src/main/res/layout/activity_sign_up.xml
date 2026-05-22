@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Lang Toggle Row -->
+        <!-- Lang Toggle -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="34dp"
                     android:gravity="center"
-                    android:text="Tiếng Việt"
+                    android:text="@string/lang_toggle_vi"
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:paddingStart="16dp"
@@ -50,7 +50,7 @@
                     android:layout_height="34dp"
                     android:background="@drawable/bg_tab_active"
                     android:gravity="center"
-                    android:text="English"
+                    android:text="@string/lang_toggle_en"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -61,13 +61,16 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvDarkToggle"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:background="@drawable/bg_toggle_group"
                 android:gravity="center"
                 android:layout_marginStart="8dp"
                 android:text="🌙"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
 
         <!-- Auth Card -->
@@ -91,7 +94,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="JOIN LINGOSWAP"
+                    android:text="@string/sign_up_tagline"
                     android:textColor="@color/blue"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -101,7 +104,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign up"
+                    android:text="@string/sign_up"
                     android:textColor="@color/text_dark"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -109,12 +112,12 @@
 
                 <!-- Full Name -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="FULL NAME" android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/full_name" android:textColor="@color/text_muted" android:textSize="12sp"
                     android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="14dp">
                     <EditText android:id="@+id/etFullName" android:layout_width="match_parent" android:layout_height="50dp"
                         android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="14dp"
-                        android:hint="Your full name" android:inputType="textPersonName"
+                        android:hint="@string/sign_up_hint_name" android:inputType="textPersonName"
                         android:textSize="14sp" android:textColor="@color/text_dark"/>
                     <ImageView android:layout_width="20dp" android:layout_height="20dp"
                         android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
@@ -123,12 +126,12 @@
 
                 <!-- Email -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="EMAIL" android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/email" android:textColor="@color/text_muted" android:textSize="12sp"
                     android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="14dp">
                     <EditText android:id="@+id/etEmail" android:layout_width="match_parent" android:layout_height="50dp"
                         android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="14dp"
-                        android:hint="you@example.com" android:inputType="textEmailAddress"
+                        android:hint="@string/sign_in_hint_email" android:inputType="textEmailAddress"
                         android:textSize="14sp" android:textColor="@color/text_dark"/>
                     <ImageView android:layout_width="20dp" android:layout_height="20dp"
                         android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
@@ -137,12 +140,12 @@
 
                 <!-- Password -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="PASSWORD" android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/password" android:textColor="@color/text_muted" android:textSize="12sp"
                     android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="14dp">
                     <EditText android:id="@+id/etPassword" android:layout_width="match_parent" android:layout_height="50dp"
                         android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="44dp"
-                        android:hint="Min 8 characters" android:inputType="textPassword"
+                        android:hint="@string/sign_up_hint_password" android:inputType="textPassword"
                         android:textSize="14sp" android:textColor="@color/text_dark"/>
                     <ImageView android:layout_width="20dp" android:layout_height="20dp"
                         android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
@@ -155,12 +158,12 @@
 
                 <!-- Confirm Password -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="CONFIRM PASSWORD" android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/confirm_password" android:textColor="@color/text_muted" android:textSize="12sp"
                     android:textStyle="bold" android:letterSpacing="0.08" android:layout_marginBottom="6dp"/>
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="14dp">
                     <EditText android:id="@+id/etConfirmPassword" android:layout_width="match_parent" android:layout_height="50dp"
                         android:background="@drawable/bg_input" android:paddingStart="44dp" android:paddingEnd="44dp"
-                        android:hint="Repeat password" android:inputType="textPassword"
+                        android:hint="@string/sign_up_hint_confirm" android:inputType="textPassword"
                         android:textSize="14sp" android:textColor="@color/text_dark"/>
                     <ImageView android:layout_width="20dp" android:layout_height="20dp"
                         android:layout_gravity="center_vertical" android:layout_marginStart="13dp"
@@ -170,7 +173,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="By signing up, you agree to our Terms of Service and Privacy Policy."
+                    android:text="@string/terms_text"
                     android:textColor="@color/text_muted"
                     android:textSize="12sp"
                     android:gravity="center"
@@ -182,7 +185,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="Create account"
+                    android:text="@string/sign_up_btn"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -194,7 +197,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_btn_outline"
-                    android:text="Continue with Google"
+                    android:text="@string/continue_with_google"
                     android:textColor="@color/text_dark"
                     android:textSize="15sp"
                     android:textAllCaps="false"/>
@@ -202,9 +205,10 @@
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:gravity="center" android:orientation="horizontal" android:layout_marginTop="20dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Already have an account? " android:textColor="@color/text_muted" android:textSize="14sp"/>
+                        android:text="@string/already_account" android:textColor="@color/text_muted" android:textSize="14sp"
+                        android:layout_marginEnd="4dp"/>
                     <TextView android:id="@+id/tvSignIn" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Sign in" android:textColor="@color/blue" android:textSize="14sp"
+                        android:text="@string/sign_in" android:textColor="@color/blue" android:textSize="14sp"
                         android:textStyle="bold" android:clickable="true" android:focusable="true"/>
                 </LinearLayout>
             </LinearLayout>

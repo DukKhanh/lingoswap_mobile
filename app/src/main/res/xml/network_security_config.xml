@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+
+    <!-- Production: chỉ HTTPS -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Dev: cho phép HTTP với emulator và điện thoại thật -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Emulator -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Điện thoại thật: chạy lệnh ipconfig (Win) / ifconfig (Mac/Linux)
+             rồi điền IP thật của máy bạn vào đây, ví dụ: -->
+        <!-- <domain includeSubdomains="false">192.168.1.5</domain> -->
+    </domain-config>
+
+</network-security-config>

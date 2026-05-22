@@ -13,6 +13,7 @@
     <color name="border">#E5E7EB</color>
     <color name="border_light">#F3F4F6</color>
     <color name="red">#EF4444</color>
+    <color name="error_red">#EF4444</color>
     <color name="green">#10B981</color>
     <color name="orange">#F97316</color>
     <color name="yellow">#F59E0B</color>

@@ -6,25 +6,66 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
-    <!-- Lang Toggle -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:gravity="end|center_vertical" android:orientation="horizontal"
-        android:paddingStart="20dp" android:paddingEnd="20dp"
-        android:paddingTop="12dp" android:paddingBottom="4dp">
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="36dp"
-            android:background="@drawable/bg_toggle_group" android:gravity="center_vertical"
-            android:orientation="horizontal" android:paddingStart="4dp" android:paddingEnd="4dp">
-            <Button android:layout_width="wrap_content" android:layout_height="28dp"
-                android:background="@android:color/transparent" android:text="Tiếng Việt"
-                android:textColor="@color/text_muted" android:textSize="12sp" style="?android:attr/borderlessButtonStyle"/>
-            <Button android:layout_width="wrap_content" android:layout_height="28dp"
-                android:background="@drawable/bg_tab_active" android:text="English"
-                android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"
-                style="?android:attr/borderlessButtonStyle"/>
+    <!-- Lang Toggle Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_toggle_group"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp">
+
+            <TextView
+                android:id="@+id/btnLangVI"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:gravity="center"
+                android:text="@string/lang_toggle_vi"
+                android:textColor="@color/text_muted"
+                android:textSize="13sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
+                android:id="@+id/btnLangEN"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_tab_active"
+                android:gravity="center"
+                android:text="@string/lang_toggle_en"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
-        <TextView android:layout_width="32dp" android:layout_height="32dp"
-            android:background="@drawable/bg_toggle_group" android:gravity="center"
-            android:layout_marginStart="8dp" android:text="🌙" android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvDarkToggle"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_toggle_group"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:text="🌙"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
     <!-- Center content -->
@@ -33,7 +74,7 @@
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
-            app:cardCornerRadius="16dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/white">
+            style="@style/Widget.LingoSwap.Card">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="44dp" android:gravity="center">
@@ -44,22 +85,22 @@
                     <ImageView android:layout_width="28dp" android:layout_height="28dp"
                         android:layout_gravity="center"
                         android:src="@android:drawable/ic_menu_send"
-                        android:tint="@color/success_text"/>
+                        app:tint="@color/success_text"/>
                 </FrameLayout>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Password reset successfully!"
+                    android:text="@string/reset_success_title"
                     android:textColor="@color/text_dark" android:textSize="20sp" android:textStyle="bold"
                     android:gravity="center" android:layout_marginBottom="8dp"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="You can now sign in with your new password."
+                    android:text="@string/reset_success_sub"
                     android:textColor="@color/text_muted" android:textSize="14sp"
                     android:gravity="center" android:layout_marginBottom="24dp"/>
 
                 <TextView android:id="@+id/tvBackToSignIn"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="← Back to sign in"
+                    android:text="@string/reset_success_back"
                     android:textColor="@color/blue" android:textSize="14sp"
                     android:clickable="true" android:focusable="true"/>
             </LinearLayout>
