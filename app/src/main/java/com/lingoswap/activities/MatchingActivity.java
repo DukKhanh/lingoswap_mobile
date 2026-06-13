@@ -25,25 +25,14 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * MatchingActivity — màn hình chờ ghép cặp.
- *
- * FIX: Thay joinMatchQueue() trực tiếp bằng joinQueueWhenReady() để tránh
- *      race condition khi socket chưa connected mà backend đã match ngay.
- *
- *      Thứ tự đúng:
- *        1. registerSocketListeners()  → đảm bảo match_found được lắng nghe
- *        2. joinQueueWhenReady()       → join khi socket đã sẵn sàng
- *        3. startConnectTimeout()      → fallback nếu socket không connect được
- */
 @AndroidEntryPoint
 public class MatchingActivity extends AppCompatActivity {
 
-    private static final String TAG                 = "MatchingActivity";
-    private static final long   CONNECT_TIMEOUT_MS  = 6_000L; // 6s chờ socket connect
+    private static final String TAG                = "MatchingActivity";
+    private static final long   CONNECT_TIMEOUT_MS = 6_000L;
 
-    @Inject SocketManager    socketManager;
-    @Inject UserPreferences  userPreferences;
+    @Inject SocketManager   socketManager;
+    @Inject UserPreferences userPreferences;
 
     private int      waitSeconds = 0;
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
@@ -51,10 +40,8 @@ public class MatchingActivity extends AppCompatActivity {
     private TextView tvWaitTime;
     private String   language;
 
-    // Guard chống navigate nhiều lần (race condition từ nhiều event)
     private volatile boolean matchFound = false;
 
-    // Handler + Runnable cho timeout kết nối
     private final Handler connectTimeoutHandler = new Handler(Looper.getMainLooper());
     private Runnable connectTimeoutRunnable;
 
@@ -75,7 +62,6 @@ public class MatchingActivity extends AppCompatActivity {
         animateRadar();
         startTimer();
 
-        // FIX: Đăng ký listener TRƯỚC rồi mới join queue
         registerSocketListeners();
         joinQueueWhenReady();
 
@@ -87,18 +73,13 @@ public class MatchingActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy | matchFound=" + matchFound);
 
-        // Dọn timer
         timerHandler.removeCallbacks(timerRunnable);
 
-        // Dọn connect-timeout
         if (connectTimeoutRunnable != null) {
             connectTimeoutHandler.removeCallbacks(connectTimeoutRunnable);
         }
 
-        // FIX: Huỷ pending join nếu Activity bị destroy trước khi socket connect
         socketManager.cancelPendingQueueJoin();
-
-        // Off listener trước, sau đó mới leave queue
         unregisterSocketListeners();
         if (!matchFound) {
             socketManager.leaveQueue();
@@ -107,12 +88,6 @@ public class MatchingActivity extends AppCompatActivity {
 
     // ─── Queue ───────────────────────────────────────────────────────────────
 
-    /**
-     * FIX: Dùng joinQueueWhenReady() thay vì gọi joinMatchQueue() trực tiếp.
-     * - Nếu socket đã connected → join ngay lập tức.
-     * - Nếu chưa → đợi EVENT_CONNECT (one-shot) rồi join, đồng thời
-     *   bật timeout 6s để tránh treo màn hình vô thời hạn.
-     */
     private void joinQueueWhenReady() {
         if (socketManager.isConnected()) {
             Log.d(TAG, "Socket đã connected → join queue ngay");
@@ -125,9 +100,6 @@ public class MatchingActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Nếu socket vẫn không connect được sau CONNECT_TIMEOUT_MS → thông báo + finish.
-     */
     private void startConnectTimeout() {
         connectTimeoutRunnable = () -> {
             if (!matchFound && !isFinishing() && !socketManager.isConnected()) {
@@ -149,11 +121,9 @@ public class MatchingActivity extends AppCompatActivity {
             Log.d(TAG, "🎯 match_found received | matchFound=" + matchFound
                     + " | finishing=" + isFinishing());
 
-            // Double-check guard để tránh navigate 2 lần
             if (matchFound || isFinishing()) return;
             matchFound = true;
 
-            // Huỷ connect-timeout vì đã match thành công
             if (connectTimeoutRunnable != null) {
                 connectTimeoutHandler.removeCallbacks(connectTimeoutRunnable);
             }
@@ -163,22 +133,26 @@ public class MatchingActivity extends AppCompatActivity {
                 String sessionId = data.getString("sessionId");
                 String partnerId = data.getString("partnerId");
 
+                // FIX: Lấy partnerName từ server, fallback về "LingoSwap User"
+                String partnerName = data.optString("partnerName", "LingoSwap User");
+
                 Log.d(TAG, "✅ Match! sessionId=" + sessionId
-                        + " | partnerId=" + partnerId);
+                        + " | partnerId=" + partnerId
+                        + " | partnerName=" + partnerName);
 
                 boolean isCaller = data.optBoolean("isCaller", false);
 
                 Intent intent = new Intent(MatchingActivity.this, VideoCallActivity.class);
-                intent.putExtra("sessionId", sessionId);
-                intent.putExtra("partnerId", partnerId);
-                intent.putExtra("language",  language);
-                intent.putExtra("isCaller",  isCaller);
+                intent.putExtra("sessionId",   sessionId);
+                intent.putExtra("partnerId",   partnerId);
+                intent.putExtra("partnerName", partnerName); // ← truyền tên
+                intent.putExtra("language",    language);
+                intent.putExtra("isCaller",    isCaller);
                 startActivity(intent);
                 finish();
 
             } catch (Exception e) {
                 Log.e(TAG, "❌ Lỗi parse match_found: " + e.getMessage());
-                // Reset guard để user có thể thử lại nếu parse lỗi
                 matchFound = false;
             }
         }));
@@ -215,14 +189,10 @@ public class MatchingActivity extends AppCompatActivity {
         }));
     }
 
-    // ✅ Fix — nếu đã match thì giữ nguyên socket listeners, chỉ off các event không cần thiết
     private void unregisterSocketListeners() {
-        // Nếu đã match rồi → VideoCallActivity sẽ tự quản lý socket
-        // Chỉ off các event liên quan đến queue
         socketManager.off("waiting_status");
         socketManager.off("queue_timeout");
         if (!matchFound) {
-            // Chỉ off match_found nếu chưa match (user hủy)
             socketManager.off("match_found");
             socketManager.off("error");
         }

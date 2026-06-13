@@ -40,7 +40,7 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
 
         binding.btnAddFriend.setOnClickListener(v ->
-                Toast.makeText(this, getString(R.string.coming_soon), Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, SearchUserActivity.class)));
 
         binding.btnFindNow.setOnClickListener(v ->
                 startActivity(new Intent(this, MatchingActivity.class)));

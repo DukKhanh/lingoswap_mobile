@@ -24,9 +24,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
     @Inject UserPreferences userPreferences;
 
-    private static final String KEY_FULL_NAME = "full_name";
-    private static final String KEY_BIO       = "bio";
-    private static final String KEY_COUNTRY   = "country";
+    private static final String KEY_BIO     = "bio";
+    private static final String KEY_COUNTRY = "country";
 
     @Override
     protected ActivityProfileBinding inflateBinding(LayoutInflater inflater) {
@@ -36,31 +35,41 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     @Override
     protected void setupViews() {
         // ── Country Spinner ────────────────────────────────────────────
-        // Sử dụng string-array từ resources để có thể dịch được
         String[] countries = getResources().getStringArray(R.array.countries_array);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, countries);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerCountry.setAdapter(adapter);
 
-        // ── Nạp dữ liệu đã lưu ────────────────────────────────────────
+        // ── Nạp dữ liệu từ UserPreferences (sau login) ────────────────
         SharedPreferences prefs = getSharedPreferences("lingoswap_prefs", MODE_PRIVATE);
 
-        String savedName    = prefs.getString(KEY_FULL_NAME, "TruongKAr");
-        String savedEmail   = userPreferences.getAccessToken() != null
-                              ? "user@example.com" : "baotruong11298@gmail.com";
-        String savedBio     = prefs.getString(KEY_BIO, "Truong");
-        int    savedCountry = prefs.getInt(KEY_COUNTRY, 0);
-
-        binding.etFullName.setText(savedName);
-        binding.etBio.setText(savedBio);
-        binding.etEmail.setText(savedEmail);
-        binding.tvHeroName.setText(savedName);
-        binding.tvHeroEmail.setText(savedEmail);
-        if (!savedName.isEmpty()) {
-            binding.tvHeroInitial.setText(String.valueOf(savedName.charAt(0)).toUpperCase());
+        // Ưu tiên lấy từ UserPreferences (đã lưu khi login)
+        // Fallback sang prefs local nếu user đã chỉnh sửa tay
+        String fullName = userPreferences.getFullName();
+        if (TextUtils.isEmpty(fullName)) {
+            fullName = prefs.getString("full_name", "");
         }
-        binding.spinnerCountry.setSelection(savedCountry);
+
+        String email = userPreferences.getEmail();
+
+        String bio = prefs.getString(KEY_BIO, "");
+
+        // Country: map từ string code sang spinner index
+        String countryCode = userPreferences.getCountry();
+        int countryIndex   = getCountryIndex(countryCode, prefs.getInt(KEY_COUNTRY, 0));
+
+        // ── Bind vào UI ────────────────────────────────────────────────
+        binding.etFullName.setText(fullName);
+        binding.etEmail.setText(email);
+        binding.etBio.setText(bio);
+        binding.tvHeroName.setText(fullName.isEmpty() ? "User" : fullName);
+        binding.tvHeroEmail.setText(email);
+
+        String initial = fullName.isEmpty() ? "U" : String.valueOf(fullName.charAt(0)).toUpperCase();
+        binding.tvHeroInitial.setText(initial);
+
+        binding.spinnerCountry.setSelection(countryIndex);
 
         // ── Áp dụng trạng thái theme / ngôn ngữ ───────────────────────
         updateAppearanceUI();
@@ -71,32 +80,36 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
         // ── Lưu thông tin cá nhân ──────────────────────────────────────
         binding.btnSaveProfile.setOnClickListener(v -> {
-            String name  = binding.etFullName.getText().toString().trim();
-            String email = binding.etEmail.getText().toString().trim();
-            String bio   = binding.etBio.getText().toString().trim();
+            String name     = binding.etFullName.getText().toString().trim();
+            String newEmail = binding.etEmail.getText().toString().trim();
+            String newBio   = binding.etBio.getText().toString().trim();
+            int    countryPos = binding.spinnerCountry.getSelectedItemPosition();
 
             if (TextUtils.isEmpty(name)) {
                 binding.etFullName.setError(getString(R.string.full_name) + " empty");
                 binding.etFullName.requestFocus();
                 return;
             }
-            if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (!TextUtils.isEmpty(newEmail) && !Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
                 binding.etEmail.setError("Email invalid");
                 binding.etEmail.requestFocus();
                 return;
             }
 
+            // Cập nhật UI hero
             binding.tvHeroName.setText(name);
-            binding.tvHeroEmail.setText(email);
-            if (!name.isEmpty()) {
-                binding.tvHeroInitial.setText(String.valueOf(name.charAt(0)).toUpperCase());
-            }
+            binding.tvHeroEmail.setText(newEmail);
+            binding.tvHeroInitial.setText(String.valueOf(name.charAt(0)).toUpperCase());
 
+            // Lưu vào SharedPreferences local
             prefs.edit()
-                 .putString(KEY_FULL_NAME, name)
-                 .putString(KEY_BIO, bio)
-                 .putInt(KEY_COUNTRY, binding.spinnerCountry.getSelectedItemPosition())
+                 .putString("full_name", name)
+                 .putString(KEY_BIO, newBio)
+                 .putInt(KEY_COUNTRY, countryPos)
                  .apply();
+
+            // Lưu vào UserPreferences để đồng bộ
+            userPreferences.saveProfile(name, newBio, getCountryCode(countryPos));
 
             Toast.makeText(this, R.string.toast_profile_saved, Toast.LENGTH_SHORT).show();
         });
@@ -129,7 +142,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             Toast.makeText(this, R.string.toast_password_updated, Toast.LENGTH_SHORT).show();
         });
 
-        // ── Appearance (Dark / Light) ──────────────────────────────────
+        // ── Appearance ─────────────────────────────────────────────────
         binding.appearLight.setOnClickListener(v -> {
             themeManager.setTheme(ThemeManager.LIGHT);
             recreate();
@@ -139,7 +152,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             recreate();
         });
 
-        // ── App Language – mở AppLanguageDialog ───────────────────────
+        // ── App Language ───────────────────────────────────────────────
         binding.btnChangeLanguage.setOnClickListener(v ->
             new AppLanguageDialog().show(getSupportFragmentManager(), "app_lang")
         );
@@ -148,6 +161,49 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.btnSaveSettings.setOnClickListener(v ->
             Toast.makeText(this, R.string.toast_settings_saved, Toast.LENGTH_SHORT).show()
         );
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────
+
+    /**
+     * Map country code từ backend (VD: "vi", "en", "jp")
+     * sang index trong countries_array.
+     * Fallback về savedIndex nếu không khớp.
+     */
+    private int getCountryIndex(String countryCode, int fallback) {
+        if (TextUtils.isEmpty(countryCode)) return fallback;
+        String[] countries = getResources().getStringArray(R.array.countries_array);
+        String lower = countryCode.toLowerCase();
+        // Map code → keyword tìm trong tên quốc gia
+        String keyword;
+        switch (lower) {
+            case "vi": case "vn": keyword = "Vietnam";       break;
+            case "us": case "en": keyword = "United States"; break;
+            case "jp": case "ja": keyword = "Japan";         break;
+            case "kr": case "ko": keyword = "Korea";         break;
+            case "fr":            keyword = "France";        break;
+            case "de":            keyword = "Germany";       break;
+            case "es":            keyword = "Spain";         break;
+            default:              return fallback;
+        }
+        for (int i = 0; i < countries.length; i++) {
+            if (countries[i].contains(keyword)) return i;
+        }
+        return fallback;
+    }
+
+    /** Map index spinner → country code để lưu vào UserPreferences */
+    private String getCountryCode(int index) {
+        switch (index) {
+            case 0: return "vn";
+            case 1: return "us";
+            case 2: return "jp";
+            case 3: return "kr";
+            case 4: return "fr";
+            case 5: return "de";
+            case 6: return "es";
+            default: return "";
+        }
     }
 
     private void updateAppearanceUI() {

@@ -11,4 +11,8 @@ public class FriendRequest {
 
     @SerializedName("sentAt")
     public Friend.TimeInfo sentAt;
+
+    public String getId() {
+        return id;
+    }
 }

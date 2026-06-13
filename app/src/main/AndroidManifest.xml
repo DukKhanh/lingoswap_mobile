@@ -86,5 +86,10 @@
             android:configChanges="locale|layoutDirection|keyboard|keyboardHidden|uiMode|density"
             android:windowSoftInputMode="adjustResize"/>
 
+        <activity
+            android:name=".presentation.friends.SearchUserActivity"
+            android:configChanges="locale|layoutDirection|keyboard|keyboardHidden|uiMode|density"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 </manifest>

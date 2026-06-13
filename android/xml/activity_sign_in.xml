@@ -81,7 +81,8 @@
                 android:textColor="@color/text_dark"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp"
-                android:paddingStart="14dp" android:paddingEnd="14dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:layout_marginBottom="16dp" />
 
             <!-- Password -->
@@ -104,7 +105,8 @@
                 android:textColor="@color/text_dark"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp"
-                android:paddingStart="14dp" android:paddingEnd="14dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:layout_marginBottom="8dp" />
 
             <!-- Forgot password -->

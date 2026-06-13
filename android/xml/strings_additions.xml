@@ -1,0 +1,29 @@
+<!--
+    Thêm các string này vào res/values/strings.xml
+    (và dịch tương ứng vào values-vi/, values-ja/, v.v.)
+-->
+<resources>
+    <!-- Sign In -->
+    <string name="sign_in_subtitle">Kết nối và học ngôn ngữ qua video</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="hint_email">example@email.com</string>
+    <string name="hint_password">Nhập mật khẩu</string>
+    <string name="label_forgot_password">Quên mật khẩu?</string>
+    <string name="btn_sign_in">Đăng nhập</string>
+    <string name="btn_google_sign_in">Tiếp tục bằng Google</string>
+    <string name="label_no_account">Chưa có tài khoản?</string>
+    <string name="label_sign_up">Đăng ký</string>
+
+    <!-- Google Web Client ID — thay bằng ID thật từ Google Console -->
+    <string name="google_web_client_id" translatable="false">
+        YOUR_WEB_CLIENT_ID.apps.googleusercontent.com
+    </string>
+
+    <!-- Friends tabs (nếu chưa có) -->
+    <string name="tab_requests">Lời mời</string>
+    <string name="tab_requests_with_count">Lời mời (%d)</string>
+
+    <!-- Chat -->
+    <string name="chat_translating_msg">Đang dịch: %s</string>
+</resources>

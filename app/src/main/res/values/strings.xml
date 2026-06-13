@@ -268,4 +268,17 @@
     <string name="action_reject">Reject</string>
     <string name="empty_friends">No friends yet</string>
     <string name="empty_friend_requests">No friend requests</string>
+
+    <!-- ── Additions ────────────────────────────── -->
+    <string name="sign_in_subtitle">Kết nối và học ngôn ngữ qua video</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="hint_email">example@email.com</string>
+    <string name="hint_password">Nhập mật khẩu</string>
+    <string name="label_forgot_password">Quên mật khẩu?</string>
+    <string name="btn_sign_in">Đăng nhập</string>
+    <string name="btn_google_sign_in">Tiếp tục bằng Google</string>
+    <string name="label_no_account">Chưa có tài khoản?</string>
+    <string name="label_sign_up">Đăng ký</string>
+    <string name="google_web_client_id" translatable="false">1049718914177-qh0j536nrkiusgcm1oo4jg6q85pvdmme.apps.googleusercontent.com</string>
 </resources>

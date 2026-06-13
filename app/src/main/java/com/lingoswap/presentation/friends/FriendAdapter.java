@@ -3,7 +3,9 @@ package com.lingoswap.presentation.friends;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,17 +13,15 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.lingoswap.R;
 import com.lingoswap.data.model.Friend;
 
-public class FriendAdapter extends ListAdapter<Friend, FriendAdapter.VH> {
+public class FriendAdapter extends ListAdapter<Friend, FriendAdapter.ViewHolder> {
 
     public interface Listener {
         void onChat(Friend friend);
         void onCall(Friend friend);
-        void onAccept(Friend friend);   // requestId stored in friend.id when isPending
+        void onAccept(Friend friend);   // friend.id = friendshipId
         void onReject(Friend friend);
         void onRemove(Friend friend);
     }
@@ -36,129 +36,119 @@ public class FriendAdapter extends ListAdapter<Friend, FriendAdapter.VH> {
     private static final DiffUtil.ItemCallback<Friend> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Friend>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull Friend oldItem, @NonNull Friend newItem) {
-                    // Use id as stable identifier
-                    if (oldItem.id == null || newItem.id == null) return false;
-                    return oldItem.id.equals(newItem.id);
+                public boolean areItemsTheSame(@NonNull Friend a, @NonNull Friend b) {
+                    return a.id != null && a.id.equals(b.id);
                 }
-
                 @Override
-                public boolean areContentsTheSame(@NonNull Friend oldItem, @NonNull Friend newItem) {
-                    boolean sameStatus = safeEquals(oldItem.status, newItem.status);
-                    boolean samePending = oldItem.isPending == newItem.isPending;
-                    boolean sameName = safeEquals(oldItem.fullName, newItem.fullName);
-                    return sameStatus && samePending && sameName;
+                public boolean areContentsTheSame(@NonNull Friend a, @NonNull Friend b) {
+                    return a.id != null && a.id.equals(b.id)
+                            && strEq(a.fullName, b.fullName)
+                            && strEq(a.status, b.status)
+                            && a.isPending == b.isPending;
                 }
-
-                private boolean safeEquals(String a, String b) {
-                    if (a == null && b == null) return true;
-                    if (a == null || b == null) return false;
-                    return a.equals(b);
+                private boolean strEq(String a, String b) {
+                    return a == null ? b == null : a.equals(b);
                 }
             };
 
     @NonNull
     @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_friend, parent, false);
-        return new VH(v);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VH h, int position) {
-        Friend f = getItem(position);
-        h.bind(f, listener);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind(getItem(position), listener);
     }
 
-    static class VH extends RecyclerView.ViewHolder {
-        TextView tvName;
-        TextView tvStatus;
-        View viewOnlineDot;
-        ImageView imgAvatar;
-        ImageView btnChat;
-        ImageView btnCall;
-        ImageView btnRemove;
-        View layoutActions;       // chat + call buttons row
-        View layoutRequestActions; // accept + reject buttons row
-        TextView btnAccept;
-        TextView btnReject;
-        TextView tvSentAt;
+    // ── ViewHolder ────────────────────────────────────────────────────────────
 
-        VH(@NonNull View v) {
-            super(v);
-            tvName       = v.findViewById(R.id.tvFriendName);
-            tvStatus     = v.findViewById(R.id.tvFriendStatus);
-            viewOnlineDot = v.findViewById(R.id.viewOnlineDot);
-            imgAvatar    = v.findViewById(R.id.imgFriendAvatar);
-            btnChat      = v.findViewById(R.id.btnFriendChat);
-            btnCall      = v.findViewById(R.id.btnFriendCall);
-            btnRemove    = v.findViewById(R.id.btnFriendRemove);
-            layoutActions        = v.findViewById(R.id.layoutFriendActions);
-            layoutRequestActions = v.findViewById(R.id.layoutRequestActions);
-            btnAccept    = v.findViewById(R.id.btnAccept);
-            btnReject    = v.findViewById(R.id.btnReject);
-            tvSentAt     = v.findViewById(R.id.tvSentAt);
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView    tvName;
+        private final TextView    tvStatus;
+        private final TextView    tvInitial;
+        private final View        statusDot;
+        private final LinearLayout layoutActions;
+        private final LinearLayout layoutRequestActions;
+        private final ImageView   btnChat;
+        private final ImageView   btnCall;
+        private final Button      btnAccept;
+        private final Button      btnReject;
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvName               = itemView.findViewById(R.id.tvFriendName);
+            tvStatus             = itemView.findViewById(R.id.tvFriendStatus);
+            tvInitial            = itemView.findViewById(R.id.tvAvatarInitial);
+            statusDot            = itemView.findViewById(R.id.viewStatusDot);
+            layoutActions        = itemView.findViewById(R.id.layoutActions);
+            layoutRequestActions = itemView.findViewById(R.id.layoutRequestActions);
+            btnChat              = itemView.findViewById(R.id.btnChat);
+            btnCall              = itemView.findViewById(R.id.btnCall);
+            btnAccept            = itemView.findViewById(R.id.btnAccept);
+            btnReject            = itemView.findViewById(R.id.btnReject);
         }
 
-        void bind(Friend f, Listener listener) {
-            // Name
-            tvName.setText(f.fullName != null ? f.fullName :
-                    (f.partner != null ? f.partner.username : ""));
+        void bind(Friend friend, Listener listener) {
+            // ── Tên ──────────────────────────────────────────────────
+            String name = friend.fullName != null ? friend.fullName : "User";
 
-            // Avatar
-            if (imgAvatar != null) {
-                String avatarUrl = f.avatar != null ? f.avatar :
-                        (f.partner != null ? f.partner.avatar : null);
-                if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                    Glide.with(imgAvatar.getContext())
-                            .load(avatarUrl)
-                            .apply(RequestOptions.circleCropTransform())
-                            .placeholder(R.drawable.ic_default_avatar)
-                            .into(imgAvatar);
-                } else {
-                    imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+            // Nếu isPending thì lấy tên từ partner nếu fullName null
+            if (friend.isPending && (friend.fullName == null || friend.fullName.isEmpty())) {
+                if (friend.partner != null && friend.partner.username != null) {
+                    name = friend.partner.username;
                 }
             }
 
-            if (f.isPending) {
-                // ── Pending friend request mode ──
-                tvStatus.setText(itemView.getContext().getString(R.string.friend_request_pending));
-                if (viewOnlineDot != null) viewOnlineDot.setVisibility(View.GONE);
+            tvName.setText(name);
+            tvInitial.setText(name.isEmpty() ? "?" : String.valueOf(name.charAt(0)).toUpperCase());
 
-                // Show sentAt if available
-                if (tvSentAt != null && f.sentAt != null) {
-                    tvSentAt.setVisibility(View.VISIBLE);
-                    tvSentAt.setText(f.sentAt.friendly);
-                } else if (tvSentAt != null) {
-                    tvSentAt.setVisibility(View.GONE);
-                }
+            // ── Trạng thái ───────────────────────────────────────────
+            if (friend.isPending) {
+                // Tab Requests
+                String sentTime = (friend.sentAt != null && friend.sentAt.friendly != null)
+                        ? friend.sentAt.friendly : "";
+                tvStatus.setText(sentTime.isEmpty()
+                        ? itemView.getContext().getString(R.string.friend_request_pending)
+                        : sentTime);
 
-                // Show request action buttons, hide friend actions
-                if (layoutActions != null) layoutActions.setVisibility(View.GONE);
-                if (layoutRequestActions != null) layoutRequestActions.setVisibility(View.VISIBLE);
+                statusDot.setVisibility(View.GONE);
+                layoutActions.setVisibility(View.GONE);
+                layoutRequestActions.setVisibility(View.VISIBLE);
 
-                if (btnAccept != null) btnAccept.setOnClickListener(v -> listener.onAccept(f));
-                if (btnReject != null) btnReject.setOnClickListener(v -> listener.onReject(f));
+                btnAccept.setOnClickListener(v -> listener.onAccept(friend));
+                btnReject.setOnClickListener(v -> listener.onReject(friend));
 
             } else {
-                // ── Regular friend mode ──
-                boolean online = f.isOnline();
+                // Tab All / Online
+                boolean online = friend.isOnline();
                 tvStatus.setText(online
                         ? itemView.getContext().getString(R.string.status_online)
                         : itemView.getContext().getString(R.string.status_offline));
-                if (viewOnlineDot != null)
-                    viewOnlineDot.setVisibility(online ? View.VISIBLE : View.GONE);
+                tvStatus.setTextColor(itemView.getContext().getResources().getColor(
+                        online ? R.color.blue : R.color.text_muted,
+                        itemView.getContext().getTheme()));
 
-                if (tvSentAt != null) tvSentAt.setVisibility(View.GONE);
+                statusDot.setVisibility(View.VISIBLE);
+                statusDot.setBackgroundResource(online
+                        ? R.drawable.status_dot_online
+                        : R.drawable.status_dot_offline);
 
-                // Show friend actions, hide request actions
-                if (layoutActions != null) layoutActions.setVisibility(View.VISIBLE);
-                if (layoutRequestActions != null) layoutRequestActions.setVisibility(View.GONE);
+                layoutActions.setVisibility(View.VISIBLE);
+                layoutRequestActions.setVisibility(View.GONE);
 
-                if (btnChat != null) btnChat.setOnClickListener(v -> listener.onChat(f));
-                if (btnCall != null) btnCall.setOnClickListener(v -> listener.onCall(f));
-                if (btnRemove != null) btnRemove.setOnClickListener(v -> listener.onRemove(f));
+                btnChat.setOnClickListener(v -> listener.onChat(friend));
+                btnCall.setOnClickListener(v -> listener.onCall(friend));
+
+                // Long press → remove friend
+                itemView.setOnLongClickListener(v -> {
+                    listener.onRemove(friend);
+                    return true;
+                });
             }
         }
     }
