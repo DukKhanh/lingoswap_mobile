@@ -5,10 +5,8 @@ import com.lingoswap.data.model.DashboardResponse;
 import com.lingoswap.data.model.SearchUserResponse;
 import com.lingoswap.data.model.User;
 import com.lingoswap.domain.repository.UserRepository;
+import com.lingoswap.utils.ErrorUtils;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -32,10 +30,10 @@ public class UserRepositoryImpl implements UserRepository {
         apiService.getProfile().enqueue(new Callback<User>() {
             @Override public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override public void onFailure(Call<User> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -45,10 +43,10 @@ public class UserRepositoryImpl implements UserRepository {
         apiService.updateProfile(body).enqueue(new Callback<Map<String, Object>>() {
             @Override public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -58,10 +56,10 @@ public class UserRepositoryImpl implements UserRepository {
         apiService.uploadAvatar(avatar).enqueue(new Callback<Map<String, String>>() {
             @Override public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override public void onFailure(Call<Map<String, String>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -71,19 +69,14 @@ public class UserRepositoryImpl implements UserRepository {
         apiService.getDashboard().enqueue(new Callback<DashboardResponse>() {
             @Override public void onResponse(Call<DashboardResponse> call, Response<DashboardResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override public void onFailure(Call<DashboardResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
 
-    /**
-     * FIX: dùng SearchUserResponse thay vì Map<String, Object>.
-     * Backend trả về { results: [...], pagination: {...} }
-     * Callback trả về List<SearchUser> để ViewModel dùng trực tiếp.
-     */
     @Override
     public void searchUsers(String query, int page, int limit,
                             RepositoryCallback<SearchUserResponse> callback) {
@@ -95,12 +88,12 @@ public class UserRepositoryImpl implements UserRepository {
                         if (response.isSuccessful() && response.body() != null) {
                             callback.onSuccess(response.body());
                         } else {
-                            callback.onError(parseError(response));
+                            callback.onError(ErrorUtils.parseError(response));
                         }
                     }
                     @Override
                     public void onFailure(Call<SearchUserResponse> call, Throwable t) {
-                        callback.onError("Lỗi mạng: " + t.getMessage());
+                        callback.onError("Lỗi kết nối: " + t.getMessage());
                     }
                 });
     }
@@ -110,20 +103,11 @@ public class UserRepositoryImpl implements UserRepository {
         apiService.getPublicProfile(userId).enqueue(new Callback<User>() {
             @Override public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override public void onFailure(Call<User> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
-    }
-
-    private String parseError(Response<?> response) {
-        try {
-            JSONObject json = new JSONObject(response.errorBody().string());
-            return json.optString("error", "Lỗi không xác định");
-        } catch (Exception e) {
-            return "HTTP " + response.code();
-        }
     }
 }

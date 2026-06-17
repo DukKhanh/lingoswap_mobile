@@ -1,101 +1,123 @@
 package com.lingoswap.presentation.friends;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.lingoswap.data.api.FriendApiService;
+import com.lingoswap.data.api.MatchApiService;
+import com.lingoswap.data.model.ApiResponse;
+import com.lingoswap.data.model.MatchHistoryResponse;
 import com.lingoswap.databinding.ActivitySearchUserBinding;
-import com.lingoswap.data.model.SearchUserResponse;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+/**
+ * SearchUserActivity — màn hình lịch sử matching để kết bạn.
+ * Mở từ FriendsActivity (nút "+ Thêm bạn")
+ * Hiển thị các người đã từng match → nút "+ Kết bạn" gọi API.
+ */
 @AndroidEntryPoint
 public class SearchUserActivity extends AppCompatActivity {
 
     private ActivitySearchUserBinding binding;
-    private FriendsViewModel          viewModel;
-    private SearchUserAdapter         adapter;
+    private MatchHistoryAdapter        adapter;
+
+    @Inject MatchApiService  matchApiService;
+    @Inject FriendApiService friendApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySearchUserBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
-
         setupViews();
-        observeViewModel();
+        loadMatchHistory();
     }
 
     private void setupViews() {
         binding.btnBack.setOnClickListener(v -> finish());
+        // Ẩn thanh search — không cần gõ tìm
+        binding.etSearch.setVisibility(View.GONE);
 
-        // FIX: adapter nhận SearchUserResponse.SearchUser
-        adapter = new SearchUserAdapter(user -> viewModel.sendFriendRequest(user.getId()));
+        adapter = new MatchHistoryAdapter(session -> sendFriendRequest(session));
         binding.rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
         binding.rvSearchResults.setAdapter(adapter);
-
-        // Tìm khi nhấn Enter
-        binding.etSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                performSearch();
-                return true;
-            }
-            return false;
-        });
-
-        // Tìm realtime khi gõ >= 2 ký tự
-        binding.etSearch.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
-            @Override public void afterTextChanged(Editable s) {}
-            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
-                if (s.length() >= 2) {
-                    viewModel.searchNewUsers(s.toString());
-                } else if (s.length() == 0) {
-                    adapter.setUsers(null);
-                    binding.tvNoResults.setVisibility(View.GONE);
-                }
-            }
-        });
     }
 
-    private void performSearch() {
-        String query = binding.etSearch.getText().toString().trim();
-        if (!query.isEmpty()) viewModel.searchNewUsers(query);
+    private void loadMatchHistory() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.tvNoResults.setVisibility(View.GONE);
+
+        matchApiService.getMatchHistory(1, 50).enqueue(
+                new Callback<List<MatchHistoryResponse>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<List<MatchHistoryResponse>> call,
+                                           @NonNull Response<List<MatchHistoryResponse>> response) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<MatchHistoryResponse> list = response.body();
+                            adapter.setItems(list);
+                            if (list.isEmpty()) {
+                                binding.tvNoResults.setVisibility(View.VISIBLE);
+                                binding.tvNoResults.setText(
+                                        "Chưa có lịch sử matching.\nHãy tìm đối tác và bắt đầu!");
+                            }
+                        } else {
+                            showError("Không thể tải lịch sử matching");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<List<MatchHistoryResponse>> call,
+                                          @NonNull Throwable t) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        showError("Lỗi mạng: " + t.getMessage());
+                    }
+                });
     }
 
-    private void observeViewModel() {
-        // FIX: observe List<SearchUserResponse.SearchUser>
-        viewModel.searchResults.observe(this, users -> {
-            adapter.setUsers(users);
-            boolean empty = users == null || users.isEmpty();
-            binding.tvNoResults.setVisibility(
-                    empty && binding.etSearch.getText().length() >= 2
-                            ? View.VISIBLE : View.GONE);
-        });
+    private void sendFriendRequest(MatchHistoryResponse session) {
+        if (session.partner == null || session.partner.id == null) return;
+        friendApiService.sendFriendRequest(session.partner.id)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call,
+                                           @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(SearchUserActivity.this,
+                                    "Đã gửi lời mời kết bạn tới " + session.partner.getFullName(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SearchUserActivity.this,
+                                    "Đã là bạn bè hoặc đã gửi lời mời trước đó",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
 
-        viewModel.isLoading.observe(this, loading ->
-                binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE));
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Toast.makeText(SearchUserActivity.this,
+                                "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+    }
 
-        viewModel.error.observe(this, msg -> {
-            if (msg != null && !msg.isEmpty())
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        });
-
-        viewModel.successMessage.observe(this, msg -> {
-            if (msg != null && !msg.isEmpty()) {
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                // Disable nút kết bạn của item vừa gửi (refresh adapter)
-                adapter.notifyDataSetChanged();
-            }
-        });
+    private void showError(String msg) {
+        binding.tvNoResults.setVisibility(View.VISIBLE);
+        binding.tvNoResults.setText(msg);
     }
 }

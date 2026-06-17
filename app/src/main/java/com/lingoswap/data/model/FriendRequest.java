@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class FriendRequest {
     @SerializedName("_id")
-    public String id;          // friendshipId — used to accept/reject
+    public String id;          // friendshipId
 
-    @SerializedName("partner")
+    // Backend có thể trả về 'partner', 'sender', 'from', hoặc 'requester'
+    @SerializedName(value = "partner", alternate = {"sender", "from", "user", "requester"})
     public Friend.FriendPartner partner;
 
     @SerializedName("sentAt")

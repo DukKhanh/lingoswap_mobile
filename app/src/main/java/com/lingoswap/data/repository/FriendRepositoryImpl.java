@@ -6,8 +6,7 @@ import com.lingoswap.data.model.Friend;
 import com.lingoswap.data.model.FriendRequest;
 import com.lingoswap.data.model.FriendStatusResponse;
 import com.lingoswap.domain.repository.FriendRepository;
-
-import org.json.JSONObject;
+import com.lingoswap.utils.ErrorUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,17 +28,18 @@ public class FriendRepositoryImpl implements FriendRepository {
 
     @Override
     public void getFriends(Callback<List<Friend>> callback) {
+        // Logcat cho thấy trả về List trực tiếp
         apiService.getFriends().enqueue(new retrofit2.Callback<List<Friend>>() {
             @Override
             public void onResponse(Call<List<Friend>> call, Response<List<Friend>> response) {
                 if (response.isSuccessful() && response.body() != null)
                     callback.onSuccess(response.body());
                 else
-                    callback.onError(parseError(response));
+                    callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<List<Friend>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -52,11 +52,11 @@ public class FriendRepositoryImpl implements FriendRepository {
                 if (response.isSuccessful() && response.body() != null)
                     callback.onSuccess(response.body());
                 else
-                    callback.onError(parseError(response));
+                    callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<List<FriendRequest>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -67,11 +67,11 @@ public class FriendRepositoryImpl implements FriendRepository {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -84,11 +84,11 @@ public class FriendRepositoryImpl implements FriendRepository {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -99,11 +99,11 @@ public class FriendRepositoryImpl implements FriendRepository {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -116,11 +116,11 @@ public class FriendRepositoryImpl implements FriendRepository {
                 if (response.isSuccessful() && response.body() != null)
                     callback.onSuccess(response.body());
                 else
-                    callback.onError(parseError(response));
+                    callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<FriendStatusResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -133,22 +133,12 @@ public class FriendRepositoryImpl implements FriendRepository {
                 if (response.isSuccessful() && response.body() != null)
                     callback.onSuccess(response.body());
                 else
-                    callback.onError(parseError(response));
+                    callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<Map<String, List<String>>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
-    }
-
-    private String parseError(Response<?> response) {
-        try {
-            String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
-            JSONObject json = new JSONObject(errorBody);
-            return json.optString("error", "Lỗi không xác định");
-        } catch (Exception e) {
-            return "HTTP " + response.code();
-        }
     }
 }

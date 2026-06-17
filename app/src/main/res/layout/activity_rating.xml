@@ -43,18 +43,46 @@
                     android:textColor="@color/text_muted"
                     android:textSize="13sp"
                     android:gravity="center"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Partner Name -->
+                <TextView
+                    android:id="@+id/tvPartnerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Partner Name"
+                    android:textColor="@color/text_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp"/>
 
                 <!-- Session Timer -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:gravity="center" android:orientation="horizontal" android:layout_marginBottom="20dp">
+                    android:gravity="center" android:orientation="horizontal" android:layout_marginBottom="12dp">
                     <ImageView android:layout_width="12dp" android:layout_height="12dp"
                         android:src="@android:drawable/ic_menu_recent_history" android:tint="@color/text_light"
                         android:layout_marginEnd="4dp"/>
                     <TextView android:id="@+id/tvSessionTime"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="0:16" android:textColor="@color/text_light" android:textSize="12sp"/>
+                        android:text="00:00" android:textColor="@color/text_light" android:textSize="12sp"/>
                 </LinearLayout>
+
+                <!-- Add Friend Button -->
+                <Button
+                    android:id="@+id/btnAddFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:text="+ Kết bạn"
+                    android:textSize="12sp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/blue"
+                    android:background="@drawable/bg_btn_outline"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:layout_marginBottom="20dp"
+                    style="?android:attr/borderlessButtonStyle" />
 
                 <!-- Rating Section 1: Overall -->
                 <View android:layout_width="match_parent" android:layout_height="1dp"

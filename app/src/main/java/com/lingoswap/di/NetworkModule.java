@@ -1,5 +1,7 @@
 package com.lingoswap.di;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lingoswap.data.api.AuthApiService;
@@ -9,6 +11,7 @@ import com.lingoswap.data.api.FriendApiService;
 import com.lingoswap.data.api.MatchApiService;
 import com.lingoswap.data.api.NotificationApiService;
 import com.lingoswap.data.api.PersistentCookieJar;
+import com.lingoswap.data.api.TokenAuthenticator;
 import com.lingoswap.data.api.UserApiService;
 import com.lingoswap.data.local.UserPreferences;
 import com.lingoswap.data.model.Message;
@@ -16,11 +19,13 @@ import com.lingoswap.data.remote.TimestampDeserializer;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -31,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @InstallIn(SingletonComponent.class)
 public class NetworkModule {
 
-    // ⚠️ Emulator: 10.0.2.2  |  Điện thoại thật: IP LAN của máy tính VD: 192.168.1.x
+    // ISSUE 1 FIX: Use Production URL
     public static final String BASE_URL = "http://10.0.2.2:5000/";
 
     @Provides @Singleton
@@ -41,34 +46,41 @@ public class NetworkModule {
 
     @Provides @Singleton
     public PersistentCookieJar provideCookieJar() {
-        // Đã được init trong LingoSwapApp.java
         return PersistentCookieJar.getInstance();
+    }
+
+    // ISSUE 3 FIX: Provide TokenAuthenticator
+    @Provides @Singleton
+    public TokenAuthenticator provideTokenAuthenticator(
+            @ApplicationContext Context context,
+            UserPreferences prefs,
+            Provider<AuthApiService> authApiProvider) {
+        return new TokenAuthenticator(context, prefs, authApiProvider);
     }
 
     @Provides @Singleton
     public OkHttpClient provideOkHttpClient(
             AuthInterceptor authInterceptor,
-            PersistentCookieJar cookieJar
+            PersistentCookieJar cookieJar,
+            TokenAuthenticator authenticator
     ) {
         return new OkHttpClient.Builder()
                 .addInterceptor(authInterceptor)
-                // ✅ CookieJar để tự động lưu & gửi refreshToken cookie
                 .cookieJar(cookieJar)
+                // ISSUE 3 FIX: Register Authenticator
+                .authenticator(authenticator)
                 .addInterceptor(new HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY))
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS) // Increased for Render cold start
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
     }
 
     @Provides @Singleton
     public Gson provideGson() {
         return new GsonBuilder()
-                .registerTypeAdapter(
-                        Message.TimestampField.class,
-                        new TimestampDeserializer()
-                )
+                .registerTypeAdapter(Message.TimestampField.class, new TimestampDeserializer())
                 .create();
     }
 

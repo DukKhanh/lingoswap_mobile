@@ -39,10 +39,14 @@
     <Button
         android:id="@+id/btnAddFriend"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:text="Kết bạn"
         android:textAllCaps="false"
-        style="?android:attr/borderlessButtonStyle"
-        android:textColor="@color/blue" />
+        android:background="@drawable/bg_btn_primary"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        style="?android:attr/borderlessButtonStyle" />
 
 </LinearLayout>

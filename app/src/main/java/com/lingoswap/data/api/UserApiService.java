@@ -24,14 +24,14 @@ public interface UserApiService {
     @PUT("api/users/me")
     Call<Map<String, Object>> updateProfile(@Body Map<String, Object> body);
 
+    // ISSUE 4 FIX: Corrected endpoint and method for avatar upload
     @Multipart
-    @POST("api/users/avatar")
+    @PUT("api/users/me/avatar")
     Call<Map<String, String>> uploadAvatar(@Part MultipartBody.Part avatar);
 
     @GET("api/users/dashboard")
     Call<DashboardResponse> getDashboard();
 
-    // FIX: đúng route backend GET /api/users?q=...
     @GET("api/users")
     Call<SearchUserResponse> searchUsers(
             @Query("q") String query,

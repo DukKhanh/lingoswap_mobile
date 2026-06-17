@@ -27,7 +27,8 @@ public interface AuthApiService {
     @POST("api/auth/logout")
     Call<ApiResponse> logout();
 
-    @POST("api/auth/token")
+    // ISSUE 2 FIX: Corrected refresh token endpoint
+    @POST("api/auth/refresh-token")
     Call<Map<String, String>> refreshToken();
 
     @PATCH("api/auth/password/change")

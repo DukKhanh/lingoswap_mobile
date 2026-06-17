@@ -9,8 +9,7 @@ import com.lingoswap.data.model.ResetPasswordRequest;
 import com.lingoswap.data.model.request.LoginRequest;
 import com.lingoswap.data.model.request.RegisterRequest;
 import com.lingoswap.domain.repository.AuthRepository;
-
-import org.json.JSONObject;
+import com.lingoswap.utils.ErrorUtils;
 
 import javax.inject.Inject;
 
@@ -37,12 +36,13 @@ public class AuthRepositoryImpl implements AuthRepository {
                     preferences.saveAuthResponse(response.body());
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onError(parseError(response));
+                    // ISSUE 6 FIX: Centralized Error Handling
+                    callback.onError(ErrorUtils.parseError(response));
                 }
             }
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -56,12 +56,12 @@ public class AuthRepositoryImpl implements AuthRepository {
                     preferences.saveAuthResponse(response.body());
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onError(parseError(response));
+                    callback.onError(ErrorUtils.parseError(response));
                 }
             }
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -88,11 +88,11 @@ public class AuthRepositoryImpl implements AuthRepository {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
@@ -103,21 +103,12 @@ public class AuthRepositoryImpl implements AuthRepository {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) callback.onSuccess(response.body());
-                else callback.onError(parseError(response));
+                else callback.onError(ErrorUtils.parseError(response));
             }
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
-    }
-
-    private String parseError(Response<?> response) {
-        try {
-            JSONObject json = new JSONObject(response.errorBody().string());
-            return json.optString("error", "Lỗi không xác định");
-        } catch (Exception e) {
-            return "HTTP " + response.code();
-        }
     }
 }

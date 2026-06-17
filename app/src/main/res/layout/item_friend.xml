@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    item_friend.xml
-    Đặt tại: app/src/main/res/layout/item_friend.xml
-
-    Dùng cho cả 3 tab:
-    - Tab All / Online: hiện nút Chat + Call, ẩn Accept/Reject
-    - Tab Requests:     hiện Accept + Reject, ẩn Chat/Call
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -33,11 +25,9 @@
                 android:id="@+id/ivAvatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/sym_def_app_icon" />
+                android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Chữ cái đầu (fallback khi không có ảnh) -->
         <TextView
             android:id="@+id/tvAvatarInitial"
             android:layout_width="48dp"
@@ -46,10 +36,8 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:background="@drawable/bg_avatar"
-            android:visibility="visible" />
+            android:background="@drawable/bg_avatar" />
 
-        <!-- Online dot -->
         <View
             android:id="@+id/viewStatusDot"
             android:layout_width="12dp"
@@ -58,7 +46,6 @@
             android:background="@drawable/status_dot_offline" />
     </FrameLayout>
 
-    <!-- Tên + trạng thái / thời gian gửi lời mời -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -82,7 +69,6 @@
             android:layout_marginTop="2dp" />
     </LinearLayout>
 
-    <!-- Nút Chat + Call (Tab All / Online) -->
     <LinearLayout
         android:id="@+id/layoutActions"
         android:layout_width="wrap_content"
@@ -112,7 +98,6 @@
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- Nút Accept + Reject (Tab Requests) -->
     <LinearLayout
         android:id="@+id/layoutRequestActions"
         android:layout_width="wrap_content"
@@ -121,30 +106,35 @@
         android:gravity="center_vertical"
         android:visibility="gone">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnAccept"
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
+            android:layout_height="32dp"
             android:background="@drawable/bg_btn_primary"
             android:text="@string/action_accept"
             android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="11sp"
+            android:textStyle="bold"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:layout_marginEnd="6dp"
-            style="?android:attr/borderlessButtonStyle" />
+            android:textAllCaps="false"
+            android:minHeight="0dp"
+            android:minWidth="0dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnReject"
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
+            android:layout_height="32dp"
             android:background="@drawable/bg_btn_outline"
             android:text="@string/action_reject"
             android:textColor="@color/text_muted"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            style="?android:attr/borderlessButtonStyle" />
+            android:textAllCaps="false"
+            android:minHeight="0dp"
+            android:minWidth="0dp" />
     </LinearLayout>
 
 </LinearLayout>
