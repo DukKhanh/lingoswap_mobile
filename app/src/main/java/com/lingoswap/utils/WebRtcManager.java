@@ -151,7 +151,13 @@ public class WebRtcManager {
         peerConnection = factory.createPeerConnection(config, new PeerConnection.Observer() {
             @Override
             public void onIceCandidate(IceCandidate candidate) {
-                Log.d(TAG, "ICE candidate ready");
+                // candidate.sdp chứa "typ host|srflx|relay" — để biết TURN có gom được relay không.
+                String typ = "?";
+                if (candidate.sdp != null && candidate.sdp.contains("typ ")) {
+                    String[] parts = candidate.sdp.split("typ ");
+                    if (parts.length > 1) typ = parts[1].split(" ")[0];
+                }
+                Log.d(TAG, "Local ICE candidate type=" + typ);
                 callback.onIceCandidateReady(candidate);
             }
 

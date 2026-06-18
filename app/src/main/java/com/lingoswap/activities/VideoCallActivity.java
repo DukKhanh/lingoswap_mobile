@@ -61,6 +61,7 @@ public class VideoCallActivity extends AppCompatActivity {
 
     @Inject SocketManager socketManager;
     @Inject UserApiService userApiService;
+    @Inject com.lingoswap.data.local.UserPreferences userPreferences;
 
     private WebRtcManager webRtcManager;
     private EglBase eglBase;
@@ -116,7 +117,6 @@ public class VideoCallActivity extends AppCompatActivity {
         sessionId = getIntent().getStringExtra("sessionId");
         partnerId = getIntent().getStringExtra("partnerId");
         language    = getIntent().getStringExtra("language");
-        isCaller    = getIntent().getBooleanExtra("isCaller", false);
         partnerName = getIntent().getStringExtra("partnerName");
 
         if (sessionId == null || partnerId == null) {
@@ -124,6 +124,12 @@ public class VideoCallActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        // Quyết định caller bằng comparePeerIds GIỐNG HỆT web (MeetingPage), bất kể ai bấm gọi.
+        // Trước đây Outgoing=true/Incoming=false cố định → lệch quy tắc với web khiến chiều
+        // "web gọi mobile" cả 2 cùng là callee → không ai tạo offer → deadlock.
+        String myId = userPreferences.getUserId();
+        isCaller = (myId != null) && comparePeerIds(myId, partnerId) > 0;
 
         Log.d(TAG, "VideoCall started: sessionId=" + sessionId + " partnerId=" + partnerId + " isCaller=" + isCaller);
 
@@ -134,6 +140,15 @@ public class VideoCallActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
                     REQ_MEDIA_PERMISSION);
+        }
+    }
+
+    /** Cùng logic comparePeerIds với web: id số so sánh số, còn lại so sánh chuỗi. */
+    private static int comparePeerIds(String a, String b) {
+        try {
+            return Long.compare(Long.parseLong(a), Long.parseLong(b));
+        } catch (NumberFormatException e) {
+            return a.compareTo(b);
         }
     }
 
