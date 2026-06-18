@@ -116,7 +116,14 @@ public class MatchingActivity extends AppCompatActivity {
                 String sessionId   = data.getString("sessionId");
                 String partnerId   = data.getString("partnerId");
                 String partnerName = data.optString("partnerName", "LingoSwap User");
-                boolean isCaller   = data.optBoolean("isCaller", false);
+
+                // Backend match_found không gửi isCaller → cả 2 máy đều false thì không
+                // ai tạo offer (deadlock). Chọn caller xác định: so sánh id của mình với
+                // partner — 2 máy tính ra ngược nhau nên đúng 1 máy làm caller.
+                String myId = userPreferences.getUserId();
+                boolean isCaller = data.has("isCaller")
+                        ? data.optBoolean("isCaller", false)
+                        : (myId != null && myId.compareTo(partnerId) > 0);
 
                 Intent intent = new Intent(this, VideoCallActivity.class);
                 intent.putExtra("sessionId",   sessionId);
