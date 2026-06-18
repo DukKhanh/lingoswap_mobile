@@ -20,16 +20,20 @@ public class TimestampDeserializer implements JsonDeserializer<Message.Timestamp
             throws JsonParseException {
 
         if (json.isJsonPrimitive()) {
-            // Socket trả về ISO string
             return new Message.TimestampField(json.getAsString());
         }
 
         if (json.isJsonObject()) {
-            // REST trả về { full, friendly }
+            // Value có thể là JSON null (vd hội thoại chưa có tin nhắn) → phải bỏ qua,
+            // nếu không getAsString() ném UnsupportedOperationException("JsonNull").
             JsonObject obj = json.getAsJsonObject();
             Message.TimestampField ts = new Message.TimestampField();
-            if (obj.has("full"))     ts.setFull(obj.get("full").getAsString());
-            if (obj.has("friendly")) ts.setFriendly(obj.get("friendly").getAsString());
+            if (obj.has("full") && !obj.get("full").isJsonNull()) {
+                ts.setFull(obj.get("full").getAsString());
+            }
+            if (obj.has("friendly") && !obj.get("friendly").isJsonNull()) {
+                ts.setFriendly(obj.get("friendly").getAsString());
+            }
             return ts;
         }
 

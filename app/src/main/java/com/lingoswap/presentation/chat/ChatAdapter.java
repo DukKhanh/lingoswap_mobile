@@ -16,40 +16,36 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.lingoswap.R;
 import com.lingoswap.data.model.Message;
+import com.lingoswap.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ChatAdapter — hiển thị danh sách tin nhắn trong RecyclerView.
- *
- * ViewType:
- *   0 = tin nhắn của mình (gravity END, bg_bubble_me)
- *   1 = tin nhắn đối phương (gravity START, bg_bubble_them)
- *
- * Hỗ trợ message type: "text", "image"
- * Payload update: truyền String để chỉ update tvMessageTranslation (partial bind)
+ * ChatAdapter — danh sách tin nhắn.
+ * ViewType: 0 = tin của mình (bg_bubble_me), 1 = đối phương (bg_bubble_them).
  */
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
-
-    // ── Listener ──────────────────────────────────────────────────────────────
 
     public interface Listener {
         void onLongPress(Message msg, int position);
     }
 
-    // ── State ─────────────────────────────────────────────────────────────────
-
     private List<Message> list = new ArrayList<>();
     private final String   currentUserId;
     private final Listener listener;
+    private String partnerAvatarUrl;
 
     public ChatAdapter(String currentUserId, Listener listener) {
         this.currentUserId = currentUserId;
         this.listener      = listener;
     }
 
-    // ── Data API ──────────────────────────────────────────────────────────────
+    /** Avatar đối phương để hiển thị cạnh bong bóng tin nhắn của họ. */
+    public void setPartnerAvatar(String url) {
+        this.partnerAvatarUrl = url;
+        notifyDataSetChanged();
+    }
 
     public void setMessages(List<Message> newList) {
         this.list = new ArrayList<>(newList);
@@ -65,7 +61,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
         notifyItemInserted(list.size() - 1);
     }
 
-    /** Cập nhật status (sent → delivered → read) cho 1 tin nhắn */
     public void updateMessageStatus(String messageId, String newStatus) {
         for (int i = 0; i < list.size(); i++) {
             if (messageId.equals(list.get(i).getId())) {
@@ -76,14 +71,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
         }
     }
 
-    /** Hiển thị bản dịch inline — dùng payload để chỉ rebind phần dịch */
+    /** Dùng payload để chỉ rebind phần dịch, tránh redraw cả item. */
     public void showTranslation(int position, String translatedText) {
         if (position >= 0 && position < list.size()) {
             notifyItemChanged(position, translatedText);
         }
     }
-
-    // ── RecyclerView overrides ────────────────────────────────────────────────
 
     @Override
     public int getItemViewType(int pos) {
@@ -104,11 +97,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
         Message m      = list.get(position);
         boolean isMine = getItemViewType(position) == 0;
 
-        // ── Reset trạng thái dịch ──────────────────────────────────────────
         h.tvTranslation.setVisibility(View.GONE);
         h.dividerTranslation.setVisibility(View.GONE);
 
-        // ── Nội dung theo type ─────────────────────────────────────────────
         if ("image".equals(m.getType())) {
             h.tvText.setVisibility(View.GONE);
             h.ivImage.setVisibility(View.VISIBLE);
@@ -125,26 +116,23 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
             h.tvText.setText(m.getContent());
         }
 
-        // ── Timestamp ──────────────────────────────────────────────────────
         if (m.getCreatedAt() != null) {
             h.tvTime.setText(m.getCreatedAt().getFriendly());
         } else {
             h.tvTime.setText("");
         }
 
-        // ── Status tick (chỉ hiện với tin nhắn của mình) ───────────────────
         if (isMine) {
             h.tvStatus.setVisibility(View.VISIBLE);
             switch (m.getStatus() != null ? m.getStatus() : "sent") {
-                case "read":      h.tvStatus.setText("✓✓"); h.tvStatus.setAlpha(1f);   break;
-                case "delivered": h.tvStatus.setText("✓✓"); h.tvStatus.setAlpha(0.5f); break;
-                default:          h.tvStatus.setText("✓");  h.tvStatus.setAlpha(0.5f); break;
+                case "read":      h.tvStatus.setImageResource(R.drawable.ic_check_double); h.tvStatus.setAlpha(1f);   break;
+                case "delivered": h.tvStatus.setImageResource(R.drawable.ic_check_double); h.tvStatus.setAlpha(0.5f); break;
+                default:          h.tvStatus.setImageResource(R.drawable.ic_check);        h.tvStatus.setAlpha(0.5f); break;
             }
         } else {
             h.tvStatus.setVisibility(View.GONE);
         }
 
-        // ── Bubble style ───────────────────────────────────────────────────
         if (isMine) {
             h.root.setGravity(Gravity.END);
             h.bubble.setBackgroundResource(R.drawable.bg_bubble_me);
@@ -153,7 +141,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
             int whiteDim = 0x99FFFFFF;
             h.tvText.setTextColor(white);
             h.tvTime.setTextColor(whiteDim);
-            h.tvStatus.setTextColor(whiteDim);
+            h.tvStatus.setColorFilter(whiteDim);
             h.tvTranslation.setTextColor(0xCCFFFFFF);
             h.cvAvatar.setVisibility(View.GONE);
         } else {
@@ -166,16 +154,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
             h.tvTime.setTextColor(muted);
             h.tvTranslation.setTextColor(muted);
             h.cvAvatar.setVisibility(View.VISIBLE);
+
+            if (partnerAvatarUrl != null && !partnerAvatarUrl.isEmpty()
+                    && !partnerAvatarUrl.equals("default_avatar.png")) {
+                Glide.with(h.ivAvatar.getContext())
+                        .load(ImageUtils.normalizeAvatar(partnerAvatarUrl))
+                        .placeholder(R.drawable.ic_avatar_placeholder)
+                        .error(R.drawable.ic_avatar_placeholder)
+                        .circleCrop()
+                        .into(h.ivAvatar);
+            } else {
+                h.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
+            }
         }
 
-        // ── Long press ─────────────────────────────────────────────────────
         h.itemView.setOnLongClickListener(v -> {
             if (listener != null) listener.onLongPress(m, h.getAdapterPosition());
             return true;
         });
     }
 
-    /** Partial bind — chỉ cập nhật bản dịch, không redraw toàn bộ item */
     @Override
     public void onBindViewHolder(@NonNull VH h, int position, @NonNull List<Object> payloads) {
         if (!payloads.isEmpty() && payloads.get(0) instanceof String) {
@@ -191,12 +189,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
     @Override
     public int getItemCount() { return list.size(); }
 
-    // ── ViewHolder ────────────────────────────────────────────────────────────
-
     static class VH extends RecyclerView.ViewHolder {
         LinearLayout root, bubble;
-        TextView     tvText, tvTime, tvTranslation, tvStatus;
-        ImageView    ivImage;
+        TextView     tvText, tvTime, tvTranslation;
+        android.widget.ImageView tvStatus;
+        ImageView    ivImage, ivAvatar;
         View         cvAvatar, dividerTranslation;
 
         VH(View v) {
@@ -208,6 +205,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
             tvTranslation     = v.findViewById(R.id.tvMessageTranslation);
             tvStatus          = v.findViewById(R.id.tvMessageStatus);
             ivImage           = v.findViewById(R.id.ivMsgImage);
+            ivAvatar          = v.findViewById(R.id.ivMsgAvatar);
             cvAvatar          = v.findViewById(R.id.cvPartnerAvatar);
             dividerTranslation= v.findViewById(R.id.dividerTranslation);
         }

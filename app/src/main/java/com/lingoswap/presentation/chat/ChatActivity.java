@@ -1,6 +1,7 @@
 package com.lingoswap.presentation.chat;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -9,26 +10,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.lingoswap.R;
 import com.lingoswap.activities.VideoCallActivity;
+import com.lingoswap.data.api.UserApiService;
 import com.lingoswap.data.local.UserPreferences;
+import com.lingoswap.data.model.User;
 import com.lingoswap.databinding.ActivityChatBinding;
 import com.lingoswap.presentation.base.BaseActivity;
+import com.lingoswap.utils.ImageUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-/**
- * ChatActivity — màn hình nhắn tin 1-1.
- */
+/** ChatActivity — màn hình nhắn tin 1-1. */
 @AndroidEntryPoint
 public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
-    // ── Intent keys ───────────────────────────────────────────────────────────
     public static final String EXTRA_PARTNER_ID      = "partnerId";
     public static final String EXTRA_CONVERSATION_ID = "conversationId";
     public static final String EXTRA_PARTNER_NAME    = "partnerName";
@@ -40,7 +53,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     public static final String EXTRA_FRIEND_AVATAR   = "extra_friend_avatar";
     public static final String EXTRA_FRIEND_ONLINE   = "extra_friend_online";
 
-    // ── Fields ────────────────────────────────────────────────────────────────
     private ChatViewModel viewModel;
     private ChatAdapter   adapter;
 
@@ -48,10 +60,15 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     private String conversationId;
     private String partnerName;
     private String matchSessionId;
+    private String partnerAvatarUrl;
 
     @Inject UserPreferences userPreferences;
+    @Inject UserApiService  userApiService;
 
-    // ── BaseActivity ──────────────────────────────────────────────────────────
+    private final ActivityResultLauncher<String> imagePicker =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) sendImage(uri);
+            });
 
     @Override
     protected ActivityChatBinding inflateBinding(LayoutInflater inflater) {
@@ -59,8 +76,16 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     @Override
+    protected boolean shouldTrackChatUnread() { return false; }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        com.lingoswap.utils.ChatUnreadStore.clear();
+    }
+
+    @Override
     protected void setupViews() {
-        // Initialize viewModel here (after super.onCreate has been called in BaseActivity)
         if (viewModel == null) {
             viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         }
@@ -72,17 +97,18 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
         if (conversationId != null) {
             viewModel.loadMessages(conversationId);
+        } else if (partnerId != null) {
+            // Mở từ Home/Friends (chưa có conversationId) → tự tìm theo partnerId.
+            viewModel.loadMessagesByPartner(partnerId);
         }
     }
 
     @Override
     protected void observeViewModel() {
-        // Ensure viewModel is initialized
         if (viewModel == null) {
             viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         }
 
-        // Lịch sử tin nhắn (REST)
         viewModel.getMessages().observe(this, messages -> {
             if (messages == null) return;
             adapter.setMessages(messages);
@@ -91,33 +117,26 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
             }
         });
 
-        // Tin nhắn mới từ đối phương (socket receive_message)
         viewModel.getIncomingMessage().observe(this, msg -> {
             if (msg == null) return;
             adapter.addMessage(msg);
             scrollToBottom();
         });
 
-        // Xác nhận tin nhắn mình gửi đã được server lưu (socket message_sent_success)
         viewModel.getSentConfirmed().observe(this, msg -> {
             if (msg == null) return;
-            adapter.addMessage(msg); // thêm vào list với _id chính thức từ DB
+            adapter.addMessage(msg); // _id chính thức từ DB, dedup theo _id trong adapter
             scrollToBottom();
         });
 
-        // Lỗi
         viewModel.getError().observe(this, errMsg -> {
             if (errMsg == null) return;
             Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
         });
 
-        // Upload ảnh đang chạy
         viewModel.getIsUploading().observe(this, uploading -> {
-            // Optional: Show loading state
         });
     }
-
-    // ── Setup helpers ─────────────────────────────────────────────────────────
 
     private void readExtras() {
         partnerId      = getIntent().getStringExtra(EXTRA_PARTNER_ID);
@@ -134,7 +153,15 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     private void bindTopBar() {
         binding.tvPartnerName.setText(partnerName);
 
-        // Online status từ Intent
+        // Avatar: ưu tiên ảnh truyền qua Intent, nếu không có thì fetch theo partnerId.
+        String avatarExtra = getIntent().getStringExtra(EXTRA_FRIEND_AVATAR);
+        if (hasRealAvatar(avatarExtra)) {
+            loadAvatar(avatarExtra);
+        } else if (partnerId != null) {
+            fetchPartnerAvatar();
+        }
+        // Nếu không có avatar thật → giữ nguyên ảnh mặc định (ic_avatar_placeholder trong layout).
+
         boolean isOnline = getIntent().getBooleanExtra(EXTRA_FRIEND_ONLINE, false);
         binding.viewOnlineDot.setVisibility(isOnline ? View.VISIBLE : View.GONE);
         binding.tvPartnerStatus.setText(isOnline
@@ -144,26 +171,87 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnVideoCall.setOnClickListener(v -> {
-            Intent intent = new Intent(this, VideoCallActivity.class);
-            intent.putExtra("partnerName", partnerName);
-            intent.putExtra("partnerId", partnerId);
+            if (partnerId == null) {
+                Toast.makeText(this, "Không xác định được người dùng", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Gọi qua signaling thay vì mở thẳng VideoCall (sẽ thiếu sessionId).
+            Intent intent = new Intent(this, com.lingoswap.activities.OutgoingCallActivity.class);
+            intent.putExtra(com.lingoswap.activities.OutgoingCallActivity.EXTRA_TARGET_ID, partnerId);
+            intent.putExtra(com.lingoswap.activities.OutgoingCallActivity.EXTRA_TARGET_NAME, partnerName);
             startActivity(intent);
         });
 
-        binding.btnEmoji.setOnClickListener(v ->
-                Toast.makeText(this, getString(R.string.coming_soon), Toast.LENGTH_SHORT).show());
+        // btnEmoji thực chất mở image picker để đính kèm ảnh.
+        binding.btnEmoji.setOnClickListener(v -> {
+            if (partnerId == null) {
+                Toast.makeText(this, "Lỗi: không có partnerId", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            imagePicker.launch("image/*");
+        });
+
+        binding.btnReport.setOnClickListener(v -> {
+            if (partnerId == null) {
+                Toast.makeText(this, "Không xác định được người dùng", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(this, com.lingoswap.presentation.report.ReportActivity.class);
+            intent.putExtra(com.lingoswap.presentation.report.ReportActivity.EXTRA_REPORTED_USER_ID, partnerId);
+            if (conversationId != null) {
+                intent.putExtra(com.lingoswap.presentation.report.ReportActivity.EXTRA_CONVERSATION_ID, conversationId);
+            }
+            startActivity(intent);
+        });
 
         binding.btnCloseTranslate.setOnClickListener(v ->
                 binding.layoutTranslateTip.setVisibility(View.GONE));
     }
 
+    /** true nếu là avatar thật (không null/rỗng và không phải sentinel "default_avatar.png" của backend). */
+    private boolean hasRealAvatar(String url) {
+        return url != null && !url.isEmpty() && !url.equals("default_avatar.png");
+    }
+
+    private void loadAvatar(String url) {
+        if (!hasRealAvatar(url)) return;
+        partnerAvatarUrl = url;
+        Glide.with(this)
+                .load(ImageUtils.normalizeAvatar(url))
+                .placeholder(R.drawable.ic_avatar_placeholder)
+                .error(R.drawable.ic_avatar_placeholder)
+                .circleCrop()
+                .into(binding.ivPartnerAvatar);
+        // Avatar cạnh bong bóng tin nhắn đối phương.
+        if (adapter != null) adapter.setPartnerAvatar(url);
+    }
+
+    /** Khi Intent không kèm avatar (vd mở từ danh sách hội thoại) → lấy từ public profile. */
+    private void fetchPartnerAvatar() {
+        userApiService.getPublicProfile(partnerId).enqueue(new Callback<User>() {
+            @Override public void onResponse(Call<User> call, Response<User> response) {
+                if (isFinishing() || response.body() == null
+                        || response.body().getProfile() == null) return;
+                String avatar = response.body().getProfile().getAvatar();
+                String name   = response.body().getProfile().getFullName();
+                if (hasRealAvatar(avatar)) loadAvatar(avatar);
+                if (("LingoSwap User".equals(partnerName) || partnerName == null)
+                        && name != null && !name.isEmpty()) {
+                    binding.tvPartnerName.setText(name);
+                }
+            }
+            @Override public void onFailure(Call<User> call, Throwable t) { }
+        });
+    }
+
     private void setupRecyclerView() {
         adapter = new ChatAdapter(userPreferences.getUserId(), (msg, position) -> {
-            // Long press → hiện translate bar với nội dung tin nhắn
             binding.layoutTranslateTip.setVisibility(View.VISIBLE);
             binding.tvTranslationResult.setText(
                     getString(R.string.chat_translating_msg, msg.getContent()));
         });
+
+        adapter.setPartnerAvatar(partnerAvatarUrl);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setStackFromEnd(true);
@@ -172,7 +260,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     private void setupInput() {
-        // Nút Send mờ khi chưa có text
         binding.btnSend.setAlpha(0.45f);
 
         binding.etMessage.addTextChangedListener(new TextWatcher() {
@@ -196,10 +283,40 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         });
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     private void scrollToBottom() {
         int count = adapter.getItemCount();
         if (count > 0) binding.rvMessages.smoothScrollToPosition(count - 1);
+    }
+
+    private void sendImage(Uri uri) {
+        try {
+            InputStream in = getContentResolver().openInputStream(uri);
+            if (in == null) {
+                Toast.makeText(this, "Không đọc được ảnh đã chọn", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] chunk = new byte[8192];
+            int n;
+            while ((n = in.read(chunk)) != -1) buffer.write(chunk, 0, n);
+            in.close();
+            byte[] bytes = buffer.toByteArray();
+
+            String mime = getContentResolver().getType(uri);
+            if (mime == null) mime = "image/*";
+            MediaType type = MediaType.parse(mime);
+
+            RequestBody imageBody = RequestBody.create(type, bytes);
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", "chat.jpg", imageBody);
+
+            MediaType textType = MediaType.parse("text/plain");
+            RequestBody partnerBody = RequestBody.create(textType, partnerId);
+            RequestBody sessionBody = RequestBody.create(textType,
+                    matchSessionId == null ? "" : matchSessionId);
+
+            viewModel.sendImage(imagePart, partnerBody, sessionBody);
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi gửi ảnh: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

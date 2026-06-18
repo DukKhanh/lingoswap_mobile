@@ -14,36 +14,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.lingoswap.R;
 
-/**
- * GoogleSignInHelper — tiện ích đăng nhập Google.
- *
- * Hướng dẫn tích hợp:
- * 1. Thêm vào build.gradle (app):
- *    implementation 'com.google.android.gms:play-services-auth:21.0.0'
- *
- * 2. Tạo project trên https://console.cloud.google.com
- *    → APIs & Services → Credentials → Create OAuth 2.0 Client ID (Android)
- *    → Lấy Web Client ID → đặt vào strings.xml:
- *    <string name="google_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
- *
- * 3. Dùng trong Activity:
- *    private GoogleSignInHelper googleHelper;
- *
- *    @Override protected void onCreate(...) {
- *        googleHelper = new GoogleSignInHelper(this);
- *        binding.btnGoogleSignIn.setOnClickListener(v ->
- *            startActivityForResult(googleHelper.getSignInIntent(), RC_GOOGLE_SIGN_IN));
- *    }
- *
- *    @Override protected void onActivityResult(int requestCode, ...) {
- *        if (requestCode == RC_GOOGLE_SIGN_IN) {
- *            googleHelper.handleResult(data, idToken -> {
- *                // Gửi idToken lên backend POST /api/auth/google
- *                viewModel.googleSignIn(idToken);
- *            });
- *        }
- *    }
- */
+/** Tiện ích đăng nhập Google: lấy idToken để gửi lên backend xác thực. */
 public class GoogleSignInHelper {
 
     private static final String TAG = "GoogleSignInHelper";
@@ -61,12 +32,10 @@ public class GoogleSignInHelper {
         client = GoogleSignIn.getClient(activity, gso);
     }
 
-    /** Trả về Intent để startActivityForResult */
     public Intent getSignInIntent() {
         return client.getSignInIntent();
     }
 
-    /** Xử lý kết quả từ onActivityResult */
     public void handleResult(Intent data, Callback callback) {
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         try {
@@ -85,7 +54,6 @@ public class GoogleSignInHelper {
         }
     }
 
-    /** Đăng xuất khỏi Google (gọi khi user logout khỏi app) */
     public void signOut() {
         client.signOut();
     }

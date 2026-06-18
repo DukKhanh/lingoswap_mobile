@@ -9,9 +9,7 @@ import com.lingoswap.data.local.UserPreferences;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/**
- * ThemeManager – cầu nối giữa UI và UserPreferences cho Dark Mode.
- */
+/** Cầu nối giữa UI và UserPreferences cho Dark Mode. */
 @Singleton
 public class ThemeManager {
 
@@ -26,18 +24,15 @@ public class ThemeManager {
         this.userPreferences = userPreferences;
     }
 
-    /** Lưu và áp dụng theme ngay lập tức. */
     public void setTheme(int mode) {
         userPreferences.setNightMode(mode);
         AppCompatDelegate.setDefaultNightMode(mode);
     }
 
-    /** Apply theme từ prefs (gọi khi app khởi động). */
     public void applyTheme() {
         AppCompatDelegate.setDefaultNightMode(userPreferences.getNightMode());
     }
 
-    /** Trả về true nếu đang ở Dark Mode. */
     public boolean isDark(Context context) {
         return userPreferences.isDarkMode(context);
     }

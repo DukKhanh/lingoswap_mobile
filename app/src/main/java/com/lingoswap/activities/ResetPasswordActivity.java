@@ -6,16 +6,24 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import com.lingoswap.data.repository.AuthRepository;
 import com.lingoswap.databinding.ActivityResetPasswordBinding;
 import com.lingoswap.presentation.base.BaseActivity;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBinding> {
+
+    @Inject AuthRepository authRepository;
 
     private CountDownTimer countDownTimer;
     private String email;
-    private static final long OTP_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+    private static final long OTP_TIMEOUT_MS = 5 * 60 * 1000;
 
     @Override
     protected ActivityResetPasswordBinding inflateBinding(LayoutInflater inflater) {
@@ -30,9 +38,7 @@ public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBin
 
         binding.tvResendCode.setOnClickListener(v -> {
             if (binding.tvResendCode.isEnabled()) {
-                // TODO: Call API to resend OTP
-                Toast.makeText(this, "OTP resent to " + email, Toast.LENGTH_SHORT).show();
-                startCountDown();
+                resendOtp();
             }
         });
 
@@ -62,11 +68,7 @@ public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBin
                 return;
             }
 
-            // TODO: Call API to verify OTP + reset password
-
-            if (countDownTimer != null) countDownTimer.cancel();
-            startActivity(new Intent(this, ResetSuccessActivity.class));
-            finish();
+            resetPassword(otp, newPw);
         });
 
         binding.tvBackToSignIn.setOnClickListener(v -> {
@@ -80,6 +82,37 @@ public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBin
 
     @Override
     protected void observeViewModel() {
+    }
+
+    private void resendOtp() {
+        binding.tvResendCode.setEnabled(false);
+        authRepository.forgotPassword(email, new AuthRepository.SimpleCallback() {
+            @Override public void onComplete() {
+                Toast.makeText(ResetPasswordActivity.this, "Email đã được gửi", Toast.LENGTH_SHORT).show();
+                startCountDown();
+            }
+            @Override public void onError(String message) {
+                binding.tvResendCode.setEnabled(true);
+                Toast.makeText(ResetPasswordActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void resetPassword(String otp, String newPw) {
+        binding.btnResetPassword.setEnabled(false);
+        authRepository.resetPassword(email, otp, newPw, new AuthRepository.SimpleCallback() {
+            @Override public void onComplete() {
+                Toast.makeText(ResetPasswordActivity.this,
+                        "Đặt lại mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                if (countDownTimer != null) countDownTimer.cancel();
+                startActivity(new Intent(ResetPasswordActivity.this, ResetSuccessActivity.class));
+                finish();
+            }
+            @Override public void onError(String message) {
+                binding.btnResetPassword.setEnabled(true);
+                Toast.makeText(ResetPasswordActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void startCountDown() {

@@ -36,7 +36,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                     preferences.saveAuthResponse(response.body());
                     callback.onSuccess(response.body());
                 } else {
-                    // ISSUE 6 FIX: Centralized Error Handling
                     callback.onError(ErrorUtils.parseError(response));
                 }
             }
@@ -78,6 +77,25 @@ public class AuthRepositoryImpl implements AuthRepository {
             public void onFailure(Call<ApiResponse> call, Throwable t) {
                 preferences.clear();
                 callback.onSuccess(null);
+            }
+        });
+    }
+
+    @Override
+    public void changePassword(String currentPassword, String newPassword,
+                               RepositoryCallback<ApiResponse> callback) {
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("currentPassword", currentPassword);
+        body.put("newPassword", newPassword);
+        apiService.changePassword(body).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) callback.onSuccess(response.body());
+                else callback.onError(ErrorUtils.parseError(response));
+            }
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
     }

@@ -26,6 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
 
+    /** Truyền tab muốn mở sẵn: 0=All, 1=Online, 2=Requests. */
+    public static final String EXTRA_OPEN_TAB = "open_tab";
+
     private FriendsViewModel viewModel;
     private FriendAdapter adapter;
     private int currentTab = 0;
@@ -43,7 +46,8 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
                 startActivity(new Intent(this, SearchUserActivity.class)));
 
         binding.btnFindNow.setOnClickListener(v ->
-                startActivity(new Intent(this, MatchingActivity.class)));
+                com.lingoswap.activities.LanguageChooserDialog.newInstance()
+                        .show(getSupportFragmentManager(), "LanguageChooserDialog"));
 
         setupRecyclerView();
         setupTabs();
@@ -61,7 +65,6 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
                 intent.putExtra(ChatActivity.EXTRA_FRIEND_NAME, friend.fullName);
                 intent.putExtra(ChatActivity.EXTRA_FRIEND_AVATAR, friend.avatar);
                 intent.putExtra(ChatActivity.EXTRA_FRIEND_ONLINE, friend.isOnline());
-                // Pass conversationId so ChatActivity can load existing messages directly
                 if (friend.conversationId != null) {
                     intent.putExtra(ChatActivity.EXTRA_CONVERSATION_ID, friend.conversationId);
                 }
@@ -70,15 +73,18 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
 
             @Override
             public void onCall(Friend friend) {
-                Intent intent = new Intent(FriendsActivity.this, VideoCallActivity.class);
-                intent.putExtra("partnerName", friend.fullName);
-                intent.putExtra("partnerId", friend.id);
+                // Gọi trực tiếp qua signaling (cần sessionId từ match_found),
+                // KHÔNG mở thẳng VideoCallActivity (sẽ thiếu sessionId → đóng ngay).
+                Intent intent = new Intent(FriendsActivity.this,
+                        com.lingoswap.activities.OutgoingCallActivity.class);
+                intent.putExtra(com.lingoswap.activities.OutgoingCallActivity.EXTRA_TARGET_ID, friend.id);
+                intent.putExtra(com.lingoswap.activities.OutgoingCallActivity.EXTRA_TARGET_NAME, friend.fullName);
                 startActivity(intent);
             }
 
             @Override
             public void onAccept(Friend friend) {
-                // friend.id here is the friendshipId (set via Friend.fromRequest)
+                // friend.id ở đây là friendshipId (đặt qua Friend.fromRequest), không phải userId.
                 viewModel.acceptFriendRequest(friend.id);
             }
 
@@ -102,14 +108,14 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
         binding.tabFriendOnline.setOnClickListener(v -> switchTab(1));
         binding.tabFriendRequests.setOnClickListener(v -> switchTab(2));
 
-        // Highlight default tab
-        switchTab(0);
+        // Mở sẵn tab theo yêu cầu (vd từ thông báo lời mời kết bạn → tab Requests)
+        int openTab = getIntent().getIntExtra(EXTRA_OPEN_TAB, 0);
+        switchTab(openTab == 1 || openTab == 2 ? openTab : 0);
     }
 
     private void switchTab(int tab) {
         currentTab = tab;
 
-        // Reset all tab styles
         for (TextView t : new TextView[]{
                 binding.tabFriendAll,
                 binding.tabFriendOnline,
@@ -118,7 +124,6 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
             t.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
         }
 
-        // Highlight active tab
         TextView active = tab == 0 ? binding.tabFriendAll
                 : tab == 1 ? binding.tabFriendOnline
                 : binding.tabFriendRequests;
@@ -140,7 +145,6 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
 
     @Override
     protected void observeViewModel() {
-        // Main list (friends or requests depending on tab)
         viewModel.friends.observe(this, friends -> {
             adapter.submitList(friends);
             boolean isEmpty = friends == null || friends.isEmpty();
@@ -148,31 +152,26 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
             binding.layoutEmptyFriends.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         });
 
-        // Loading indicator
         viewModel.isLoading.observe(this, loading -> {
             if (binding.progressBar != null) {
                 binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             }
         });
 
-        // Error messages
         viewModel.error.observe(this, msg -> {
             if (msg != null && !msg.isEmpty()) {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Success messages (accept/reject/remove)
         viewModel.successMessage.observe(this, msg -> {
             if (msg != null && !msg.isEmpty()) {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Update badge on friend requests tab if needed
         viewModel.friendRequests.observe(this, requests -> {
             int count = requests != null ? requests.size() : 0;
-            // Optional: show badge on tabFriendRequests
             if (binding.tabFriendRequests != null && count > 0) {
                 binding.tabFriendRequests.setText(
                         getString(R.string.tab_requests_with_count, count));
@@ -187,11 +186,19 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         });
-        binding.navMatch.setOnClickListener(v ->
-                startActivity(new Intent(this, MatchingActivity.class)));
-        binding.navChat.setOnClickListener(v ->
-                startActivity(new Intent(this, ChatActivity.class)));
-        binding.navProfile.setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
+        binding.navMatch.setOnClickListener(v -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
+        // Chat tab mở danh sách hội thoại, không phải ChatActivity rỗng.
+        binding.navChat.setOnClickListener(v -> {
+            startActivity(new Intent(this,
+                    com.lingoswap.presentation.chat.ConversationListActivity.class));
+            finish();
+        });
+        binding.navProfile.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+            finish();
+        });
     }
 }

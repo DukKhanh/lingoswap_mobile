@@ -6,7 +6,6 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
-    <!-- ── Top Bar ─────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -26,7 +25,6 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <!-- Add friend icon -->
         <ImageView
             android:id="@+id/btnAddFriend"
             android:layout_width="36dp"
@@ -39,7 +37,6 @@
             app:tint="@color/blue" />
     </LinearLayout>
 
-    <!-- ── Search Bar ───────────────────────────────────────────── -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
@@ -77,7 +74,6 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- ── Tabs: Tất cả / Online / Lời mời ─────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -129,13 +125,11 @@
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- ── Content Area ────────────────────────────────────────── -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- ── Friends List (RecyclerView) ──────────────────────────── -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFriends"
             android:layout_width="match_parent"
@@ -146,7 +140,6 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp" />
 
-        <!-- ── Empty State (hiển thị khi không có bạn bè) ───────────── -->
         <LinearLayout
             android:id="@+id/layoutEmptyFriends"
             android:layout_width="match_parent"
@@ -155,11 +148,11 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👥"
-                android:textSize="48sp"
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_friends"
+                app:tint="@color/text_muted"
                 android:layout_marginBottom="12dp" />
 
             <TextView
@@ -193,7 +186,6 @@
                 android:paddingEnd="32dp" />
         </LinearLayout>
 
-        <!-- ── Loading indicator ────────────────────────────────────── -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -202,7 +194,6 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <!-- ── Bottom Navigation ─────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -215,8 +206,8 @@
             android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical"
             android:clickable="true" android:focusable="true">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="🏠" android:textSize="18sp"/>
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_home" app:tint="@color/text_muted"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/nav_home" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
@@ -225,8 +216,8 @@
             android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical"
             android:clickable="true" android:focusable="true">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="👥" android:textSize="18sp"/>
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_friends" app:tint="@color/blue"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/nav_friends" android:textSize="9sp" android:textColor="@color/blue"/>
         </LinearLayout>
@@ -235,8 +226,8 @@
             android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical"
             android:clickable="true" android:focusable="true">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="🔍" android:textSize="18sp"/>
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_search" app:tint="@color/text_muted"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/nav_match" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
@@ -245,8 +236,15 @@
             android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical"
             android:clickable="true" android:focusable="true">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="💬" android:textSize="18sp"/>
+            <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                    android:src="@drawable/ic_chat" app:tint="@color/text_muted"/>
+                <View android:id="@+id/chatUnreadDot"
+                    android:layout_width="9dp" android:layout_height="9dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/bg_badge_red"
+                    android:visibility="gone" />
+            </FrameLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/nav_chat" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
@@ -255,8 +253,8 @@
             android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical"
             android:clickable="true" android:focusable="true">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="👤" android:textSize="18sp"/>
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_profile" app:tint="@color/text_muted"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/nav_profile" android:textSize="9sp" android:textColor="@color/text_muted"/>
         </LinearLayout>

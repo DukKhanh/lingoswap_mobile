@@ -68,7 +68,7 @@
     <string name="back_to_sign_in">← Quay lại đăng nhập</string>
 
     <string name="reset_subtitle">ĐẶT LẠI MẬT KHẨU</string>
-    <string name="reset_otp_sent">📧 OTP đã được gửi đến email của bạn</string>
+    <string name="reset_otp_sent">OTP đã được gửi đến email của bạn</string>
     <string name="reset_label_otp">MÃ OTP</string>
     <string name="reset_hint_otp">Nhập mã 6 chữ số</string>
     <string name="reset_resend_in">Gửi lại sau</string>
@@ -84,7 +84,7 @@
     <string name="new_password">MẬT KHẨU MỚI</string>
     <string name="confirm_new_password">XÁC NHẬN MẬT KHẨU MỚI</string>
     <string name="reset_password">Đặt lại mật khẩu</string>
-    <string name="otp_sent">📧 OTP đã được gửi đến email của bạn</string>
+    <string name="otp_sent">OTP đã được gửi đến email của bạn</string>
     <string name="resend_in">Gửi lại sau</string>
     <string name="resend_code">Gửi lại mã</string>
 
@@ -147,12 +147,12 @@
     <string name="matching_title">Đang tìm kiếm…</string>
     <string name="matching_sub">Đang tìm người để luyện tập %1$s cùng</string>
     <string name="matching_waiting">Đã chờ %1$ss</string>
-    <string name="matching_tip">💡 Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
+    <string name="matching_tip">Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
     <string name="matching_cancel">Hủy tìm kiếm</string>
 
     <string name="finding_match">Đang tìm kiếm…</string>
     <string name="waiting">Đã chờ 1s</string>
-    <string name="tip_text">💡 Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
+    <string name="tip_text">Mẹo: Hãy chuẩn bị để bắt đầu cuộc trò chuyện!</string>
     <string name="cancel_search">Hủy tìm kiếm</string>
 
     <!-- ── Video Call ─────────────────────────── -->
@@ -206,8 +206,8 @@
     <string name="profile_btn_save">Lưu thay đổi</string>
     <string name="profile_settings_title">Cài đặt chung</string>
     <string name="profile_appearance">GIAO DIỆN</string>
-    <string name="profile_light">☀️ Sáng</string>
-    <string name="profile_dark">🌙 Tối</string>
+    <string name="profile_light">Sáng</string>
+    <string name="profile_dark">Tối</string>
     <string name="profile_default_lang">NGÔN NGỮ MẶC ĐỊNH</string>
     <string name="profile_btn_save_settings">Lưu cài đặt</string>
     <string name="profile_change_pw_title">Đổi mật khẩu</string>
@@ -242,4 +242,76 @@
     <string name="toast_profile_saved">Đã lưu hồ sơ</string>
     <string name="toast_password_updated">Đã cập nhật mật khẩu</string>
     <string name="error_open_lang_chooser">Không thể mở hộp thoại chọn ngôn ngữ</string>
+
+    <!-- ── Added: missing Vietnamese translations ── -->
+    <string name="home_greeting_default">Chào mừng trở lại </string>
+    <string name="home_stat_streak">Chuỗi ngày</string>
+    <string name="home_stat_hours">Tổng số giờ</string>
+    <string name="home_stat_sessions">Phiên</string>
+    <string name="home_streak_value">%1$d</string>
+    <string name="home_hours_value">%1$.1fh</string>
+    <string name="home_calendar_title">Lịch học</string>
+    <string name="home_calendar_week">Tuần</string>
+    <string name="home_calendar_month">Tháng</string>
+    <string name="btn_language">Ngôn ngữ</string>
+    <string name="btn_theme">Giao diện</string>
+
+    <string name="nav_notifications">Thông báo</string>
+    <string name="notif_title">Thông báo</string>
+    <string name="notif_mark_all">Đánh dấu đã đọc tất cả</string>
+    <string name="notif_empty">Chưa có thông báo nào</string>
+    <string name="conv_empty">Chưa có cuộc trò chuyện nào.\nHãy bắt đầu trò chuyện với bạn bè của bạn!</string>
+
+    <string name="report_title">Báo cáo vi phạm</string>
+    <string name="report_reason_label">LÝ DO</string>
+    <string name="report_reason_spam">Thư rác</string>
+    <string name="report_reason_harass">Quấy rối</string>
+    <string name="report_reason_inappropriate">Ngôn ngữ không phù hợp</string>
+    <string name="report_reason_impersonation">Mạo danh</string>
+    <string name="report_reason_other">Khác</string>
+    <string name="report_desc_hint">Mô tả vấn đề…</string>
+    <string name="report_submit">Gửi báo cáo</string>
+
+    <string name="call_incoming">Cuộc gọi đến…</string>
+    <string name="call_outgoing">Đang gọi…</string>
+    <string name="call_connecting">Đang kết nối…</string>
+    <string name="call_accept">Chấp nhận</string>
+    <string name="call_reject">Từ chối</string>
+    <string name="call_cancel">Hủy</string>
+    <string name="call_rejected">Người dùng đã từ chối cuộc gọi</string>
+    <string name="call_error_offline">Bạn học hiện đang ngoại tuyến.</string>
+    <string name="call_use_buttons">Sử dụng các nút để chấp nhận hoặc từ chối</string>
+
+    <string name="chat_send_failed">Gửi tin nhắn thất bại</string>
+
+    <string name="tab_requests">Lời mời</string>
+    <string name="tab_requests_with_count">Lời mời (%d)</string>
+    <string name="status_online">Trực tuyến</string>
+    <string name="status_offline">Ngoại tuyến</string>
+    <string name="friend_request_pending">Lời mời kết bạn</string>
+    <string name="action_chat">Trò chuyện</string>
+    <string name="action_call">Gọi video</string>
+    <string name="action_remove_friend">Xóa bạn bè</string>
+    <string name="action_accept">Chấp nhận</string>
+    <string name="action_reject">Từ chối</string>
+    <string name="empty_friends">Chưa có bạn bè nào</string>
+    <string name="empty_friend_requests">Không có lời mời kết bạn nào</string>
+
+    <string name="profile_stat_streak">CHUỖI NGÀY</string>
+    <string name="profile_stat_sessions">PHIÊN</string>
+    <string name="profile_btn_logout">Đăng xuất</string>
+    <string name="profile_logout_confirm_title">Đăng xuất</string>
+    <string name="profile_logout_confirm_msg">Bạn có chắc chắn muốn đăng xuất không?</string>
+
+    <string name="sign_in_subtitle">Kết nối và học ngôn ngữ qua video</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="hint_email">example@email.com</string>
+    <string name="hint_password">Nhập mật khẩu của bạn</string>
+    <string name="label_forgot_password">Quên mật khẩu?</string>
+    <string name="btn_sign_in">Đăng nhập</string>
+    <string name="btn_google_sign_in">Tiếp tục với Google</string>
+    <string name="label_no_account">Chưa có tài khoản?</string>
+    <string name="label_sign_up">Đăng ký</string>
+    <string name="reset_otp_sent_plain">OTP đã được gửi tới email của bạn</string>
 </resources>

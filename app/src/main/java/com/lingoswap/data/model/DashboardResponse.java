@@ -6,12 +6,13 @@ import java.util.List;
 public class DashboardResponse {
     @SerializedName("greeting")          private String greeting;
     @SerializedName("stats")             private UserStats stats;
-    @SerializedName("learningCalendar")  private List<Integer> learningCalendar;
+    // API trả về mảng chuỗi ngày dạng "2026-05-09", KHÔNG phải số.
+    @SerializedName("learningCalendar")  private List<String> learningCalendar;
     @SerializedName("suggestedPartners") private List<SuggestedPartner> suggestedPartners;
 
     public String getGreeting() { return greeting; }
     public UserStats getStats() { return stats; }
-    public List<Integer> getLearningCalendar() { return learningCalendar; }
+    public List<String> getLearningCalendar() { return learningCalendar; }
     public List<SuggestedPartner> getSuggestedPartners() { return suggestedPartners; }
 
     public static class SuggestedPartner {

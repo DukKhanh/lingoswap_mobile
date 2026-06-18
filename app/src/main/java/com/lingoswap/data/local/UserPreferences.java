@@ -22,7 +22,7 @@ public class UserPreferences {
     private static final String KEY_ROLE     = "user_role";
     private static final String KEY_USER_ID  = "user_id";
 
-    // ── Profile fields lưu riêng để đọc nhanh ────────────────────────
+    // Profile fields lưu riêng để đọc nhanh
     private static final String KEY_FULL_NAME = "user_full_name";
     private static final String KEY_EMAIL     = "user_email";
     private static final String KEY_COUNTRY   = "user_country";
@@ -53,7 +53,6 @@ public class UserPreferences {
             .putString(KEY_USER_ID, response.getId())
             .putString(KEY_USER,    gson.toJson(response));
 
-        // Lưu thêm profile fields để đọc nhanh
         if (response.getProfile() != null) {
             AuthResponse.Profile p = response.getProfile();
             if (p.getFullName() != null) editor.putString(KEY_FULL_NAME, p.getFullName());
@@ -69,14 +68,10 @@ public class UserPreferences {
         prefs.edit().putString(KEY_TOKEN, token).apply();
     }
 
-    // ── Getters token / auth ──────────────────────────────────────────
-
     public String getAccessToken() { return prefs.getString(KEY_TOKEN,   null); }
     public String getRole()        { return prefs.getString(KEY_ROLE,    null); }
     public String getUserId()      { return prefs.getString(KEY_USER_ID, null); }
     public boolean isLoggedIn()    { return getAccessToken() != null; }
-
-    // ── Getters profile ───────────────────────────────────────────────
 
     public String getFullName() { return prefs.getString(KEY_FULL_NAME, ""); }
     public String getEmail()    { return prefs.getString(KEY_EMAIL,     ""); }
@@ -93,8 +88,6 @@ public class UserPreferences {
 
     public void clear() { prefs.edit().clear().apply(); }
 
-    // ── Dark Mode ─────────────────────────────────────────────────────
-
     public void setNightMode(int mode) { prefs.edit().putInt(KEY_NIGHT_MODE, mode).apply(); }
 
     public int getNightMode() {
@@ -109,8 +102,6 @@ public class UserPreferences {
                 & Configuration.UI_MODE_NIGHT_MASK;
         return uiMode == Configuration.UI_MODE_NIGHT_YES;
     }
-
-    // ── Language ──────────────────────────────────────────────────────
 
     public void setAppLanguage(String langCode) {
         prefs.edit().putString(KEY_APP_LANG, langCode).apply();

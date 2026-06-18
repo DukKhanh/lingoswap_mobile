@@ -14,7 +14,9 @@ import com.lingoswap.databinding.ActivitySignInBinding;
 import com.lingoswap.presentation.auth.signin.SignInViewModel;
 import com.lingoswap.presentation.base.BaseActivity;
 import com.lingoswap.utils.GoogleSignInHelper;
+import com.lingoswap.utils.HeartbeatManager;
 import com.lingoswap.utils.Resource;
+import com.lingoswap.utils.SocketManager;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,8 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
     private GoogleSignInHelper googleHelper;
 
     @Inject UserPreferences userPreferences;
+    @Inject SocketManager   socketManager;
+    @Inject HeartbeatManager heartbeatManager;
 
     @Override
     protected ActivitySignInBinding inflateBinding(android.view.LayoutInflater inflater) {
@@ -43,11 +47,27 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
         setupNormalLogin();
         setupGoogleLogin();
         setupLinks();
+        setupPasswordToggle();
+        // Nút ngôn ngữ (đảo VI↔EN) và theme được wire tập trung ở BaseActivity.setupCommonToggles().
+    }
+
+    private boolean pwVisible = false;
+
+    private void setupPasswordToggle() {
+        binding.ivTogglePassword.setOnClickListener(v -> {
+            pwVisible = !pwVisible;
+            binding.etPassword.setInputType(pwVisible
+                    ? android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    : android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.etPassword.setSelection(binding.etPassword.getText().length());
+            binding.ivTogglePassword.setImageResource(pwVisible
+                    ? android.R.drawable.ic_menu_view
+                    : android.R.drawable.ic_secure);
+        });
     }
 
     @Override
     protected void observeViewModel() {
-        // ── Email / Password ──────────────────────────────────────────
         viewModel.getLoginResult().observe(this, result -> {
             if (result == null) return;
             switch (result.getStatus()) {
@@ -60,7 +80,6 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
             }
         });
 
-        // ── Google Login ──────────────────────────────────────────────
         viewModel.getGoogleLoginResult().observe(this, result -> {
             if (result == null) return;
             switch (result.getStatus()) {
@@ -79,8 +98,6 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
         });
     }
 
-    // ─── Email / Password ─────────────────────────────────────────────────────
-
     private void setupNormalLogin() {
         binding.btnSignIn.setOnClickListener(v -> {
             String email    = binding.etEmail.getText().toString().trim();
@@ -98,8 +115,6 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
         });
     }
 
-    // ─── Google Sign-In ───────────────────────────────────────────────────────
-
     private void setupGoogleLogin() {
         if (binding.btnGoogleSignIn == null) return;
         binding.btnGoogleSignIn.setOnClickListener(v ->
@@ -116,7 +131,7 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
                 @Override
                 public void onSuccess(String idToken) {
                     Log.d(TAG, "ID Token nhận được → gửi lên backend");
-                    viewModel.googleLogin(idToken); // ← gọi API thật
+                    viewModel.googleLogin(idToken);
                 }
                 @Override
                 public void onError(String message) {
@@ -125,8 +140,6 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
             });
         }
     }
-
-    // ─── Links ────────────────────────────────────────────────────────────────
 
     private void setupLinks() {
         if (binding.tvForgotPassword != null) {
@@ -139,8 +152,6 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
         }
     }
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────
-
     private void setLoading(boolean loading) {
         binding.btnSignIn.setEnabled(!loading);
         if (binding.btnGoogleSignIn != null) {
@@ -149,6 +160,10 @@ public class SignInActivity extends BaseActivity<ActivitySignInBinding> {
     }
 
     private void navigateHome() {
+        // Tạo lại socket theo token vừa đăng nhập (tránh giữ identity tài khoản cũ).
+        socketManager.reconnectWithNewToken();
+        heartbeatManager.start();
+
         Intent intent = new Intent(this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

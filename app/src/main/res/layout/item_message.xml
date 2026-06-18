@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    item_message.xml — layout dùng chung cho cả tin nhắn mình (END) và đối phương (START).
-    ChatAdapter sẽ switch gravity + background + màu chữ theo viewType.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +11,6 @@
     android:paddingStart="4dp"
     android:paddingEnd="4dp">
 
-    <!-- Avatar đối phương — ẩn khi isMine, hiện khi đối phương gửi -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPartnerAvatar"
         android:layout_width="32dp"
@@ -34,7 +29,6 @@
             android:src="@android:drawable/sym_def_app_icon" />
     </androidx.cardview.widget.CardView>
 
-    <!-- Bubble wrapper — max 72% chiều rộng màn hình -->
     <LinearLayout
         android:id="@+id/layoutBubble"
         android:layout_width="wrap_content"
@@ -47,7 +41,6 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
-        <!-- Tin nhắn text (ẩn khi type=image) -->
         <TextView
             android:id="@+id/tvMessageText"
             android:layout_width="wrap_content"
@@ -57,7 +50,6 @@
             android:lineSpacingExtra="2dp"
             tools:text="Xin chào bạn!" />
 
-        <!-- Ảnh (ẩn khi type=text) — hiện khi type=image -->
         <ImageView
             android:id="@+id/ivMsgImage"
             android:tag="ivMsgImage"
@@ -67,7 +59,6 @@
             android:visibility="gone"
             android:src="@drawable/ic_image_placeholder" />
 
-        <!-- Bản dịch — ẩn mặc định, hiện khi user long press → dịch -->
         <TextView
             android:id="@+id/tvMessageTranslation"
             android:layout_width="wrap_content"
@@ -80,7 +71,6 @@
             android:visibility="gone"
             tools:text="Hello!" />
 
-        <!-- Divider mỏng giữa bản dịch và timestamp (chỉ hiện khi có dịch) -->
         <View
             android:id="@+id/dividerTranslation"
             android:layout_width="match_parent"
@@ -89,7 +79,6 @@
             android:layout_marginTop="4dp"
             android:visibility="gone" />
 
-        <!-- Timestamp + trạng thái (sent/delivered/read) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,16 +95,14 @@
                 android:textSize="10sp"
                 tools:text="10:30" />
 
-            <!-- Tick trạng thái: chỉ hiện với tin nhắn của mình -->
-            <TextView
+            <ImageView
                 android:id="@+id/tvMessageStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#99FFFFFF"
-                android:textSize="10sp"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:src="@drawable/ic_check_double"
                 android:layout_marginStart="3dp"
-                android:visibility="gone"
-                tools:text="✓✓" />
+                android:layout_gravity="center_vertical"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 

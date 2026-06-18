@@ -7,14 +7,12 @@
     android:gravity="center"
     android:padding="24dp">
 
-    <!-- Radar Animation (concentric rings + center) -->
     <FrameLayout
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp">
 
-        <!-- Outer ring -->
         <View android:id="@+id/radarRing3"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -22,7 +20,6 @@
             android:background="@drawable/bg_radar_ring"
             android:alpha="0.2"/>
 
-        <!-- Mid ring -->
         <View android:id="@+id/radarRing2"
             android:layout_width="140dp"
             android:layout_height="140dp"
@@ -30,7 +27,6 @@
             android:background="@drawable/bg_radar_ring"
             android:alpha="0.4"/>
 
-        <!-- Inner ring -->
         <View android:id="@+id/radarRing1"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -38,7 +34,6 @@
             android:background="@drawable/bg_radar_ring"
             android:alpha="0.6"/>
 
-        <!-- Center button -->
         <FrameLayout
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -56,7 +51,6 @@
         </FrameLayout>
     </FrameLayout>
 
-    <!-- Text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,7 +81,6 @@
         android:gravity="center"
         android:layout_marginBottom="32dp"/>
 
-    <!-- Tip Box -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +92,6 @@
         android:gravity="center"
         android:layout_marginBottom="32dp"/>
 
-    <!-- Cancel -->
     <Button
         android:id="@+id/btnCancelSearch"
         android:layout_width="wrap_content"

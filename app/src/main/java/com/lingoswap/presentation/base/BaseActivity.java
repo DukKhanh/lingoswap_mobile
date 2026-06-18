@@ -13,10 +13,14 @@ import androidx.viewbinding.ViewBinding;
 
 import com.lingoswap.R;
 import com.lingoswap.activities.HomeActivity;
+import com.lingoswap.utils.ChatUnreadStore;
 import com.lingoswap.utils.LocaleManager;
+import com.lingoswap.utils.SocketManager;
 import com.lingoswap.utils.ThemeManager;
 
 import javax.inject.Inject;
+
+import io.socket.emitter.Emitter;
 
 public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity {
 
@@ -24,12 +28,14 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 
     @Inject protected ThemeManager themeManager;
     @Inject protected LocaleManager localeManager;
+    @Inject protected SocketManager socketManager;
+
+    private Emitter.Listener chatUnreadListener;
 
     protected abstract VB inflateBinding(LayoutInflater inflater);
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        // Step 3: Ensure BaseActivity apply locale
         super.attachBaseContext(LocaleManager.setLocale(newBase));
     }
 
@@ -37,29 +43,54 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Apply theme before inflating layout
         if (themeManager != null) {
             themeManager.applyTheme();
         }
 
         binding = inflateBinding(getLayoutInflater());
         setContentView(binding.getRoot());
-        
+
         setupCommonToggles();
+        setupChatUnreadDot();
         setupViews();
         observeViewModel();
     }
 
+    /** Cho phép màn chat tự tắt việc đánh dấu chưa đọc (đang đọc rồi). */
+    protected boolean shouldTrackChatUnread() { return true; }
+
+    private void setupChatUnreadDot() {
+        View dot = findViewById(R.id.chatUnreadDot);
+        if (dot == null) return;
+        ChatUnreadStore.get().observe(this, unread ->
+                dot.setVisibility(Boolean.TRUE.equals(unread) ? View.VISIBLE : View.GONE));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!shouldTrackChatUnread()) return;
+        chatUnreadListener = args -> ChatUnreadStore.markUnread();
+        socketManager.onReceiveMessage(chatUnreadListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (chatUnreadListener != null) {
+            socketManager.off("receive_message", chatUnreadListener);
+            chatUnreadListener = null;
+        }
+    }
+
     private void setupCommonToggles() {
-        // Dark toggle
         View tvDarkToggle = findViewById(R.id.tvDarkToggle);
-        if (tvDarkToggle instanceof TextView) {
-            TextView tv = (TextView) tvDarkToggle;
-            tv.setText(isDarkMode() ? "☀️" : "🌙");
-            tv.setOnClickListener(v -> toggleTheme());
+        if (tvDarkToggle instanceof android.widget.ImageView) {
+            android.widget.ImageView iv = (android.widget.ImageView) tvDarkToggle;
+            iv.setImageResource(isDarkMode() ? R.drawable.ic_sun : R.drawable.ic_moon);
+            iv.setOnClickListener(v -> toggleTheme());
         }
 
-        // Lang toggle
         View btnLangVI = findViewById(R.id.btnLangVI);
         View btnLangEN = findViewById(R.id.btnLangEN);
         
@@ -73,6 +104,33 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         if (btnLangVI instanceof TextView && btnLangEN instanceof TextView) {
             syncLangToggleUI((TextView) btnLangVI, (TextView) btnLangEN);
         }
+
+        View btnAppLanguage = findViewById(R.id.btnAppLanguage);
+        if (btnAppLanguage instanceof TextView) {
+            ((TextView) btnAppLanguage).setText(langDisplayName(getCurrentLanguage()));
+            btnAppLanguage.setOnClickListener(this::showLanguageMenu);
+        }
+
+        View btnThemeToggle = findViewById(R.id.btnThemeToggle);
+        if (btnThemeToggle != null) {
+            btnThemeToggle.setOnClickListener(v -> toggleTheme());
+        }
+    }
+
+    /** Dropdown chọn ngôn ngữ giao diện (Tiếng Việt / English), dùng chung login & Profile. */
+    public void showLanguageMenu(View anchor) {
+        android.widget.PopupMenu menu = new android.widget.PopupMenu(this, anchor);
+        menu.getMenu().add(0, 0, 0, "Tiếng Việt");
+        menu.getMenu().add(0, 1, 1, "English");
+        menu.setOnMenuItemClickListener(item -> {
+            changeLanguage(item.getItemId() == 0 ? LocaleManager.LANG_VI : LocaleManager.LANG_EN);
+            return true;
+        });
+        menu.show();
+    }
+
+    protected String langDisplayName(String code) {
+        return LocaleManager.LANG_VI.equals(code) ? "Tiếng Việt" : "English";
     }
 
     protected void syncLangToggleUI(TextView btnVI, TextView btnEN) {
@@ -87,26 +145,16 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     protected abstract void setupViews();
     protected abstract void observeViewModel();
 
-    // ── Helper methods ─────────────────────────────────────────────
     public void toggleTheme() {
         int newMode = themeManager.isDark(this) ? ThemeManager.LIGHT : ThemeManager.DARK;
         themeManager.setTheme(newMode);
         recreate();
     }
 
-    /**
-     * Changes the application language and restarts the app task stack.
-     * Step 5: After changing language, restart all app stack.
-     */
     public void changeLanguage(String langCode) {
         if (localeManager != null) {
+            // setApplicationLocales tự recreate toàn bộ Activity của app → đồng bộ ngay.
             localeManager.setLocale(this, langCode);
-            
-            // Restart entire app task stack
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
         }
     }
 

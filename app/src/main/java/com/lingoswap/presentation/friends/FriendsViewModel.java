@@ -41,8 +41,6 @@ public class FriendsViewModel extends ViewModel {
         loadAll();
     }
 
-    // ── Load ─────────────────────────────────────────────────────────────────
-
     public void loadAll() {
         loadFriends();
         loadFriendRequests();
@@ -75,16 +73,12 @@ public class FriendsViewModel extends ViewModel {
         });
     }
 
-    // ── Search ────────────────────────────────────────────────────────────────
-
     public void searchNewUsers(String query) {
         if (query == null || query.trim().isEmpty()) {
             searchResults.setValue(new ArrayList<>());
             return;
         }
         isLoading.setValue(true);
-
-        // FIX: dùng SearchUserResponse thay vì Map<String, Object>
         userRepository.searchUsers(query.trim(), 1, 20,
                 new RepositoryCallback<SearchUserResponse>() {
                     @Override
@@ -115,8 +109,6 @@ public class FriendsViewModel extends ViewModel {
         });
     }
 
-    // ── Filter ────────────────────────────────────────────────────────────────
-
     public void filterFriends(int tab, String query) {
         if (tab == 2) {
             List<Friend> requestList = new ArrayList<>();
@@ -143,8 +135,6 @@ public class FriendsViewModel extends ViewModel {
         if (name == null) return false;
         return name.toLowerCase().contains(query.toLowerCase().trim());
     }
-
-    // ── Actions ───────────────────────────────────────────────────────────────
 
     public void acceptFriendRequest(String friendshipId) {
         repository.respondFriendRequest(friendshipId, "accept",

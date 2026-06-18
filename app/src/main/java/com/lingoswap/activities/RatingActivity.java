@@ -57,7 +57,6 @@ public class RatingActivity extends AppCompatActivity {
         partnerId   = getIntent().getStringExtra("partnerId");
         partnerName = getIntent().getStringExtra("partnerName");
 
-        // ── Hiển thị thời lượng ────────────────────────────────────
         TextView tvSessionTime = findViewById(R.id.tvSessionTime);
         if (tvSessionTime != null) {
             int mins = callDuration / 60;
@@ -65,19 +64,16 @@ public class RatingActivity extends AppCompatActivity {
             tvSessionTime.setText(String.format("%02d:%02d", mins, secs));
         }
 
-        // ── Hiển thị tên partner ───────────────────────────────────
         TextView tvPartnerName = findViewById(R.id.tvPartnerName);
         if (tvPartnerName != null) {
             tvPartnerName.setText(partnerName != null ? partnerName : "Partner");
         }
 
-        // ── Stars ──────────────────────────────────────────────────
         LinearLayout starsOverall = findViewById(R.id.starsOverall);
         LinearLayout starsPartner = findViewById(R.id.starsPartner);
         setupStars(starsOverall, rating -> ratingOverall = rating);
         setupStars(starsPartner, rating -> ratingPartner = rating);
 
-        // ── Chips ──────────────────────────────────────────────────
         int[] chipIds = {
             R.id.chipFriendly, R.id.chipPatient, R.id.chipPronunciation,
             R.id.chipVocabulary, R.id.chipEasyToUnderstand, R.id.chipEnthusiastic
@@ -87,10 +83,8 @@ public class RatingActivity extends AppCompatActivity {
             if (chip != null) chip.setOnClickListener(v -> toggleChip(chip));
         }
 
-        // ── Nút Kết bạn ───────────────────────────────────────────
         Button btnAddFriend = findViewById(R.id.btnAddFriend);
         if (btnAddFriend != null) {
-            // Ẩn nếu không có partnerId
             if (partnerId == null) {
                 btnAddFriend.setVisibility(View.GONE);
             } else {
@@ -99,7 +93,6 @@ public class RatingActivity extends AppCompatActivity {
             }
         }
 
-        // ── Nút Skip / Submit ──────────────────────────────────────
         Button btnSkip   = findViewById(R.id.btnSkip);
         Button btnSubmit = findViewById(R.id.btnSubmitReview);
         EditText etComments = findViewById(R.id.etComments);
@@ -118,8 +111,6 @@ public class RatingActivity extends AppCompatActivity {
         }
     }
 
-    // ── Kết bạn ───────────────────────────────────────────────────────────────
-
     private void sendFriendRequest(Button btn) {
         btn.setEnabled(false);
         btn.setText("Đang gửi...");
@@ -130,13 +121,17 @@ public class RatingActivity extends AppCompatActivity {
                     public void onResponse(@NonNull Call<ApiResponse> call,
                                            @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful()) {
-                            btn.setText("✓ Đã gửi lời mời");
+                            btn.setText("Đã gửi lời mời");
+                            btn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                            btn.setCompoundDrawablePadding(8);
                             Toast.makeText(RatingActivity.this,
                                     "Đã gửi lời mời kết bạn tới " + partnerName,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             btn.setEnabled(true);
-                            btn.setText("+ Kết bạn");
+                            btn.setText("Kết bạn");
+                            btn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+                            btn.setCompoundDrawablePadding(8);
                             // Nếu đã là bạn bè hoặc đã gửi rồi
                             Toast.makeText(RatingActivity.this,
                                     "Đã gửi lời mời trước đó hoặc đã là bạn bè",
@@ -147,14 +142,14 @@ public class RatingActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                         btn.setEnabled(true);
-                        btn.setText("+ Kết bạn");
+                        btn.setText("Kết bạn");
+                        btn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+                        btn.setCompoundDrawablePadding(8);
                         Toast.makeText(RatingActivity.this,
                                 "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
-    // ── Submit review ─────────────────────────────────────────────────────────
 
     private void submitReview(int rating, String comment) {
         if (sessionId == null) { goHome(); return; }
@@ -179,8 +174,6 @@ public class RatingActivity extends AppCompatActivity {
             }
         });
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void setupStars(LinearLayout container, StarCallback callback) {
         if (container == null) return;

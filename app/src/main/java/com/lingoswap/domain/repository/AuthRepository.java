@@ -10,6 +10,7 @@ public interface AuthRepository {
     void login(String email, String password, RepositoryCallback<AuthResponse> callback);
     void register(RegisterRequest request, RepositoryCallback<AuthResponse> callback);
     void logout(RepositoryCallback<Void> callback);
+    void changePassword(String currentPassword, String newPassword, RepositoryCallback<ApiResponse> callback);
     void forgotPassword(String email, RepositoryCallback<ApiResponse> callback);
     void resetPassword(ResetPasswordRequest request, RepositoryCallback<ApiResponse> callback);
 }

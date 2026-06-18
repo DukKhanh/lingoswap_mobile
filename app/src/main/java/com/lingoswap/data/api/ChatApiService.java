@@ -16,7 +16,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ChatApiService {
-    @GET("api/user/conversations/all")
+    @GET("api/user/conversations")
     Call<List<Conversation>> getAllConversations();
 
     @GET("api/user/conversations/{conversationId}")
@@ -27,7 +27,7 @@ public interface ChatApiService {
     );
 
     @Multipart
-    @POST("api/user/conversations/upload-image")
+    @POST("api/user/conversations/images")
     Call<Message> uploadImage(
         @Part MultipartBody.Part image,
         @Part("partnerId") RequestBody partnerId,

@@ -19,12 +19,12 @@ public interface NotificationApiService {
         @Query("limit") int limit
     );
 
-    @GET("api/user/notifications/unread-count")
+    @GET("api/user/notifications/unread/count")
     Call<Map<String, Integer>> getUnreadCount();
 
-    @PATCH("api/user/notifications/{notificationId}/read")
+    @PATCH("api/user/notifications/{notificationId}/status")
     Call<ApiResponse> markAsRead(@Path("notificationId") String notifId);
 
-    @PATCH("api/user/notifications/read-all")
+    @PATCH("api/user/notifications")
     Call<ApiResponse> markAllAsRead();
 }

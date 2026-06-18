@@ -2,10 +2,7 @@ package com.lingoswap.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Model cuộc hội thoại — khớp với response của getAllConversation()
- * trong conversation.service.js (đã được enrich partner + lastMessage).
- */
+/** Model cuộc hội thoại — khớp với response của getAllConversation() (đã enrich partner + lastMessage). */
 public class Conversation {
 
     @SerializedName("_id")
@@ -21,14 +18,10 @@ public class Conversation {
     @SerializedName("updatedAt")
     private Message.TimestampField updatedAt;
 
-    // ── Getters ───────────────────────────────────────────────────────────────
-
     public String getId()               { return id; }
     public Partner getPartner()         { return partner; }
     public LastMessage getLastMessage() { return lastMessage; }
     public Message.TimestampField getUpdatedAt() { return updatedAt; }
-
-    // ── Nested: Partner ───────────────────────────────────────────────────────
 
     public static class Partner {
         @SerializedName("_id")
@@ -75,8 +68,6 @@ public class Conversation {
         public String getAvatar()   { return avatar; }
     }
 
-    // ── Nested: LastMessage ───────────────────────────────────────────────────
-
     public static class LastMessage {
         @SerializedName("content")
         private String content;
@@ -88,8 +79,15 @@ public class Conversation {
         public Message.TimestampField getTime() { return time; }
 
         public String getPreview() {
-            if (content == null) return "";
-            return content.length() > 50 ? content.substring(0, 50) + "…" : content;
+            if (content == null || content.trim().isEmpty()) return "";
+            String c = content.trim();
+            // Tin ảnh lưu content = URL ảnh (Cloudinary/uploads) → hiển thị gọn.
+            // Bắt cả dữ liệu rác cũ ("android.widget.ImageView") sót từ bản build trước.
+            boolean isImage = c.startsWith("http://") || c.startsWith("https://")
+                    || c.contains("/uploads/") || c.contains("cloudinary")
+                    || c.equals("android.widget.ImageView");
+            if (isImage) return "[Hình ảnh]";
+            return c.length() > 50 ? c.substring(0, 50) + "…" : c;
         }
     }
 }

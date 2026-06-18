@@ -75,8 +75,8 @@ public class FriendAdapter extends ListAdapter<Friend, FriendAdapter.ViewHolder>
         private final LinearLayout layoutRequestActions;
         private final ImageView   btnChat;
         private final ImageView   btnCall;
-        private final TextView    btnAccept; // Chuyển sang TextView
-        private final TextView    btnReject; // Chuyển sang TextView
+        private final TextView    btnAccept;
+        private final TextView    btnReject;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -113,7 +113,7 @@ public class FriendAdapter extends ListAdapter<Friend, FriendAdapter.ViewHolder>
                 tvInitial.setVisibility(View.GONE);
                 ivAvatar.setVisibility(View.VISIBLE);
                 Glide.with(itemView.getContext())
-                        .load(avatarUrl)
+                        .load(com.lingoswap.utils.ImageUtils.normalizeAvatar(avatarUrl))
                         .circleCrop()
                         .placeholder(R.drawable.bg_avatar)
                         .into(ivAvatar);

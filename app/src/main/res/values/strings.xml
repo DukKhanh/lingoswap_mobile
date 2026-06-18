@@ -68,7 +68,7 @@
     <string name="back_to_sign_in">← Back to sign in</string>
 
     <string name="reset_subtitle">RESET PASSWORD</string>
-    <string name="reset_otp_sent">📧 OTP sent to your email</string>
+    <string name="reset_otp_sent">OTP sent to your email</string>
     <string name="reset_label_otp">OTP CODE</string>
     <string name="reset_hint_otp">Enter 6-digit code</string>
     <string name="reset_resend_in">Resend in</string>
@@ -84,7 +84,7 @@
     <string name="new_password">NEW PASSWORD</string>
     <string name="confirm_new_password">CONFIRM NEW PASSWORD</string>
     <string name="reset_password">Reset password</string>
-    <string name="otp_sent">📧 OTP sent to your email</string>
+    <string name="otp_sent">OTP sent to your email</string>
     <string name="resend_in">Resend in</string>
     <string name="resend_code">Resend code</string>
 
@@ -104,6 +104,18 @@
     <string name="home_tab_online">Online</string>
     <string name="home_empty_friends">No friends in this list</string>
     <string name="home_sessions_count">%1$s · %2$d sessions</string>
+    <string name="home_greeting_default">Welcome back </string>
+    <string name="home_stat_streak">Day streak</string>
+    <string name="home_stat_hours">Total hours</string>
+    <string name="home_stat_sessions">Sessions</string>
+    <string name="home_streak_value">%1$d</string>
+    <string name="btn_language">Language</string>
+    <string name="btn_theme">Theme</string>
+    <string name="reset_otp_sent_plain">An OTP has been sent to your email</string>
+    <string name="home_hours_value">%1$.1fh</string>
+    <string name="home_calendar_title">Learning calendar</string>
+    <string name="home_calendar_week">Week</string>
+    <string name="home_calendar_month">Month</string>
 
     <string name="lingoswap">LingoSwap</string>
     <string name="search_friends">Search friends…</string>
@@ -134,6 +146,35 @@
     <string name="nav_match">Match</string>
     <string name="nav_chat">Chat</string>
     <string name="nav_profile">Profile</string>
+    <string name="nav_notifications">Notifications</string>
+
+    <!-- ── Notifications ─────────────────────── -->
+    <string name="notif_title">Notifications</string>
+    <string name="notif_mark_all">Mark all read</string>
+    <string name="notif_empty">No notifications yet</string>
+    <string name="conv_empty">No conversations yet.\nStart chatting with your friends!</string>
+
+    <!-- ── Report ────────────────────────────── -->
+    <string name="report_title">Report violation</string>
+    <string name="report_reason_label">REASON</string>
+    <string name="report_reason_spam">Spam</string>
+    <string name="report_reason_harass">Harassment</string>
+    <string name="report_reason_inappropriate">Inappropriate language</string>
+    <string name="report_reason_impersonation">Impersonation</string>
+    <string name="report_reason_other">Other</string>
+    <string name="report_desc_hint">Describe the issue…</string>
+    <string name="report_submit">Submit report</string>
+
+    <!-- ── Calls ─────────────────────────────── -->
+    <string name="call_incoming">Incoming call…</string>
+    <string name="call_outgoing">Calling…</string>
+    <string name="call_connecting">Connecting…</string>
+    <string name="call_accept">Accept</string>
+    <string name="call_reject">Decline</string>
+    <string name="call_cancel">Cancel</string>
+    <string name="call_rejected">User declined the call</string>
+    <string name="call_error_offline">Partner is currently offline.</string>
+    <string name="call_use_buttons">Use the buttons to accept or decline</string>
 
     <!-- ── Chat ──────────────────────────────── -->
     <string name="chat_hint">Type a message…</string>
@@ -148,12 +189,12 @@
     <string name="matching_title">Finding match…</string>
     <string name="matching_sub">Looking for someone to practice %1$s with</string>
     <string name="matching_waiting">Waiting %1$ss</string>
-    <string name="matching_tip">💡 Tip: Be ready to start a conversation!</string>
+    <string name="matching_tip">Tip: Be ready to start a conversation!</string>
     <string name="matching_cancel">Cancel search</string>
 
     <string name="finding_match">Finding match…</string>
     <string name="waiting">Waiting 1s</string>
-    <string name="tip_text">💡 Tip: Be ready to start a conversation!</string>
+    <string name="tip_text">Tip: Be ready to start a conversation!</string>
     <string name="cancel_search">Cancel search</string>
 
     <!-- ── Video Call ─────────────────────────── -->
@@ -199,6 +240,11 @@
     <string name="profile_photo_hint">Tap to change photo (JPG, PNG, max 2MB)</string>
     <string name="profile_stat_learning">LEARNING LANGUAGE</string>
     <string name="profile_stat_level">PROFICIENCY LEVEL</string>
+    <string name="profile_stat_streak">STREAK</string>
+    <string name="profile_stat_sessions">SESSIONS</string>
+    <string name="profile_btn_logout">Log out</string>
+    <string name="profile_logout_confirm_title">Log out</string>
+    <string name="profile_logout_confirm_msg">Are you sure you want to log out?</string>
     <string name="profile_edit_title">Edit Profile</string>
     <string name="profile_label_name">FULL NAME</string>
     <string name="profile_label_bio">BIO</string>
@@ -207,8 +253,8 @@
     <string name="profile_btn_save">Save changes</string>
     <string name="profile_settings_title">General settings</string>
     <string name="profile_appearance">APPEARANCE</string>
-    <string name="profile_light">☀️ Light</string>
-    <string name="profile_dark">🌙 Dark</string>
+    <string name="profile_light">Light</string>
+    <string name="profile_dark">Dark</string>
     <string name="profile_default_lang">DEFAULT LANGUAGE</string>
     <string name="profile_btn_save_settings">Save settings</string>
     <string name="profile_change_pw_title">Change password</string>
@@ -269,16 +315,15 @@
     <string name="empty_friends">No friends yet</string>
     <string name="empty_friend_requests">No friend requests</string>
 
-    <!-- ── Additions ────────────────────────────── -->
-    <string name="sign_in_subtitle">Kết nối và học ngôn ngữ qua video</string>
+    <string name="sign_in_subtitle">Connect and learn languages through video</string>
     <string name="label_email">Email</string>
-    <string name="label_password">Mật khẩu</string>
+    <string name="label_password">Password</string>
     <string name="hint_email">example@email.com</string>
-    <string name="hint_password">Nhập mật khẩu</string>
-    <string name="label_forgot_password">Quên mật khẩu?</string>
-    <string name="btn_sign_in">Đăng nhập</string>
-    <string name="btn_google_sign_in">Tiếp tục bằng Google</string>
-    <string name="label_no_account">Chưa có tài khoản?</string>
-    <string name="label_sign_up">Đăng ký</string>
+    <string name="hint_password">Enter your password</string>
+    <string name="label_forgot_password">Forgot password?</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="btn_google_sign_in">Continue with Google</string>
+    <string name="label_no_account">Don\'t have an account?</string>
+    <string name="label_sign_up">Sign up</string>
     <string name="google_web_client_id" translatable="false">1049718914177-qh0j536nrkiusgcm1oo4jg6q85pvdmme.apps.googleusercontent.com</string>
 </resources>

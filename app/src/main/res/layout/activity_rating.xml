@@ -25,7 +25,6 @@
                 android:orientation="vertical"
                 android:padding="22dp">
 
-                <!-- Title -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,7 +44,6 @@
                     android:gravity="center"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Partner Name -->
                 <TextView
                     android:id="@+id/tvPartnerName"
                     android:layout_width="match_parent"
@@ -57,7 +55,6 @@
                     android:gravity="center"
                     android:layout_marginBottom="4dp"/>
 
-                <!-- Session Timer -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:gravity="center" android:orientation="horizontal" android:layout_marginBottom="12dp">
                     <ImageView android:layout_width="12dp" android:layout_height="12dp"
@@ -68,23 +65,24 @@
                         android:text="00:00" android:textColor="@color/text_light" android:textSize="12sp"/>
                 </LinearLayout>
 
-                <!-- Add Friend Button -->
                 <Button
                     android:id="@+id/btnAddFriend"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_gravity="center"
-                    android:text="+ Kết bạn"
+                    android:text="Kết bạn"
                     android:textSize="12sp"
                     android:textAllCaps="false"
                     android:textColor="@color/blue"
                     android:background="@drawable/bg_btn_outline"
+                    android:backgroundTint="@null"
+                    android:drawablePadding="6dp"
+                    app:drawableStartCompat="@drawable/ic_add"
+                    app:drawableTint="@color/blue"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:layout_marginBottom="20dp"
-                    style="?android:attr/borderlessButtonStyle" />
+                    android:layout_marginBottom="20dp" />
 
-                <!-- Rating Section 1: Overall -->
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:background="@color/border_light"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -114,7 +112,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Rating Section 2: Partner Skills -->
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:background="@color/border_light"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -144,13 +141,11 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Chips: What stood out -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="@string/rating_what_stood_out" android:textColor="@color/text_muted"
                     android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Flexbox-like flow for chips -->
                 <com.google.android.material.chip.ChipGroup
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -202,7 +197,6 @@
 
                 </com.google.android.material.chip.ChipGroup>
 
-                <!-- Comments -->
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="@string/rating_label_comments"
                     android:textColor="@color/text_muted" android:textSize="11sp"
@@ -222,7 +216,6 @@
                     android:textColor="@color/text_dark"
                     android:layout_marginBottom="20dp"/>
 
-                <!-- Action Buttons -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnSkip"

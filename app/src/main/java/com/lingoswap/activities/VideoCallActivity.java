@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -16,9 +17,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.lingoswap.R;
+import com.lingoswap.data.api.UserApiService;
+import com.lingoswap.data.model.User;
+import com.lingoswap.utils.ImageUtils;
 import com.lingoswap.utils.SocketManager;
 import com.lingoswap.utils.WebRtcManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import org.json.JSONObject;
 import org.webrtc.EglBase;
@@ -44,39 +53,39 @@ public class VideoCallActivity extends AppCompatActivity {
     private static final String TAG = "VideoCallActivity";
 
     @Inject SocketManager socketManager;
+    @Inject UserApiService userApiService;
 
     private WebRtcManager webRtcManager;
     private EglBase eglBase;
 
-    // Intent data
     private String sessionId;
     private String partnerId;
     private String partnerName;
     private String language;
     private boolean isCaller = false;
 
-    // UI
     private boolean isMuted     = false;
     private boolean isCameraOff = false;
     private boolean isChatVisible = true;
     private final List<String> iceCandidateQueue = new ArrayList<>();
     private volatile boolean remoteDescriptionSet = false;
-    private TextView tvMuteIcon, tvCameraIcon;
+    private volatile boolean remoteAttached = false;
+    private io.socket.emitter.Emitter.Listener receiveMessageListener;
+    private ImageView tvMuteIcon, tvCameraIcon;
     private LinearLayout chatPanel, chatMessages;
     private ScrollView scrollChat;
     private EditText etChatInput;
 
-    // Timer
     private TextView tvCallTimer;
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
     private int elapsedSeconds = 0;
     private Runnable timerRunnable;
 
-    // Video views
     private SurfaceViewRenderer localVideoView;
     private SurfaceViewRenderer remoteVideoView;
+    private ImageView imgPartnerAvatar;
+    private TextView tvPartnerName;
 
-    // Heartbeat
     private static final long HEARTBEAT_INTERVAL_MS = 30_000L; // 30s — dưới ngưỡng 90s của server
     private final Handler heartbeatHandler = new Handler(Looper.getMainLooper());
     private Runnable heartbeatRunnable;
@@ -116,7 +125,7 @@ public class VideoCallActivity extends AppCompatActivity {
         startHeartbeat();
 
         if (isCaller) {
-            // ✅ Fix — tăng lên 2500ms và kiểm tra socket còn connected không
+            // Chờ socket ổn định rồi mới tạo offer
             timerHandler.postDelayed(() -> {
                 if (!isFinishing() && webRtcManager != null) {
                     if (!socketManager.isConnected()) {
@@ -133,9 +142,10 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        localVideoView  = findViewById(R.id.localVideoView);
-        remoteVideoView = findViewById(R.id.remoteVideoView);
-        tvCallTimer     = findViewById(R.id.tvCallTimer);
+        localVideoView   = findViewById(R.id.localVideoView);
+        remoteVideoView  = findViewById(R.id.remoteVideoView);
+        imgPartnerAvatar = findViewById(R.id.imgPartnerAvatar);
+        tvCallTimer      = findViewById(R.id.tvCallTimer);
         tvMuteIcon      = findViewById(R.id.tvMuteIcon);
         tvCameraIcon    = findViewById(R.id.tvCameraIcon);
         chatPanel       = findViewById(R.id.chatPanel);
@@ -143,11 +153,12 @@ public class VideoCallActivity extends AppCompatActivity {
         scrollChat      = findViewById(R.id.scrollChat);
         etChatInput     = findViewById(R.id.etChatInput);
 
-        TextView tvPartnerName = findViewById(R.id.tvPartnerName);
+        tvPartnerName = findViewById(R.id.tvPartnerName);
         if (tvPartnerName != null) tvPartnerName.setText(
-                partnerName != null ? partnerName : "Partner");
+                partnerName != null ? partnerName : getString(R.string.video_connecting));
 
-        // Buttons
+        loadPartnerInfo();
+
         LinearLayout btnMute       = findViewById(R.id.btnMute);
         LinearLayout btnStopVideo  = findViewById(R.id.btnStopVideo);
         LinearLayout btnToggleChat = findViewById(R.id.btnToggleChat);
@@ -166,6 +177,31 @@ public class VideoCallActivity extends AppCompatActivity {
                 return true;
             });
         }
+    }
+
+    private void loadPartnerInfo() {
+        if (partnerId == null) return;
+        userApiService.getPublicProfile(partnerId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (isFinishing() || response.body() == null || response.body().getProfile() == null) return;
+                String name   = response.body().getProfile().getFullName();
+                String avatar = response.body().getProfile().getAvatar();
+                if (tvPartnerName != null && name != null && !name.isEmpty()) {
+                    tvPartnerName.setText(name);
+                }
+                if (imgPartnerAvatar != null && avatar != null && !avatar.isEmpty()) {
+                    Glide.with(VideoCallActivity.this)
+                            .load(ImageUtils.normalizeAvatar(avatar))
+                            .circleCrop()
+                            .into(imgPartnerAvatar);
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.w(TAG, "loadPartnerInfo failed: " + t.getMessage());
+            }
+        });
     }
 
     private void initWebRtc() {
@@ -208,10 +244,11 @@ public class VideoCallActivity extends AppCompatActivity {
             @Override
             public void onRemoteVideoTrackReceived(VideoTrack videoTrack) {
                 runOnUiThread(() -> {
-                    if (remoteVideoView != null) {
-                        webRtcManager.attachRemoteView(videoTrack, remoteVideoView);
-                        Log.d(TAG, "Remote video attached");
-                    }
+                    if (isFinishing() || remoteAttached || remoteVideoView == null || webRtcManager == null) return;
+                    remoteAttached = true;
+                    webRtcManager.attachRemoteView(videoTrack, remoteVideoView);
+                    if (imgPartnerAvatar != null) imgPartnerAvatar.setVisibility(View.GONE);
+                    Log.d(TAG, "Remote video attached");
                 });
             }
 
@@ -230,51 +267,46 @@ public class VideoCallActivity extends AppCompatActivity {
 
     private void registerSocketListeners() {
         socketManager.onWebRtcOffer(args -> {
-            if (isCaller) return;
+            if (isCaller || webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data  = (JSONObject) args[0];
                 String offerJson = data.getJSONObject("offer").toString();
                 webRtcManager.setRemoteOffer(offerJson);
 
-                // ✅ FIX: Đánh dấu remote SDP đã set, flush queue trước khi createAnswer
                 remoteDescriptionSet = true;
                 flushIceCandidateQueue();
 
                 webRtcManager.createAnswer();
-                Log.d(TAG, "Received offer, created answer");
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_offer error: " + e.getMessage());
             }
         });
 
         socketManager.onWebRtcAnswer(args -> {
-            if (!isCaller) return;
+            if (!isCaller || webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data   = (JSONObject) args[0];
                 String answerJson = data.getJSONObject("answer").toString();
                 webRtcManager.setRemoteAnswer(answerJson);
 
-                // ✅ FIX: Đánh dấu remote SDP đã set, flush queue
                 remoteDescriptionSet = true;
                 flushIceCandidateQueue();
-
-                Log.d(TAG, "Remote answer set");
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_answer error: " + e.getMessage());
             }
         });
 
         socketManager.onIceCandidate(args -> {
+            if (webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data      = (JSONObject) args[0];
                 String candidateJson = data.getJSONObject("candidate").toString();
 
-                // ✅ FIX: Nếu remote SDP chưa set → queue lại, xử lý sau
+                // Remote SDP chưa set thì xếp hàng ICE để xử lý sau
                 if (remoteDescriptionSet) {
                     webRtcManager.addRemoteIceCandidate(candidateJson);
                 } else {
                     iceCandidateQueue.add(candidateJson);
-                    Log.d(TAG, "ICE candidate queued (remoteDesc chưa sẵn sàng), queue size=" + iceCandidateQueue.size());
                 }
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_ice_candidate error: " + e.getMessage());
@@ -286,7 +318,7 @@ public class VideoCallActivity extends AppCompatActivity {
             endCall();
         }));
 
-        socketManager.onReceiveMessage(args -> runOnUiThread(() -> {
+        receiveMessageListener = args -> runOnUiThread(() -> {
             try {
                 JSONObject data = (JSONObject) args[0];
                 String content  = data.optString("content", "");
@@ -296,7 +328,8 @@ public class VideoCallActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "receive_message error: " + e.getMessage());
             }
-        }));
+        });
+        socketManager.onReceiveMessage(receiveMessageListener);
     }
 
     private void unregisterSocketListeners() {
@@ -304,7 +337,7 @@ public class VideoCallActivity extends AppCompatActivity {
         socketManager.off("webrtc_answer");
         socketManager.off("webrtc_ice_candidate");
         socketManager.off("partner_disconnected");
-        socketManager.off("receive_message");
+        if (receiveMessageListener != null) socketManager.off("receive_message", receiveMessageListener);
     }
 
     private void flushIceCandidateQueue() {
@@ -319,7 +352,7 @@ public class VideoCallActivity extends AppCompatActivity {
     private void toggleMic() {
         isMuted = !isMuted;
         webRtcManager.setMicEnabled(!isMuted);
-        if (tvMuteIcon != null) tvMuteIcon.setText(isMuted ? "🔇" : "🎤");
+        if (tvMuteIcon != null) tvMuteIcon.setImageResource(isMuted ? R.drawable.ic_mic_off : R.drawable.ic_mic);
         LinearLayout btnMute = findViewById(R.id.btnMute);
         if (btnMute != null) btnMute.setBackgroundResource(
             isMuted ? R.drawable.bg_ctrl_btn_red : R.drawable.bg_ctrl_btn);
@@ -329,7 +362,7 @@ public class VideoCallActivity extends AppCompatActivity {
     private void toggleCamera() {
         isCameraOff = !isCameraOff;
         webRtcManager.setCameraEnabled(!isCameraOff);
-        if (tvCameraIcon != null) tvCameraIcon.setText(isCameraOff ? "📵" : "📹");
+        if (tvCameraIcon != null) tvCameraIcon.setImageResource(isCameraOff ? R.drawable.ic_videocam_off : R.drawable.ic_videocam);
         if (localVideoView != null) localVideoView.setVisibility(
             isCameraOff ? View.INVISIBLE : View.VISIBLE);
         LinearLayout btnStopVideo = findViewById(R.id.btnStopVideo);
@@ -376,7 +409,7 @@ public class VideoCallActivity extends AppCompatActivity {
         tvMsg.setText(message);
         tvMsg.setTextColor(isSelf
             ? android.graphics.Color.WHITE
-            : android.graphics.Color.BLACK); // Using standard colors or R.color if available
+            : android.graphics.Color.BLACK);
         tvMsg.setBackgroundResource(isSelf
             ? R.drawable.bg_btn_primary
             : R.drawable.bg_card);
@@ -439,7 +472,7 @@ public class VideoCallActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (socketManager.isConnected()) {
-                    socketManager.emit("heartbeat", null); // hoặc new JSONObject()
+                    socketManager.emit("heartbeat", null);
                     Log.d(TAG, "💓 heartbeat sent");
                 }
                 heartbeatHandler.postDelayed(this, HEARTBEAT_INTERVAL_MS);
@@ -477,14 +510,8 @@ public class VideoCallActivity extends AppCompatActivity {
             remoteVideoView = null;
         }
         if (webRtcManager != null) {
-            webRtcManager.release(); // EglBase được release bên trong này
+            webRtcManager.release();
             webRtcManager = null;
         }
-
-        // ❌ XÓA HOÀN TOÀN đoạn này — webRtcManager.release() đã làm rồi
-        // if (eglBase != null) {
-        //     eglBase.release();
-        //     eglBase = null;
-        // }
     }
 }

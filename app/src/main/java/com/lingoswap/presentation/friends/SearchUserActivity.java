@@ -98,12 +98,10 @@ public class SearchUserActivity extends AppCompatActivity {
                                     "Đã là bạn bè hoặc đã gửi lời mời trước đó",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            // Xử lý lỗi 404 hoặc các lỗi khác từ server
                             Toast.makeText(SearchUserActivity.this,
                                     "Lỗi server (" + response.code() + "): Kiểm tra lại API Route",
                                     Toast.LENGTH_LONG).show();
                         }
-                        // Refresh lại danh sách để cập nhật trạng thái nút
                         adapter.notifyDataSetChanged();
                     }
 

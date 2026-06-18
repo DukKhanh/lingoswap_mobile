@@ -32,7 +32,6 @@ public class SignInViewModel extends ViewModel {
     public LiveData<Resource<AuthResponse>> getLoginResult()       { return loginResult; }
     public LiveData<Resource<AuthResponse>> getGoogleLoginResult() { return googleLoginResult; }
 
-    /** Đăng nhập email / password */
     public void login(String email, String password) {
         loginResult.setValue(Resource.loading());
         loginUseCase.execute(email, password, new RepositoryCallback<>() {

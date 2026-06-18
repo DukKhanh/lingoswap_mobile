@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Vòng tròn nền -->
+    <path
+        android:fillColor="#C7D2FE"
+        android:pathData="M20,20m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+    <!-- Silhouette người (trắng) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,20c2.76,0 5,-2.24 5,-5s-2.24,-5 -5,-5 -5,2.24 -5,5 2.24,5 5,5zM20,22.5c-3.34,0 -10,1.67 -10,5V30h20v-2.5c0,-3.33 -6.66,-5 -10,-5z" />
+</vector>

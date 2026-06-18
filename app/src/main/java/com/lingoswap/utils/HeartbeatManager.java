@@ -9,21 +9,24 @@ import javax.inject.Singleton;
 @Singleton
 public class HeartbeatManager {
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private static final long HEARTBEAT_INTERVAL = 30000; // 30 seconds
+    private static final long HEARTBEAT_INTERVAL = 30000;
     private boolean isRunning = false;
+
+    private final SocketManager socketManager;
 
     private final Runnable heartbeatRunnable = new Runnable() {
         @Override
         public void run() {
             if (isRunning) {
-                // Heartbeat logic here (e.g., sending a ping to server via socket)
+                socketManager.emitHeartbeat();
                 handler.postDelayed(this, HEARTBEAT_INTERVAL);
             }
         }
     };
 
     @Inject
-    public HeartbeatManager() {
+    public HeartbeatManager(SocketManager socketManager) {
+        this.socketManager = socketManager;
     }
 
     public void start() {

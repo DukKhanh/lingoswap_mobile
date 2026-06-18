@@ -4,13 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Khớp với response backend GET /api/users?q=...
- * {
- *   "results": [ { _id, fullName, avatar, country, isFriend, isOnline } ],
- *   "pagination": { total, page, limit, totalPages }
- * }
- */
+/** Khớp với response backend GET /api/users?q=... */
 public class SearchUserResponse {
 
     @SerializedName("results")
@@ -21,8 +15,6 @@ public class SearchUserResponse {
 
     public List<SearchUser> getResults()   { return results;    }
     public Pagination       getPagination(){ return pagination; }
-
-    // ── SearchUser — flat object từ backend ───────────────────────────
 
     public static class SearchUser {
         @SerializedName("_id")
@@ -43,7 +35,6 @@ public class SearchUserResponse {
         @SerializedName("isOnline")
         public boolean isOnline;
 
-        // Helper cho SearchUserAdapter
         public String getId()       { return id;       }
         public String getFullName() { return fullName; }
         public String getEmail()    { return "";       } // backend không trả email trong search
@@ -51,7 +42,6 @@ public class SearchUserResponse {
         public boolean isFriend()   { return isFriend; }
         public boolean isOnline()   { return isOnline; }
 
-        // Tương thích với SearchUserAdapter đang dùng user.getProfile().getFullName()
         public Profile getProfile() {
             Profile p = new Profile();
             p.fullName = fullName;
@@ -69,8 +59,6 @@ public class SearchUserResponse {
             public String getCountry()  { return country;  }
         }
     }
-
-    // ── Pagination ────────────────────────────────────────────────────
 
     public static class Pagination {
         @SerializedName("total")      public int total;

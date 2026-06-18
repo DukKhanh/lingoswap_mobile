@@ -6,7 +6,6 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
-    <!-- ── Top Bar ─────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -17,18 +16,16 @@
         android:paddingEnd="12dp"
         android:elevation="2dp">
 
-        <!-- Back button -->
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="6dp"
-            android:src="@android:drawable/ic_media_previous"
+            android:src="@drawable/ic_chevron_left"
             android:clickable="true"
             android:focusable="true"
             app:tint="@color/text_dark" />
 
-        <!-- Partner avatar + online dot -->
         <FrameLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -45,7 +42,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"
-                    android:src="@android:drawable/sym_def_app_icon" />
+                    android:src="@drawable/ic_avatar_placeholder" />
             </androidx.cardview.widget.CardView>
 
             <View
@@ -56,7 +53,6 @@
                 android:background="@drawable/bg_online_dot" />
         </FrameLayout>
 
-        <!-- Name + typing indicator -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -82,7 +78,6 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Language tag chip -->
         <TextView
             android:id="@+id/tvLangTag"
             android:layout_width="wrap_content"
@@ -97,7 +92,18 @@
             android:textStyle="bold"
             android:layout_marginEnd="8dp" />
 
-        <!-- Video call button -->
+        <ImageView
+            android:id="@+id/btnReport"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="7dp"
+            android:layout_marginEnd="4dp"
+            android:src="@android:drawable/ic_menu_report_image"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/report_title"
+            app:tint="@color/text_muted" />
+
         <ImageView
             android:id="@+id/btnVideoCall"
             android:layout_width="36dp"
@@ -110,7 +116,6 @@
             app:tint="@color/white" />
     </LinearLayout>
 
-    <!-- ── Date Divider ─────────────── -->
     <TextView
         android:id="@+id/tvDateDivider"
         android:layout_width="wrap_content"
@@ -127,7 +132,6 @@
         android:textColor="@color/text_muted"
         android:textSize="11sp" />
 
-    <!-- ── Message List ───────────────────────────────────────────── -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
         android:layout_width="match_parent"
@@ -140,7 +144,6 @@
         android:paddingBottom="8dp"
         android:scrollbars="none" />
 
-    <!-- ── Translate Tip Bar ────────────── -->
     <LinearLayout
         android:id="@+id/layoutTranslateTip"
         android:layout_width="match_parent"
@@ -150,11 +153,11 @@
         android:orientation="horizontal"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🌐"
-            android:textSize="14sp"
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_globe"
+            app:tint="@color/text_muted"
             android:layout_marginEnd="6dp" />
 
         <TextView
@@ -177,7 +180,6 @@
             app:tint="@color/text_muted" />
     </LinearLayout>
 
-    <!-- ── Input Bar ─────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

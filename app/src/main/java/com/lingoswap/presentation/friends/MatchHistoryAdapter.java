@@ -54,7 +54,7 @@ public class MatchHistoryAdapter
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivAvatar;
         TextView  tvInitial, tvPartnerName, tvLanguage, tvDuration;
-        TextView  btnAddFriend; // Chuyển từ Button sang TextView
+        TextView  btnAddFriend;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,15 +75,16 @@ public class MatchHistoryAdapter
             tvInitial.setText(name.isEmpty() ? "?" :
                     String.valueOf(name.charAt(0)).toUpperCase());
             tvLanguage.setText(session.language != null ? session.language : "");
-            tvDuration.setText("⏱ " + session.getFormattedDuration());
+            tvDuration.setText(session.getFormattedDuration());
+            tvDuration.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_timer, 0, 0, 0);
+            tvDuration.setCompoundDrawablePadding(6);
 
-            // Avatar
             if (avatar != null && !avatar.isEmpty()
                     && !avatar.equals("default_avatar.png")) {
                 tvInitial.setVisibility(View.GONE);
                 ivAvatar.setVisibility(View.VISIBLE);
                 Glide.with(itemView.getContext())
-                        .load(avatar)
+                        .load(com.lingoswap.utils.ImageUtils.normalizeAvatar(avatar))
                         .circleCrop()
                         .placeholder(R.drawable.bg_avatar)
                         .into(ivAvatar);
@@ -92,7 +93,6 @@ public class MatchHistoryAdapter
                 tvInitial.setVisibility(View.VISIBLE);
             }
 
-            // Nút kết bạn — disable nếu partner null
             if (partner == null || partner.id == null) {
                 btnAddFriend.setVisibility(View.GONE);
                 return;
@@ -100,7 +100,9 @@ public class MatchHistoryAdapter
 
             btnAddFriend.setVisibility(View.VISIBLE);
             btnAddFriend.setEnabled(true);
-            btnAddFriend.setText("+ Kết bạn");
+            btnAddFriend.setText("Kết bạn");
+            btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+            btnAddFriend.setCompoundDrawablePadding(6);
             btnAddFriend.setAlpha(1f);
             btnAddFriend.setOnClickListener(v -> {
                 btnAddFriend.setEnabled(false);
@@ -109,9 +111,10 @@ public class MatchHistoryAdapter
             });
         }
 
-        /** Gọi sau khi gửi lời mời thành công */
         public void markAsSent() {
-            btnAddFriend.setText("✓ Đã gửi");
+            btnAddFriend.setText("Đã gửi");
+            btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+            btnAddFriend.setCompoundDrawablePadding(6);
             btnAddFriend.setEnabled(false);
             btnAddFriend.setAlpha(0.6f);
         }

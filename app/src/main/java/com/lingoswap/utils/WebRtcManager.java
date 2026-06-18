@@ -57,6 +57,7 @@ public class WebRtcManager {
     private VideoTrack localVideoTrack;
     private AudioTrack localAudioTrack;
     private VideoCapturer videoCapturer;
+    private SurfaceTextureHelper surfaceTextureHelper;
     private EglBase eglBase;
 
     private final Callback callback;
@@ -96,10 +97,10 @@ public class WebRtcManager {
 
         videoCapturer = createVideoCapturer();
         if (videoCapturer != null) {
-            SurfaceTextureHelper helper = SurfaceTextureHelper.create(
+            surfaceTextureHelper = SurfaceTextureHelper.create(
                 "CaptureThread", eglBase.getEglBaseContext());
             videoSource = factory.createVideoSource(videoCapturer.isScreencast());
-            videoCapturer.initialize(helper, localView.getContext(), videoSource.getCapturerObserver());
+            videoCapturer.initialize(surfaceTextureHelper, localView.getContext(), videoSource.getCapturerObserver());
             videoCapturer.startCapture(1280, 720, 30);
 
             localVideoTrack = factory.createVideoTrack("local_video", videoSource);
@@ -142,8 +143,9 @@ public class WebRtcManager {
 
             @Override
             public void onAddStream(MediaStream stream) {
+                // Plan-B fallback; với UNIFIED_PLAN remote track về qua onAddTrack().
                 if (stream.videoTracks.size() > 0) {
-                    Log.d(TAG, "Remote video stream received");
+                    Log.d(TAG, "Remote video stream received (onAddStream)");
                     callback.onRemoteVideoTrackReceived(stream.videoTracks.get(0));
                 }
             }
@@ -156,7 +158,13 @@ public class WebRtcManager {
                 }
             }
 
-            @Override public void onAddTrack(RtpReceiver receiver, MediaStream[] streams) {}
+            @Override public void onAddTrack(RtpReceiver receiver, MediaStream[] streams) {
+                org.webrtc.MediaStreamTrack track = receiver.track();
+                if (track instanceof VideoTrack) {
+                    Log.d(TAG, "Remote video track received (onAddTrack)");
+                    callback.onRemoteVideoTrackReceived((VideoTrack) track);
+                }
+            }
             @Override public void onTrack(RtpTransceiver transceiver) {}
             @Override public void onSignalingChange(PeerConnection.SignalingState s) {}
             @Override public void onIceConnectionChange(PeerConnection.IceConnectionState s) {}
@@ -208,6 +216,7 @@ public class WebRtcManager {
     }
 
     public void createAnswer() {
+        if (peerConnection == null) createPeerConnection();
         MediaConstraints constraints = new MediaConstraints();
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
@@ -220,6 +229,10 @@ public class WebRtcManager {
     }
 
     public void setRemoteAnswer(String sdpJson) {
+        if (peerConnection == null) {
+            Log.w(TAG, "setRemoteAnswer: peerConnection null, bỏ qua");
+            return;
+        }
         try {
             JSONObject obj = new JSONObject(sdpJson);
             String sdp     = obj.getString("sdp");
@@ -269,6 +282,7 @@ public class WebRtcManager {
                 videoCapturer.stopCapture();
                 videoCapturer.dispose();
             }
+            if (surfaceTextureHelper != null) surfaceTextureHelper.dispose();
             if (videoSource != null)  videoSource.dispose();
             if (audioSource != null)  audioSource.dispose();
             if (peerConnection != null) {

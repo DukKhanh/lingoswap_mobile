@@ -18,34 +18,27 @@ import retrofit2.http.Path;
 
 public interface FriendApiService {
 
-    // GET /api/user/friends/friends - Lấy danh sách bạn bè
-    @GET("api/user/friends/friends")
+    @GET("api/user/friends")
     Call<List<Friend>> getFriends();
 
-    // GET /api/user/friends/friends/requests - Lấy danh sách yêu cầu kết bạn
-    @GET("api/user/friends/friends/requests")
+    @GET("api/user/friends/requests")
     Call<List<FriendRequest>> getFriendRequests();
 
-    // POST /api/user/friends/friends/{recipientId}/request - Gửi yêu cầu kết bạn
-    @POST("api/user/friends/friends/{recipientId}/request")
+    @POST("api/user/friends/{recipientId}/requests")
     Call<ApiResponse> sendFriendRequest(@Path("recipientId") String recipientId);
 
-    // PATCH /api/user/friends/friends/{requestId}/response - Phản hồi yêu cầu kết bạn
-    @PATCH("api/user/friends/friends/{requestId}/response")
+    @PATCH("api/user/friends/requests/{requestId}")
     Call<ApiResponse> respondFriendRequest(
             @Path("requestId") String requestId,
             @Body Map<String, String> body
     );
 
-    // DELETE /api/user/friends/friends/{friendId} - Hủy kết bạn
-    @DELETE("api/user/friends/friends/{friendId}")
+    @DELETE("api/user/friends/{friendId}")
     Call<ApiResponse> removeFriend(@Path("friendId") String friendId);
 
-    // GET /api/user/friends/friends/{targetUserId}/status - Kiểm tra trạng thái bạn bè
-    @GET("api/user/friends/friends/{targetUserId}/status")
+    @GET("api/user/friends/{targetUserId}/status")
     Call<FriendStatusResponse> checkFriendStatus(@Path("targetUserId") String targetUserId);
 
-    // GET /api/user/friends/online-friends - Lấy danh sách bạn bè đang online
-    @GET("api/user/friends/online-friends")
+    @GET("api/user/friends/online")
     Call<Map<String, List<String>>> getOnlineFriends();
 }

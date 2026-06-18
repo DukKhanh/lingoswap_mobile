@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,42 +27,43 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class MatchingActivity extends AppCompatActivity {
 
-    private static final String TAG                = "MatchingActivity";
-    private static final long   CONNECT_TIMEOUT_MS = 6_000L;
+    private static final long CONNECT_TIMEOUT_MS = 6_000L;
 
     @Inject SocketManager   socketManager;
     @Inject UserPreferences userPreferences;
 
-    private int      waitSeconds = 0;
+    private int waitSeconds = 0;
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
     private Runnable timerRunnable;
     private TextView tvWaitTime;
-    private String   language;
+    private String language;
 
     private volatile boolean matchFound = false;
 
     private final Handler connectTimeoutHandler = new Handler(Looper.getMainLooper());
     private Runnable connectTimeoutRunnable;
 
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matching);
 
-        language = normalizeLanguage(getIntent().getStringExtra("language"));
-        Log.d(TAG, "onCreate | language=" + language
-                + " | socketConnected=" + socketManager.isConnected());
+        // Mã ngôn ngữ (en, vi, ja...) khớp với hàng đợi queue:<language> của backend.
+        language = getIntent().getStringExtra("language");
+        if (language == null || language.trim().isEmpty()) language = "en";
 
         tvWaitTime = findViewById(R.id.tvWaitTime);
         Button btnCancelSearch = findViewById(R.id.btnCancelSearch);
 
         animateRadar();
         startTimer();
-
         registerSocketListeners();
         joinQueueWhenReady();
+
+        // Nếu socket rớt rồi nối lại khi đang chờ, tự vào lại queue (tránh bị loại khỏi hàng chờ).
+        socketManager.setOnReconnect(() -> {
+            if (!matchFound) socketManager.joinMatchQueue(language);
+        });
 
         btnCancelSearch.setOnClickListener(v -> cancelSearch());
     }
@@ -71,41 +71,29 @@ public class MatchingActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy | matchFound=" + matchFound);
-
         timerHandler.removeCallbacks(timerRunnable);
-
         if (connectTimeoutRunnable != null) {
             connectTimeoutHandler.removeCallbacks(connectTimeoutRunnable);
         }
-
         socketManager.cancelPendingQueueJoin();
+        socketManager.setOnReconnect(null);
         unregisterSocketListeners();
-        if (!matchFound) {
-            socketManager.leaveQueue();
-        }
+        if (!matchFound) socketManager.leaveQueue();
     }
-
-    // ─── Queue ───────────────────────────────────────────────────────────────
 
     private void joinQueueWhenReady() {
         if (socketManager.isConnected()) {
-            Log.d(TAG, "Socket đã connected → join queue ngay");
             socketManager.joinMatchQueue(language);
         } else {
-            Log.w(TAG, "Socket chưa connected → đăng ký one-shot và bật timeout");
             startConnectTimeout();
-            socketManager.joinQueueWhenReady(language, () ->
-                    Log.d(TAG, "✅ join_queue đã được emit sau khi socket connected"));
+            socketManager.joinQueueWhenReady(language, null);
         }
     }
 
     private void startConnectTimeout() {
         connectTimeoutRunnable = () -> {
             if (!matchFound && !isFinishing() && !socketManager.isConnected()) {
-                Log.e(TAG, "⏱ Connect timeout — không thể kết nối socket");
-                Toast.makeText(this,
-                        "Không thể kết nối máy chủ. Vui lòng thử lại.",
+                Toast.makeText(this, "Không thể kết nối máy chủ. Vui lòng thử lại.",
                         Toast.LENGTH_LONG).show();
                 socketManager.cancelPendingQueueJoin();
                 finish();
@@ -114,68 +102,50 @@ public class MatchingActivity extends AppCompatActivity {
         connectTimeoutHandler.postDelayed(connectTimeoutRunnable, CONNECT_TIMEOUT_MS);
     }
 
-    // ─── Socket Listeners ─────────────────────────────────────────────────────
+    private io.socket.emitter.Emitter.Listener matchFoundListener;
 
     private void registerSocketListeners() {
-        socketManager.onMatchFound(args -> runOnUiThread(() -> {
-            Log.d(TAG, "🎯 match_found received | matchFound=" + matchFound
-                    + " | finishing=" + isFinishing());
-
+        matchFoundListener = args -> runOnUiThread(() -> {
             if (matchFound || isFinishing()) return;
             matchFound = true;
-
             if (connectTimeoutRunnable != null) {
                 connectTimeoutHandler.removeCallbacks(connectTimeoutRunnable);
             }
-
             try {
                 JSONObject data  = (JSONObject) args[0];
-                String sessionId = data.getString("sessionId");
-                String partnerId = data.getString("partnerId");
-
-                // FIX: Lấy partnerName từ server, fallback về "LingoSwap User"
+                String sessionId   = data.getString("sessionId");
+                String partnerId   = data.getString("partnerId");
                 String partnerName = data.optString("partnerName", "LingoSwap User");
+                boolean isCaller   = data.optBoolean("isCaller", false);
 
-                Log.d(TAG, "✅ Match! sessionId=" + sessionId
-                        + " | partnerId=" + partnerId
-                        + " | partnerName=" + partnerName);
-
-                boolean isCaller = data.optBoolean("isCaller", false);
-
-                Intent intent = new Intent(MatchingActivity.this, VideoCallActivity.class);
+                Intent intent = new Intent(this, VideoCallActivity.class);
                 intent.putExtra("sessionId",   sessionId);
                 intent.putExtra("partnerId",   partnerId);
-                intent.putExtra("partnerName", partnerName); // ← truyền tên
+                intent.putExtra("partnerName", partnerName);
                 intent.putExtra("language",    language);
                 intent.putExtra("isCaller",    isCaller);
                 startActivity(intent);
                 finish();
-
             } catch (Exception e) {
-                Log.e(TAG, "❌ Lỗi parse match_found: " + e.getMessage());
                 matchFound = false;
             }
-        }));
+        });
+        socketManager.onMatchFound(matchFoundListener);
 
         socketManager.onWaitingStatus(args -> runOnUiThread(() -> {
             try {
                 JSONObject data = (JSONObject) args[0];
-                String msg = data.optString("message", "Đang tìm kiếm...");
-                Log.d(TAG, "waiting_status: " + msg);
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Log.e(TAG, "Lỗi parse waiting_status: " + e.getMessage());
-            }
+                Toast.makeText(this, data.optString("message", "Đang tìm kiếm..."),
+                        Toast.LENGTH_SHORT).show();
+            } catch (Exception ignored) {}
         }));
 
         socketManager.onQueueTimeout(args -> runOnUiThread(() -> {
             if (isFinishing()) return;
             String msg = "Không tìm được đối tác. Vui lòng thử lại.";
             try {
-                JSONObject data = (JSONObject) args[0];
-                msg = data.optString("message", msg);
+                msg = ((JSONObject) args[0]).optString("message", msg);
             } catch (Exception ignored) {}
-            Log.w(TAG, "queue_timeout: " + msg);
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             finish();
         }));
@@ -183,7 +153,6 @@ public class MatchingActivity extends AppCompatActivity {
         socketManager.onMatchError(args -> runOnUiThread(() -> {
             if (isFinishing()) return;
             String msg = (args.length > 0) ? args[0].toString() : "Lỗi hệ thống";
-            Log.e(TAG, "match error: " + msg);
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             finish();
         }));
@@ -192,14 +161,13 @@ public class MatchingActivity extends AppCompatActivity {
     private void unregisterSocketListeners() {
         socketManager.off("waiting_status");
         socketManager.off("queue_timeout");
-        if (!matchFound) {
-            socketManager.off("match_found");
-            socketManager.off("error");
+        socketManager.off("error");
+        // Gỡ đúng listener match_found của màn này (không đụng màn khác)
+        if (matchFoundListener != null) {
+            socketManager.off("match_found", matchFoundListener);
+            matchFoundListener = null;
         }
-        Log.d(TAG, "unregisterSocketListeners | matchFound=" + matchFound);
     }
-
-    // ─── UI helpers ───────────────────────────────────────────────────────────
 
     private void startTimer() {
         timerRunnable = new Runnable() {
@@ -249,25 +217,8 @@ public class MatchingActivity extends AppCompatActivity {
     }
 
     private void cancelSearch() {
-        Log.d(TAG, "User huỷ tìm kiếm");
         socketManager.cancelPendingQueueJoin();
         socketManager.leaveQueue();
         finish();
-    }
-
-    // ─── Helpers ─────────────────────────────────────────────────────────────
-
-    private static String normalizeLanguage(String raw) {
-        if (raw == null || raw.isEmpty()) return "english";
-        switch (raw.toLowerCase().trim()) {
-            case "english":
-            case "japanese":
-            case "korean":
-            case "chinese":
-            case "french":
-                return raw.toLowerCase().trim();
-            default:
-                return "english";
-        }
     }
 }

@@ -35,24 +35,11 @@ public class ChatViewModel extends ViewModel {
             .registerTypeAdapter(Message.TimestampField.class, new TimestampDeserializer())
             .create();
 
-    // ── LiveData ──────────────────────────────────────────────────────────────
-
-    /** Danh sách tin nhắn lịch sử (load lần đầu) */
     private final MutableLiveData<List<Message>> messages   = new MutableLiveData<>();
-
-    /** Tin nhắn mới đến từ đối phương (socket receive_message) */
     private final MutableLiveData<Message>  incomingMessage = new MutableLiveData<>();
-
-    /** Xác nhận tin nhắn mình gửi đã được server lưu (socket message_sent_success) */
     private final MutableLiveData<Message>  sentConfirmed   = new MutableLiveData<>();
-
-    /** Lỗi (network / socket) */
     private final MutableLiveData<String>   error           = new MutableLiveData<>();
-
-    /** Trạng thái upload ảnh */
     private final MutableLiveData<Boolean>  isUploading     = new MutableLiveData<>(false);
-
-    // ── Constructor ───────────────────────────────────────────────────────────
 
     @Inject
     public ChatViewModel(ChatApiService chatApiService, SocketManager socketManager) {
@@ -61,20 +48,12 @@ public class ChatViewModel extends ViewModel {
         listenSocket();
     }
 
-    // ── Public getters ────────────────────────────────────────────────────────
-
     public LiveData<List<Message>> getMessages()        { return messages; }
     public LiveData<Message>       getIncomingMessage() { return incomingMessage; }
     public LiveData<Message>       getSentConfirmed()   { return sentConfirmed; }
     public LiveData<String>        getError()           { return error; }
     public LiveData<Boolean>       getIsUploading()     { return isUploading; }
 
-    // ── Actions ───────────────────────────────────────────────────────────────
-
-    /**
-     * Load lịch sử tin nhắn của 1 cuộc hội thoại qua REST API.
-     * @param conversationId ID cuộc hội thoại
-     */
     public void loadMessages(String conversationId) {
         chatApiService.getMessages(conversationId, 1, 50)
                 .enqueue(new Callback<List<Message>>() {
@@ -96,17 +75,35 @@ public class ChatViewModel extends ViewModel {
     }
 
     /**
-     * Gửi tin nhắn text qua Socket.IO.
-     * Kết quả phản hồi sẽ đến qua sentConfirmed LiveData.
+     * Khi mở chat từ Home/Friends (chỉ có partnerId, chưa có conversationId):
+     * tìm hội thoại khớp partnerId trong danh sách rồi tải tin nhắn.
      */
+    public void loadMessagesByPartner(String partnerId) {
+        if (partnerId == null) return;
+        chatApiService.getAllConversations().enqueue(new Callback<java.util.List<com.lingoswap.data.model.Conversation>>() {
+            @Override
+            public void onResponse(Call<java.util.List<com.lingoswap.data.model.Conversation>> call,
+                                   Response<java.util.List<com.lingoswap.data.model.Conversation>> response) {
+                if (!response.isSuccessful() || response.body() == null) return;
+                for (com.lingoswap.data.model.Conversation c : response.body()) {
+                    if (c.getPartner() != null && partnerId.equals(c.getPartner().getId())) {
+                        loadMessages(c.getId());
+                        return;
+                    }
+                }
+                // Chưa từng chat với người này → chưa có hội thoại, để trống là đúng.
+            }
+            @Override
+            public void onFailure(Call<java.util.List<com.lingoswap.data.model.Conversation>> call, Throwable t) { }
+        });
+    }
+
+    /** Gửi text qua socket; xác nhận trả về qua sentConfirmed LiveData. */
     public void sendMessage(String partnerId, String content, String matchSessionId) {
         socketManager.sendMessage(partnerId, content, matchSessionId);
     }
 
-    /**
-     * Upload ảnh qua REST API (multipart).
-     * Kết quả phản hồi đến qua sentConfirmed LiveData.
-     */
+    /** Upload ảnh qua REST (multipart); kết quả trả về qua sentConfirmed LiveData. */
     public void sendImage(MultipartBody.Part image,
                           RequestBody partnerId,
                           RequestBody matchSessionId) {
@@ -131,20 +128,21 @@ public class ChatViewModel extends ViewModel {
                 });
     }
 
-    // ── Socket listeners ──────────────────────────────────────────────────────
+    private io.socket.emitter.Emitter.Listener receiveListener;
+    private io.socket.emitter.Emitter.Listener sentListener;
 
     private void listenSocket() {
-        // Tin nhắn đến từ đối phương
-        socketManager.onReceiveMessage(args -> {
+        receiveListener = args -> {
             Message msg = parseSocketMessage(args);
             if (msg != null) incomingMessage.postValue(msg);
-        });
+        };
+        socketManager.onReceiveMessage(receiveListener);
 
-        // Xác nhận tin nhắn mình vừa gửi đã được lưu vào DB
-        socketManager.onMessageSentSuccess(args -> {
+        sentListener = args -> {
             Message msg = parseSocketMessage(args);
             if (msg != null) sentConfirmed.postValue(msg);
-        });
+        };
+        socketManager.onMessageSentSuccess(sentListener);
     }
 
     private Message parseSocketMessage(Object[] args) {
@@ -158,11 +156,11 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
-
     @Override
     protected void onCleared() {
         super.onCleared();
-        socketManager.offAll();
+        // Gỡ đúng listener của màn chat này (không đụng listener của VideoCall/màn khác).
+        if (receiveListener != null) socketManager.off("receive_message", receiveListener);
+        if (sentListener != null)    socketManager.off("message_sent_success", sentListener);
     }
 }

@@ -2,15 +2,7 @@ package com.lingoswap.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Khớp với response GET /api/user/matches
- * {
- *   _id, language, status, durationSeconds, startedAt, endedAt,
- *   partner: { _id, profile.fullName, profile.avatar },
- *   conversationId,
- *   myReview: null | { rating, comment }
- * }
- */
+/** Khớp với response GET /api/user/matches. */
 public class MatchHistoryResponse {
 
     @SerializedName("_id")
@@ -41,8 +33,6 @@ public class MatchHistoryResponse {
         int secs = durationSeconds % 60;
         return String.format("%02d:%02d", mins, secs);
     }
-
-    // ── Partner ───────────────────────────────────────────────────────────────
 
     public static class Partner {
         @SerializedName("_id")

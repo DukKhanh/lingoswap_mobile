@@ -24,11 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * AuthRepository — cầu nối giữa ViewModel và API/Socket.
- *
- * Sau login/register thành công:
- *   1. Lưu token + user vào UserPreferences
- *   2. Kết nối Socket.IO với token mới
+ * AuthRepository — sau login/register thành công sẽ lưu token rồi mới kết nối Socket.IO.
  */
 @Singleton
 public class AuthRepository {
@@ -50,8 +46,6 @@ public class AuthRepository {
         this.socketManager   = socketManager;
     }
 
-    // ── Login ─────────────────────────────────────────────────────────
-
     public void login(String email, String password, AuthCallback callback) {
         LoginRequest request = new LoginRequest(email, password);
         apiService.login(request).enqueue(new Callback<AuthResponse>() {
@@ -60,7 +54,7 @@ public class AuthRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse auth = response.body();
                     userPreferences.saveAuthResponse(auth);
-                    socketManager.connect(); // ✅ connect socket sau khi có token
+                    socketManager.connect();
                     callback.onSuccess(auth);
                 } else {
                     String msg = parseError(response);
@@ -75,8 +69,6 @@ public class AuthRepository {
             }
         });
     }
-
-    // ── Register ──────────────────────────────────────────────────────
 
     public void register(RegisterRequest request, AuthCallback callback) {
         apiService.register(request).enqueue(new Callback<AuthResponse>() {
@@ -97,8 +89,6 @@ public class AuthRepository {
             }
         });
     }
-
-    // ── Google Login ──────────────────────────────────────────────────
 
     public void googleLogin(String idToken, AuthCallback callback) {
         Map<String, String> body = new HashMap<>();
@@ -122,8 +112,6 @@ public class AuthRepository {
         });
     }
 
-    // ── Logout ────────────────────────────────────────────────────────
-
     public void logout(SimpleCallback callback) {
         apiService.logout().enqueue(new Callback<ApiResponse>() {
             @Override
@@ -143,8 +131,6 @@ public class AuthRepository {
         });
     }
 
-    // ── Forgot Password ───────────────────────────────────────────────
-
     public void forgotPassword(String email, SimpleCallback callback) {
         ForgotPasswordRequest request = new ForgotPasswordRequest(email);
         apiService.forgotPassword(request).enqueue(new Callback<ApiResponse>() {
@@ -159,8 +145,6 @@ public class AuthRepository {
             }
         });
     }
-
-    // ── Reset Password ────────────────────────────────────────────────
 
     public void resetPassword(String email, String otp, String newPassword, SimpleCallback callback) {
         ResetPasswordRequest request = new ResetPasswordRequest(email, otp, newPassword);
@@ -177,8 +161,6 @@ public class AuthRepository {
         });
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────
-
     private String parseError(Response<?> response) {
         try {
             if (response.errorBody() != null) {
@@ -190,8 +172,6 @@ public class AuthRepository {
         } catch (Exception ignored) {}
         return "Lỗi " + response.code();
     }
-
-    // ── Callback interfaces ───────────────────────────────────────────
 
     public interface AuthCallback {
         void onSuccess(AuthResponse response);

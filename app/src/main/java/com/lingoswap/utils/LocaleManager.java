@@ -1,17 +1,12 @@
 package com.lingoswap.utils;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
-import android.os.LocaleList;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 
 import com.lingoswap.data.local.UserPreferences;
 
-import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -33,54 +28,29 @@ public class LocaleManager {
         this.userPreferences = userPreferences;
     }
 
-    /**
-     * Static method to set locale and return wrapped context.
-     * Used in attachBaseContext.
-     */
-    public static Context setLocale(Context context) {
-        UserPreferences prefs = new UserPreferences(context, true);
-        String lang = prefs.getAppLanguage();
-        return applyLocale(context, lang);
-    }
+    // Locale do AppCompat quản (setApplicationLocales) nên không cần bọc context thủ công.
+    public static Context setLocale(Context context) { return context; }
+
+    public Context wrap(Context ctx) { return ctx; }
 
     public void setLocale(Context ctx, String lang) {
         userPreferences.setAppLanguage(lang);
-        
-        // Cập nhật qua AppCompatDelegate (chuẩn mới cho AppCompat 1.6+)
-        LocaleListCompat appLocales = LocaleListCompat.forLanguageTags(lang);
-        AppCompatDelegate.setApplicationLocales(appLocales);
-        
-        // Cập nhật thủ công để có hiệu lực ngay lập tức
-        applyLocale(ctx, lang);
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(lang));
     }
 
-    public Context wrap(Context ctx) {
-        return applyLocale(ctx, userPreferences.getAppLanguage());
+    /** Áp ngôn ngữ đã lưu lúc khởi động (khi AppCompat chưa có locale nào). */
+    public void applyPersisted() {
+        if (AppCompatDelegate.getApplicationLocales().isEmpty()) {
+            AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(userPreferences.getAppLanguage()));
+        }
     }
 
     public String getLanguage() {
+        LocaleListCompat locales = AppCompatDelegate.getApplicationLocales();
+        if (!locales.isEmpty() && locales.get(0) != null) {
+            return locales.get(0).getLanguage();
+        }
         return userPreferences.getAppLanguage();
-    }
-
-    private static Context applyLocale(Context ctx, String lang) {
-        Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-
-        Resources res = ctx.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocales(new LocaleList(locale));
-        } else {
-            config.setLocale(locale);
-        }
-
-        // Cập nhật Resources cho context hiện tại
-        res.updateConfiguration(config, res.getDisplayMetrics());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return ctx.createConfigurationContext(config);
-        }
-        return ctx;
     }
 }

@@ -6,7 +6,6 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
-    <!-- Lang Toggle Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,20 +54,19 @@
                 android:focusable="true"/>
         </LinearLayout>
 
-        <TextView
+        <ImageView
             android:id="@+id/tvDarkToggle"
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:background="@drawable/bg_toggle_group"
-            android:gravity="center"
+            android:padding="9dp"
             android:layout_marginStart="8dp"
-            android:text="🌙"
-            android:textSize="18sp"
+            android:src="@drawable/ic_moon"
+            app:tint="@color/text_dark"
             android:clickable="true"
             android:focusable="true"/>
     </LinearLayout>
 
-    <!-- Center content -->
     <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -79,7 +77,6 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="44dp" android:gravity="center">
 
-                <!-- Success Icon -->
                 <FrameLayout android:layout_width="64dp" android:layout_height="64dp"
                     android:background="@drawable/bg_success_icon" android:layout_marginBottom="20dp">
                     <ImageView android:layout_width="28dp" android:layout_height="28dp"

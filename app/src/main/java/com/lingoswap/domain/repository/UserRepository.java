@@ -15,7 +15,6 @@ public interface UserRepository {
     void uploadAvatar(MultipartBody.Part avatar, RepositoryCallback<Map<String, String>> callback);
     void getDashboard(RepositoryCallback<DashboardResponse> callback);
 
-    // FIX: trả SearchUserResponse thay vì Map<String, Object>
     void searchUsers(String query, int page, int limit, RepositoryCallback<SearchUserResponse> callback);
 
     void getPublicProfile(String userId, RepositoryCallback<User> callback);

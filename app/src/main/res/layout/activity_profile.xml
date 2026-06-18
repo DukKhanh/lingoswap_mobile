@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
+    android:orientation="vertical">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
     android:fillViewport="true">
 
     <LinearLayout
@@ -20,6 +26,7 @@
             android:textColor="@color/blue"
             android:textSize="13sp"
             android:layout_marginBottom="12dp"
+            android:visibility="gone"
             android:clickable="true"
             android:focusable="true"/>
 
@@ -32,7 +39,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Profile Hero Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,10 +54,13 @@
                 android:padding="24dp">
 
                 <FrameLayout
+                    android:id="@+id/flAvatar"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/bg_avatar"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
                     <TextView
                         android:id="@+id/tvHeroInitial"
                         android:layout_width="wrap_content"
@@ -61,6 +70,13 @@
                         android:textColor="@color/white"
                         android:textSize="32sp"
                         android:textStyle="bold"/>
+                    <ImageView
+                        android:id="@+id/ivAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:contentDescription="@string/profile_photo_hint"/>
                 </FrameLayout>
 
                 <TextView
@@ -104,17 +120,21 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/profile_stat_learning"
+                            android:text="@string/profile_stat_streak"
                             android:textColor="@color/text_light"
                             android:textSize="10sp"
                             android:textStyle="bold"
                             android:letterSpacing="0.06"
                             android:layout_marginBottom="3dp"/>
                         <TextView
+                            android:id="@+id/tvHeroStreak"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="—"
-                            android:textColor="@color/text_muted"
+                            android:text="0"
+                            android:drawablePadding="4dp"
+                            app:drawableStartCompat="@drawable/ic_fire"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/orange"
                             android:textSize="15sp"
                             android:textStyle="bold"/>
                     </LinearLayout>
@@ -133,17 +153,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/profile_stat_level"
+                            android:text="@string/profile_stat_sessions"
                             android:textColor="@color/text_light"
                             android:textSize="10sp"
                             android:textStyle="bold"
                             android:letterSpacing="0.06"
                             android:layout_marginBottom="3dp"/>
                         <TextView
+                            android:id="@+id/tvHeroSessions"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="—"
-                            android:textColor="@color/text_muted"
+                            android:text="0"
+                            android:textColor="@color/blue"
                             android:textSize="15sp"
                             android:textStyle="bold"/>
                     </LinearLayout>
@@ -151,7 +172,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Edit Profile Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -272,7 +292,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- General Settings Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -295,7 +314,6 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- Appearance -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -313,7 +331,6 @@
                     android:layout_marginBottom="16dp"
                     android:baselineAligned="false">
 
-                    <!-- Light option -->
                     <LinearLayout
                         android:id="@+id/appearLight"
                         android:layout_width="0dp"
@@ -353,6 +370,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/profile_light"
+                                android:drawablePadding="8dp"
+                                app:drawableStartCompat="@drawable/ic_sun"
+                                app:drawableTint="@color/blue"
+                                android:gravity="center_vertical"
                                 android:textColor="@color/blue"
                                 android:textSize="12sp"/>
                             <FrameLayout
@@ -360,18 +381,16 @@
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:background="@drawable/bg_ctrl_btn">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
                                     android:layout_gravity="center"
-                                    android:text="✓"
-                                    android:textColor="@color/white"
-                                    android:textSize="8sp"/>
+                                    android:src="@drawable/ic_check"
+                                    app:tint="@color/white"/>
                             </FrameLayout>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Dark option -->
                     <LinearLayout
                         android:id="@+id/appearDark"
                         android:layout_width="0dp"
@@ -411,26 +430,28 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/profile_dark"
+                                android:drawablePadding="8dp"
+                                app:drawableStartCompat="@drawable/ic_moon"
+                                app:drawableTint="@color/text_muted"
+                                android:gravity="center_vertical"
                                 android:textColor="@color/text_muted"
                                 android:textSize="12sp"/>
                             <FrameLayout
                                 android:id="@+id/frameDarkCheck"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
                                     android:layout_gravity="center"
-                                    android:text="✓"
-                                    android:textColor="@color/white"
-                                    android:textSize="8sp"
+                                    android:src="@drawable/ic_check"
+                                    app:tint="@color/white"
                                     android:visibility="gone"/>
                             </FrameLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Default Language -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -446,9 +467,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/bg_btn_primary"
-                    android:text="🌐 English"
+                    android:text="English"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:drawablePadding="8dp"
+                    app:drawableStartCompat="@drawable/ic_globe"
+                    app:drawableTint="@color/white"
                     android:gravity="center_vertical|start"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
@@ -471,7 +495,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Change Password Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -605,5 +628,89 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_btn_logout"
+            android:backgroundTint="@null"
+            android:text="@string/profile_btn_logout"
+            android:textColor="@color/red"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:drawablePadding="8dp"
+            app:drawableStartCompat="@drawable/ic_logout"
+            app:drawableTint="@color/red"
+            android:layout_marginBottom="24dp"/>
+
     </LinearLayout>
 </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout android:id="@+id/navHome"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical"
+            android:clickable="true" android:focusable="true">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_home" app:tint="@color/text_muted" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/nav_home" android:textSize="9sp" android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/navFriends"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical"
+            android:clickable="true" android:focusable="true">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_friends" app:tint="@color/text_muted" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/nav_friends" android:textSize="9sp" android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/navMatch"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical"
+            android:clickable="true" android:focusable="true">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_search" app:tint="@color/text_muted" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/nav_match" android:textSize="9sp" android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/navChat"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical"
+            android:clickable="true" android:focusable="true">
+            <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                    android:src="@drawable/ic_chat" app:tint="@color/text_muted" />
+                <View android:id="@+id/chatUnreadDot"
+                    android:layout_width="9dp" android:layout_height="9dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/bg_badge_red"
+                    android:visibility="gone" />
+            </FrameLayout>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/nav_chat" android:textSize="9sp" android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/navProfile"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical"
+            android:clickable="true" android:focusable="true">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_profile" app:tint="@color/blue" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/nav_profile" android:textSize="9sp" android:textColor="@color/blue" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

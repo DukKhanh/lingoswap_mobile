@@ -42,8 +42,6 @@ public class Message {
     @SerializedName("grammarCorrection")
     private GrammarCorrection grammarCorrection;
 
-    // ── Getters ───────────────────────────────────────────────────────────────
-
     public String getId()             { return id; }
     public String getConversationId() { return conversationId; }
     public String getSenderId()       { return senderId; }
@@ -53,8 +51,7 @@ public class Message {
     public TimestampField getCreatedAt() { return createdAt; }
     public GrammarCorrection getGrammarCorrection() { return grammarCorrection; }
 
-    // ── Setters (cần cho manual build khi nhận socket) ────────────────────────
-
+    // Setters cần cho manual build khi nhận socket
     public void setId(String id)                   { this.id = id; }
     public void setConversationId(String cid)      { this.conversationId = cid; }
     public void setSenderId(String sid)            { this.senderId = sid; }
@@ -63,15 +60,12 @@ public class Message {
     public void setStatus(String status)           { this.status = status; }
     public void setCreatedAt(TimestampField ts)    { this.createdAt = ts; }
 
-    // ── Nested: TimestampField ────────────────────────────────────────────────
-
     /**
      * Backend có thể trả về createdAt là:
      *   - Object: { "full": "19/05/2025 10:30", "friendly": "10:30" }  ← REST
      *   - String: "2025-05-19T10:30:00.000Z"                           ← Socket
      *
-     * Gson không tự parse string → object nên ta dùng custom deserializer
-     * đăng ký trong GsonBuilder. Xem GsonProvider.java bên dưới.
+     * Gson không tự parse string → object nên ta dùng custom deserializer đăng ký trong GsonBuilder.
      */
     public static class TimestampField {
         @SerializedName("full")
@@ -85,12 +79,27 @@ public class Message {
         /** Constructor dùng khi nhận ISO string từ socket */
         public TimestampField(String isoOrFull) {
             this.full = isoOrFull;
-            // Parse giờ:phút từ ISO string "2025-05-19T10:30:00.000Z"
-            if (isoOrFull != null && isoOrFull.contains("T")) {
-                this.friendly = isoOrFull.substring(11, 16); // "10:30"
-            } else {
-                this.friendly = isoOrFull;
+            this.friendly = toLocalHourMinute(isoOrFull);
+        }
+
+        /**
+         * Đổi ISO UTC ("2025-05-19T10:30:00.000Z") → giờ:phút theo múi giờ thiết bị.
+         * Trước đây cắt thẳng substring(11,16) nên hiển thị giờ UTC (lệch 7 tiếng với VN).
+         */
+        private static String toLocalHourMinute(String iso) {
+            if (iso == null) return "";
+            try {
+                if (iso.contains("T")) {
+                    java.time.Instant instant = java.time.Instant.parse(iso);
+                    java.time.ZonedDateTime z = instant.atZone(java.time.ZoneId.systemDefault());
+                    return String.format(java.util.Locale.US, "%02d:%02d",
+                            z.getHour(), z.getMinute());
+                }
+            } catch (Exception ignored) {
+                // fallback: cắt thô nếu parse lỗi
+                if (iso.length() >= 16 && iso.contains("T")) return iso.substring(11, 16);
             }
+            return iso;
         }
 
         public String getFull()     { return full; }
@@ -98,8 +107,6 @@ public class Message {
         public void setFull(String full)         { this.full = full; }
         public void setFriendly(String friendly) { this.friendly = friendly; }
     }
-
-    // ── Nested: GrammarCorrection ─────────────────────────────────────────────
 
     public static class GrammarCorrection {
         @SerializedName("isCorrected")

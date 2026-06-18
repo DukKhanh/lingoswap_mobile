@@ -34,7 +34,7 @@ public class LanguageChooserDialog extends BottomSheetDialogFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_language_chooser, container, false);
 
-        Button btnClose        = view.findViewById(R.id.btnClose);
+        View btnClose          = view.findViewById(R.id.btnClose);
         Button btnCancel       = view.findViewById(R.id.btnCancel);
         Button btnStartMatching = view.findViewById(R.id.btnStartMatching);
 
@@ -62,13 +62,12 @@ public class LanguageChooserDialog extends BottomSheetDialogFragment {
             }
         }
 
-        // Pre-select English
         LinearLayout englishOption = view.findViewById(R.id.langEnglish);
         if (englishOption != null) {
             selectLanguage(englishOption, LocaleManager.LANG_EN);
         }
 
-        if (btnClose  != null) btnClose.setOnClickListener(v -> dismiss());
+        if (btnClose != null) btnClose.setOnClickListener(v -> dismiss());
         if (btnCancel != null) btnCancel.setOnClickListener(v -> dismiss());
 
         if (btnStartMatching != null) {

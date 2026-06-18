@@ -44,27 +44,33 @@ public class AuthInterceptor implements Interceptor {
         Request original = chain.request();
         String token = userPreferences.getAccessToken();
 
-        // Gửi request với token hiện tại
         Request request = buildRequest(original, token);
         Response response = chain.proceed(request);
 
-        // Nếu 401 → thử refresh token
+        // Nếu 401 → thử refresh token (single-flight: nhiều request 401 đồng thời
+        // chỉ refresh 1 lần, các thread sau dùng lại token mới).
         if (response.code() == 401 && token != null) {
             response.close();
-            Log.d(TAG, "Token hết hạn, đang refresh...");
 
-            String newToken = refreshAccessToken();
-            if (newToken != null) {
-                userPreferences.saveAccessToken(newToken);
-                // Cập nhật SocketManager token nếu cần (event-based)
-                Log.d(TAG, "Refresh thành công, retry request");
-                Request retryRequest = buildRequest(original, newToken);
-                return chain.proceed(retryRequest);
-            } else {
-                // Refresh thất bại → xóa session, về màn login
-                Log.w(TAG, "Refresh thất bại, clear session");
-                userPreferences.clear();
+            String newToken;
+            synchronized (this) {
+                String latest = userPreferences.getAccessToken();
+                if (latest != null && !latest.equals(token)) {
+                    // Thread khác đã refresh xong → dùng token mới, không gọi lại API.
+                    newToken = latest;
+                } else {
+                    Log.d(TAG, "Token hết hạn, đang refresh...");
+                    newToken = refreshAccessToken();
+                    if (newToken != null) userPreferences.saveAccessToken(newToken);
+                }
             }
+
+            if (newToken != null) {
+                Log.d(TAG, "Refresh OK, retry request");
+                return chain.proceed(buildRequest(original, newToken));
+            }
+            Log.w(TAG, "Refresh thất bại, clear session");
+            userPreferences.clear();
         }
 
         return response;

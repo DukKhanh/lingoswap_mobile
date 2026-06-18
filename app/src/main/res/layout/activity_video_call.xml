@@ -5,20 +5,25 @@
     android:background="@color/video_bg"
     android:orientation="vertical">
 
-    <!-- ── Vùng video chính ──────────────────────────────────────── -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/video_main_bg">
 
-        <!-- Video remote (partner) — full screen, phía sau -->
         <org.webrtc.SurfaceViewRenderer
             android:id="@+id/remoteVideoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Tên đối tác (overlay) -->
+        <ImageView
+            android:id="@+id/imgPartnerAvatar"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/video_connecting" />
+
         <TextView
             android:id="@+id/tvPartnerName"
             android:layout_width="wrap_content"
@@ -34,7 +39,6 @@
             android:shadowDy="1"
             android:shadowRadius="2"/>
 
-        <!-- Bộ đếm thời gian cuộc gọi -->
         <TextView
             android:id="@+id/tvCallTimer"
             android:layout_width="wrap_content"
@@ -48,7 +52,6 @@
             android:textSize="13sp"
             android:fontFamily="monospace"/>
 
-        <!-- Video local (self) — nhỏ góc phải trên, phía trước -->
         <org.webrtc.SurfaceViewRenderer
             android:id="@+id/localVideoView"
             android:layout_width="120dp"
@@ -58,7 +61,6 @@
 
     </FrameLayout>
 
-    <!-- ── Chat panel ── -->
     <LinearLayout
         android:id="@+id/chatPanel"
         android:layout_width="match_parent"
@@ -81,7 +83,6 @@
                 android:orientation="vertical"/>
         </ScrollView>
 
-        <!-- Input chat -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
@@ -108,18 +109,16 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/bg_btn_primary">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="center"
-                    android:text="➤"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"/>
+                    android:src="@drawable/ic_send"
+                    android:tint="@color/white"/>
             </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ── Control bar ── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -137,12 +136,12 @@
             android:background="@drawable/bg_ctrl_btn"
             android:gravity="center"
             android:orientation="vertical">
-            <TextView
+            <ImageView
                 android:id="@+id/tvMuteIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎤"
-                android:textSize="20sp"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_mic"
+                android:tint="@color/white"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,12 +158,12 @@
             android:background="@drawable/bg_ctrl_btn"
             android:gravity="center"
             android:orientation="vertical">
-            <TextView
+            <ImageView
                 android:id="@+id/tvCameraIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📹"
-                android:textSize="20sp"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_videocam"
+                android:tint="@color/white"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -181,11 +180,11 @@
             android:background="@drawable/bg_ctrl_btn"
             android:gravity="center"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💬"
-                android:textSize="20sp"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_chat"
+                android:tint="@color/white"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -202,11 +201,11 @@
             android:background="@drawable/bg_ctrl_btn_red"
             android:gravity="center"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📵"
-                android:textSize="20sp"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_call_end"
+                android:tint="@color/white"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
