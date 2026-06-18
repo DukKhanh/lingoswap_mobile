@@ -1,7 +1,7 @@
 package com.lingoswap.activities;
-import java.util.ArrayList;
-import java.util.List;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,7 +15,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.lingoswap.R;
@@ -43,6 +46,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.socket.emitter.Emitter;
 
 /**
  * VideoCallActivity — màn hình video call với WebRTC thật.
@@ -51,6 +55,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VideoCallActivity extends AppCompatActivity {
 
     private static final String TAG = "VideoCallActivity";
+    private static final int REQ_MEDIA_PERMISSION = 301;
+    private static final int MAX_OFFER_RETRIES = 10;
+    private static final long OFFER_RETRY_INTERVAL_MS = 1_000L;
 
     @Inject SocketManager socketManager;
     @Inject UserApiService userApiService;
@@ -67,10 +74,21 @@ public class VideoCallActivity extends AppCompatActivity {
     private boolean isMuted     = false;
     private boolean isCameraOff = false;
     private boolean isChatVisible = true;
-    private final List<String> iceCandidateQueue = new ArrayList<>();
-    private volatile boolean remoteDescriptionSet = false;
     private volatile boolean remoteAttached = false;
-    private io.socket.emitter.Emitter.Listener receiveMessageListener;
+    private boolean answerReceived = false;
+    private boolean callStarted = false;
+    private boolean endingCall = false;
+    private boolean offerCreationScheduled = false;
+    private boolean offerCreationStarted = false;
+    private int offerCreateWaitAttempts = 0;
+    private int offerRetryCount = 0;
+    private String localOfferJson;
+    private Runnable offerRetryRunnable;
+    private Emitter.Listener webRtcOfferListener;
+    private Emitter.Listener webRtcAnswerListener;
+    private Emitter.Listener iceCandidateListener;
+    private Emitter.Listener partnerDisconnectedListener;
+    private Emitter.Listener receiveMessageListener;
     private ImageView tvMuteIcon, tvCameraIcon;
     private LinearLayout chatPanel, chatMessages;
     private ScrollView scrollChat;
@@ -110,10 +128,70 @@ public class VideoCallActivity extends AppCompatActivity {
         Log.d(TAG, "VideoCall started: sessionId=" + sessionId + " partnerId=" + partnerId + " isCaller=" + isCaller);
 
         bindViews();
+        if (hasMediaPermission()) {
+            startCallWhenReady();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
+                    REQ_MEDIA_PERMISSION);
+        }
+    }
+
+    private boolean hasMediaPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void startCallWhenReady() {
+        if (callStarted || isFinishing()) return;
+        callStarted = true;
+
+        if (!socketManager.isConnected()) {
+            socketManager.connect();
+        }
+
         startCallTimer();
         initWebRtc();
         registerSocketListeners();
-        // Báo server biết đã vào call, tránh bị presence timeout
+        joinCallRoom();
+        startHeartbeat();
+
+        if (isCaller) {
+            scheduleOfferCreation(500);
+        }
+    }
+
+    private void scheduleOfferCreation(long delayMs) {
+        if (offerCreationScheduled || offerCreationStarted) return;
+        offerCreationScheduled = true;
+        timerHandler.postDelayed(this::tryCreateOfferWhenSocketReady, delayMs);
+    }
+
+    private void tryCreateOfferWhenSocketReady() {
+        offerCreationScheduled = false;
+        if (isFinishing() || webRtcManager == null || answerReceived || offerCreationStarted) return;
+
+        if (!socketManager.isConnected()) {
+            if (offerCreateWaitAttempts++ < 10) {
+                socketManager.connect();
+                scheduleOfferCreation(500);
+                return;
+            }
+            Log.e(TAG, "Socket disconnected before creating offer");
+            Toast.makeText(this, "Mất kết nối, thử lại", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        offerCreateWaitAttempts = 0;
+        offerCreationStarted = true;
+        Log.d(TAG, "Creating offer...");
+        webRtcManager.createOffer();
+    }
+
+    private void joinCallRoom() {
         try {
             JSONObject joinData = new JSONObject();
             joinData.put("sessionId", sessionId);
@@ -121,23 +199,6 @@ public class VideoCallActivity extends AppCompatActivity {
             Log.d(TAG, "Emitted join_call_room: " + sessionId);
         } catch (Exception e) {
             Log.e(TAG, "join_call_room error: " + e.getMessage());
-        }
-        startHeartbeat();
-
-        if (isCaller) {
-            // Chờ socket ổn định rồi mới tạo offer
-            timerHandler.postDelayed(() -> {
-                if (!isFinishing() && webRtcManager != null) {
-                    if (!socketManager.isConnected()) {
-                        Log.e(TAG, "Socket mất kết nối trước khi tạo offer!");
-                        Toast.makeText(this, "Mất kết nối, thử lại", Toast.LENGTH_SHORT).show();
-                        finish();
-                        return;
-                    }
-                    Log.d(TAG, "Tạo offer...");
-                    webRtcManager.createOffer();
-                }
-            }, 2500);
         }
     }
 
@@ -179,6 +240,29 @@ public class VideoCallActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQ_MEDIA_PERMISSION) return;
+
+        boolean granted = grantResults.length > 0;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                granted = false;
+                break;
+            }
+        }
+
+        if (granted) {
+            startCallWhenReady();
+        } else {
+            Toast.makeText(this, "Cần cấp quyền Camera và Mic để gọi video", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
     private void loadPartnerInfo() {
         if (partnerId == null) return;
         userApiService.getPublicProfile(partnerId).enqueue(new Callback<User>() {
@@ -217,8 +301,9 @@ public class VideoCallActivity extends AppCompatActivity {
                     String sdpJson = sdpObj.toString();
 
                     if (sdp.type == SessionDescription.Type.OFFER) {
-                        socketManager.sendWebRtcOffer(sessionId, sdpJson);
-                        Log.d(TAG, "Offer sent");
+                        localOfferJson = sdpJson;
+                        offerRetryCount = 0;
+                        emitOfferAndScheduleRetry();
                     } else {
                         socketManager.sendWebRtcAnswer(sessionId, sdpJson);
                         Log.d(TAG, "Answer sent");
@@ -265,58 +350,85 @@ public class VideoCallActivity extends AppCompatActivity {
         webRtcManager.startLocalStream(localVideoView);
     }
 
+    private void emitOfferAndScheduleRetry() {
+        if (!isCaller || localOfferJson == null || answerReceived || isFinishing()) return;
+
+        socketManager.sendWebRtcOffer(sessionId, localOfferJson);
+        Log.d(TAG, "Offer sent" + (offerRetryCount > 0 ? " retry=" + offerRetryCount : ""));
+
+        if (offerRetryRunnable != null) {
+            timerHandler.removeCallbacks(offerRetryRunnable);
+        }
+
+        offerRetryRunnable = () -> {
+            if (answerReceived || isFinishing() || localOfferJson == null) return;
+            if (offerRetryCount >= MAX_OFFER_RETRIES) return;
+            offerRetryCount++;
+            emitOfferAndScheduleRetry();
+        };
+        timerHandler.postDelayed(offerRetryRunnable, OFFER_RETRY_INTERVAL_MS);
+    }
+
+    private void stopOfferRetry() {
+        if (offerRetryRunnable != null) {
+            timerHandler.removeCallbacks(offerRetryRunnable);
+            offerRetryRunnable = null;
+        }
+    }
+
     private void registerSocketListeners() {
-        socketManager.onWebRtcOffer(args -> {
+        webRtcOfferListener = args -> {
             if (isCaller || webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data  = (JSONObject) args[0];
+                if (!isCurrentSession(data)) return;
                 String offerJson = data.getJSONObject("offer").toString();
-                webRtcManager.setRemoteOffer(offerJson);
-
-                remoteDescriptionSet = true;
-                flushIceCandidateQueue();
-
-                webRtcManager.createAnswer();
+                webRtcManager.setRemoteOffer(offerJson, () -> {
+                    if (!isFinishing() && webRtcManager != null) {
+                        webRtcManager.createAnswer();
+                    }
+                });
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_offer error: " + e.getMessage());
             }
-        });
+        };
+        socketManager.onWebRtcOffer(webRtcOfferListener);
 
-        socketManager.onWebRtcAnswer(args -> {
+        webRtcAnswerListener = args -> {
             if (!isCaller || webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data   = (JSONObject) args[0];
+                if (!isCurrentSession(data)) return;
                 String answerJson = data.getJSONObject("answer").toString();
+                answerReceived = true;
+                stopOfferRetry();
                 webRtcManager.setRemoteAnswer(answerJson);
-
-                remoteDescriptionSet = true;
-                flushIceCandidateQueue();
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_answer error: " + e.getMessage());
             }
-        });
+        };
+        socketManager.onWebRtcAnswer(webRtcAnswerListener);
 
-        socketManager.onIceCandidate(args -> {
+        iceCandidateListener = args -> {
             if (webRtcManager == null || isFinishing()) return;
             try {
                 JSONObject data      = (JSONObject) args[0];
+                if (!isCurrentSession(data)) return;
                 String candidateJson = data.getJSONObject("candidate").toString();
 
                 // Remote SDP chưa set thì xếp hàng ICE để xử lý sau
-                if (remoteDescriptionSet) {
-                    webRtcManager.addRemoteIceCandidate(candidateJson);
-                } else {
-                    iceCandidateQueue.add(candidateJson);
-                }
+                webRtcManager.addRemoteIceCandidate(candidateJson);
             } catch (Exception e) {
                 Log.e(TAG, "webrtc_ice_candidate error: " + e.getMessage());
             }
-        });
+        };
+        socketManager.onIceCandidate(iceCandidateListener);
 
-        socketManager.onPartnerDisconnected(args -> runOnUiThread(() -> {
+        partnerDisconnectedListener = args -> runOnUiThread(() -> {
             Toast.makeText(this, "Đối tác đã rời cuộc gọi.", Toast.LENGTH_SHORT).show();
             endCall();
-        }));
+        });
+        socketManager.onPartnerDisconnected(partnerDisconnectedListener);
 
         receiveMessageListener = args -> runOnUiThread(() -> {
             try {
@@ -333,23 +445,39 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void unregisterSocketListeners() {
-        socketManager.off("webrtc_offer");
-        socketManager.off("webrtc_answer");
-        socketManager.off("webrtc_ice_candidate");
-        socketManager.off("partner_disconnected");
-        if (receiveMessageListener != null) socketManager.off("receive_message", receiveMessageListener);
+        if (webRtcOfferListener != null) {
+            socketManager.off("webrtc_offer", webRtcOfferListener);
+            webRtcOfferListener = null;
+        }
+        if (webRtcAnswerListener != null) {
+            socketManager.off("webrtc_answer", webRtcAnswerListener);
+            webRtcAnswerListener = null;
+        }
+        if (iceCandidateListener != null) {
+            socketManager.off("webrtc_ice_candidate", iceCandidateListener);
+            iceCandidateListener = null;
+        }
+        if (partnerDisconnectedListener != null) {
+            socketManager.off("partner_disconnected", partnerDisconnectedListener);
+            partnerDisconnectedListener = null;
+        }
+        if (receiveMessageListener != null) {
+            socketManager.off("receive_message", receiveMessageListener);
+            receiveMessageListener = null;
+        }
     }
 
-    private void flushIceCandidateQueue() {
-        if (iceCandidateQueue.isEmpty()) return;
-        Log.d(TAG, "Flushing " + iceCandidateQueue.size() + " queued ICE candidates");
-        for (String candidateJson : iceCandidateQueue) {
-            webRtcManager.addRemoteIceCandidate(candidateJson);
+    private boolean isCurrentSession(JSONObject data) {
+        String payloadSessionId = data.optString("sessionId", "");
+        if (payloadSessionId.isEmpty() || payloadSessionId.equals(sessionId)) {
+            return true;
         }
-        iceCandidateQueue.clear();
+        Log.d(TAG, "Ignored signaling for session=" + payloadSessionId + ", current=" + sessionId);
+        return false;
     }
 
     private void toggleMic() {
+        if (webRtcManager == null) return;
         isMuted = !isMuted;
         webRtcManager.setMicEnabled(!isMuted);
         if (tvMuteIcon != null) tvMuteIcon.setImageResource(isMuted ? R.drawable.ic_mic_off : R.drawable.ic_mic);
@@ -360,6 +488,7 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void toggleCamera() {
+        if (webRtcManager == null) return;
         isCameraOff = !isCameraOff;
         webRtcManager.setCameraEnabled(!isCameraOff);
         if (tvCameraIcon != null) tvCameraIcon.setImageResource(isCameraOff ? R.drawable.ic_videocam_off : R.drawable.ic_videocam);
@@ -452,11 +581,16 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     private void endCall() {
+        if (endingCall) return;
+        endingCall = true;
         stopHeartbeat();
+        stopOfferRetry();
 
         socketManager.leaveQueue();
 
-        timerHandler.removeCallbacks(timerRunnable);
+        if (timerRunnable != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
         unregisterSocketListeners();
 
         Intent intent = new Intent(this, RatingActivity.class);
@@ -496,10 +630,11 @@ public class VideoCallActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopHeartbeat();
-        timerHandler.removeCallbacks(timerRunnable);
+        if (timerRunnable != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
         unregisterSocketListeners();
-        iceCandidateQueue.clear();
-        remoteDescriptionSet = false;
+        stopOfferRetry();
 
         if (localVideoView != null) {
             localVideoView.release();

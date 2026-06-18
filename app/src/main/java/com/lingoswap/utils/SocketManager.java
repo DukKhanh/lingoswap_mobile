@@ -26,7 +26,7 @@ import io.socket.emitter.Emitter;
 public class SocketManager {
 
     private static final String TAG        = "SocketManager";
-    private static final String SOCKET_URL = "http://10.0.2.2:5000/";
+    private static final String SOCKET_URL = "https://lingoswap-backend.onrender.com/";
 
     private Socket socket;
     private String connectedToken;
@@ -59,6 +59,7 @@ public class SocketManager {
         }
 
         if (socket != null) {
+            socket.connect();
             return;
         }
 
@@ -155,8 +156,24 @@ public class SocketManager {
     }
 
     public void requestDirectMatch(String targetUserId) {
-        if (!isConnected()) connect();
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitDirectMatchRequestWhenConnected(targetUserId);
+            return;
+        }
+        emitDirectMatchRequest(targetUserId);
+    }
+
+    private void emitDirectMatchRequestWhenConnected(String targetUserId) {
+        if (isConnected()) {
+            emitDirectMatchRequest(targetUserId);
+            return;
+        }
+        if (socket == null) return;
+        socket.once(Socket.EVENT_CONNECT, args -> emitDirectMatchRequest(targetUserId));
+    }
+
+    private void emitDirectMatchRequest(String targetUserId) {
         try {
             JSONObject data = new JSONObject();
             data.put("targetUserId", targetUserId);
@@ -167,7 +184,24 @@ public class SocketManager {
     }
 
     public void respondDirectMatch(String callerId, boolean accept) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitDirectMatchResponseWhenConnected(callerId, accept);
+            return;
+        }
+        emitDirectMatchResponse(callerId, accept);
+    }
+
+    private void emitDirectMatchResponseWhenConnected(String callerId, boolean accept) {
+        if (isConnected()) {
+            emitDirectMatchResponse(callerId, accept);
+            return;
+        }
+        if (socket == null) return;
+        socket.once(Socket.EVENT_CONNECT, args -> emitDirectMatchResponse(callerId, accept));
+    }
+
+    private void emitDirectMatchResponse(String callerId, boolean accept) {
         try {
             JSONObject data = new JSONObject();
             data.put("callerId", callerId);
@@ -274,7 +308,11 @@ public class SocketManager {
     public void onMatchError(Emitter.Listener listener)          { on("error",                 listener); }
 
     public void sendWebRtcOffer(String sessionId, String sdpJson) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitWhenConnected(() -> sendWebRtcOffer(sessionId, sdpJson));
+            return;
+        }
         try {
             JSONObject data = new JSONObject();
             data.put("sessionId", sessionId);
@@ -286,7 +324,11 @@ public class SocketManager {
     }
 
     public void sendWebRtcAnswer(String sessionId, String sdpJson) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitWhenConnected(() -> sendWebRtcAnswer(sessionId, sdpJson));
+            return;
+        }
         try {
             JSONObject data = new JSONObject();
             data.put("sessionId", sessionId);
@@ -298,7 +340,11 @@ public class SocketManager {
     }
 
     public void sendIceCandidate(String sessionId, String candidateJson) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitWhenConnected(() -> sendIceCandidate(sessionId, candidateJson));
+            return;
+        }
         try {
             JSONObject data = new JSONObject();
             data.put("sessionId", sessionId);
@@ -306,6 +352,16 @@ public class SocketManager {
             socket.emit("webrtc_ice_candidate", data);
         } catch (JSONException e) {
             Log.e(TAG, "emit webrtc_ice_candidate error: " + e.getMessage());
+        }
+    }
+
+    private void emitWhenConnected(Runnable action) {
+        if (isConnected()) {
+            action.run();
+            return;
+        }
+        if (socket != null) {
+            socket.once(Socket.EVENT_CONNECT, args -> action.run());
         }
     }
 
@@ -333,12 +389,19 @@ public class SocketManager {
     public void onPresenceUpdate(Emitter.Listener listener)    { on("presence_update",       listener); }
 
     public void emit(String event, Object data) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            connect();
+            emitWhenConnected(() -> emit(event, data));
+            return;
+        }
         if (data == null) socket.emit(event);
         else socket.emit(event, data);
     }
 
     public void on(String event, Emitter.Listener listener) {
+        if (socket == null) {
+            connect();
+        }
         if (socket != null) socket.on(event, listener);
     }
 

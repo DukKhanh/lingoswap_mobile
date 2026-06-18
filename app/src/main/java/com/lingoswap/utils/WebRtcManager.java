@@ -29,6 +29,7 @@ import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,6 +63,9 @@ public class WebRtcManager {
 
     private final Callback callback;
     private boolean isInitialized = false;
+    private boolean isReleased = false;
+    private boolean remoteDescriptionSet = false;
+    private final List<IceCandidate> pendingRemoteIceCandidates = new ArrayList<>();
 
     public WebRtcManager(Callback callback) {
         this.callback = callback;
@@ -69,6 +73,7 @@ public class WebRtcManager {
 
     public void init(Context context, EglBase eglBase) {
         this.eglBase = eglBase;
+        isReleased = false;
 
         PeerConnectionFactory.InitializationOptions initOptions =
             PeerConnectionFactory.InitializationOptions.builder(context)
@@ -159,13 +164,13 @@ public class WebRtcManager {
             }
 
             @Override public void onAddTrack(RtpReceiver receiver, MediaStream[] streams) {
-                org.webrtc.MediaStreamTrack track = receiver.track();
-                if (track instanceof VideoTrack) {
-                    Log.d(TAG, "Remote video track received (onAddTrack)");
-                    callback.onRemoteVideoTrackReceived((VideoTrack) track);
+                handleRemoteTrack(receiver.track(), "onAddTrack");
+            }
+            @Override public void onTrack(RtpTransceiver transceiver) {
+                if (transceiver != null && transceiver.getReceiver() != null) {
+                    handleRemoteTrack(transceiver.getReceiver().track(), "onTrack");
                 }
             }
-            @Override public void onTrack(RtpTransceiver transceiver) {}
             @Override public void onSignalingChange(PeerConnection.SignalingState s) {}
             @Override public void onIceConnectionChange(PeerConnection.IceConnectionState s) {}
             @Override public void onIceConnectionReceivingChange(boolean b) {}
@@ -177,10 +182,10 @@ public class WebRtcManager {
         });
 
         if (localVideoTrack != null) {
-            peerConnection.addTrack(localVideoTrack, List.of("local_stream"));
+            peerConnection.addTrack(localVideoTrack, Collections.singletonList("local_stream"));
         }
         if (localAudioTrack != null) {
-            peerConnection.addTrack(localAudioTrack, List.of("local_stream"));
+            peerConnection.addTrack(localAudioTrack, Collections.singletonList("local_stream"));
         }
     }
 
@@ -194,22 +199,44 @@ public class WebRtcManager {
         peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sdp) {
-                peerConnection.setLocalDescription(new SimpleSdpObserver(), sdp);
-                callback.onLocalSdpReady(sdp);
-                Log.d(TAG, "Offer created");
+                peerConnection.setLocalDescription(new SimpleSdpObserver() {
+                    @Override
+                    public void onSetSuccess() {
+                        if (!isReleased) callback.onLocalSdpReady(sdp);
+                        Log.d(TAG, "Offer created and set as local description");
+                    }
+                }, sdp);
             }
         }, constraints);
     }
 
+    private void handleRemoteTrack(org.webrtc.MediaStreamTrack track, String source) {
+        if (track instanceof VideoTrack) {
+            Log.d(TAG, "Remote video track received (" + source + ")");
+            callback.onRemoteVideoTrackReceived((VideoTrack) track);
+        }
+    }
+
     public void setRemoteOffer(String sdpJson) {
+        setRemoteOffer(sdpJson, null);
+    }
+
+    public void setRemoteOffer(String sdpJson, Runnable onSetSuccess) {
         if (peerConnection == null) createPeerConnection();
         try {
             JSONObject obj  = new JSONObject(sdpJson);
             String sdp      = obj.getString("sdp");
             SessionDescription remoteSdp = new SessionDescription(
                 SessionDescription.Type.OFFER, sdp);
-            peerConnection.setRemoteDescription(new SimpleSdpObserver(), remoteSdp);
-            Log.d(TAG, "Remote offer set");
+            peerConnection.setRemoteDescription(new SimpleSdpObserver() {
+                @Override
+                public void onSetSuccess() {
+                    remoteDescriptionSet = true;
+                    flushPendingRemoteIceCandidates();
+                    if (onSetSuccess != null && !isReleased) onSetSuccess.run();
+                    Log.d(TAG, "Remote offer set");
+                }
+            }, remoteSdp);
         } catch (JSONException e) {
             Log.e(TAG, "setRemoteOffer JSON error: " + e.getMessage());
         }
@@ -221,14 +248,22 @@ public class WebRtcManager {
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sdp) {
-                peerConnection.setLocalDescription(new SimpleSdpObserver(), sdp);
-                callback.onLocalSdpReady(sdp);
-                Log.d(TAG, "Offer created");
+                peerConnection.setLocalDescription(new SimpleSdpObserver() {
+                    @Override
+                    public void onSetSuccess() {
+                        if (!isReleased) callback.onLocalSdpReady(sdp);
+                        Log.d(TAG, "Answer created and set as local description");
+                    }
+                }, sdp);
             }
         }, constraints);
     }
 
     public void setRemoteAnswer(String sdpJson) {
+        setRemoteAnswer(sdpJson, null);
+    }
+
+    public void setRemoteAnswer(String sdpJson, Runnable onSetSuccess) {
         if (peerConnection == null) {
             Log.w(TAG, "setRemoteAnswer: peerConnection null, bỏ qua");
             return;
@@ -238,8 +273,15 @@ public class WebRtcManager {
             String sdp     = obj.getString("sdp");
             SessionDescription remoteSdp = new SessionDescription(
                 SessionDescription.Type.ANSWER, sdp);
-            peerConnection.setRemoteDescription(new SimpleSdpObserver(), remoteSdp);
-            Log.d(TAG, "Remote answer set");
+            peerConnection.setRemoteDescription(new SimpleSdpObserver() {
+                @Override
+                public void onSetSuccess() {
+                    remoteDescriptionSet = true;
+                    flushPendingRemoteIceCandidates();
+                    if (onSetSuccess != null && !isReleased) onSetSuccess.run();
+                    Log.d(TAG, "Remote answer set");
+                }
+            }, remoteSdp);
         } catch (JSONException e) {
             Log.e(TAG, "setRemoteAnswer JSON error: " + e.getMessage());
         }
@@ -248,17 +290,42 @@ public class WebRtcManager {
     public void addRemoteIceCandidate(String candidateJson) {
         try {
             JSONObject obj = new JSONObject(candidateJson);
+            String candidateSdp = obj.optString("candidate", "");
+            if (candidateSdp.isEmpty()) {
+                Log.w(TAG, "Ignoring empty ICE candidate");
+                return;
+            }
             IceCandidate candidate = new IceCandidate(
-                obj.getString("sdpMid"),
-                obj.getInt("sdpMLineIndex"),
-                obj.getString("candidate")
+                obj.optString("sdpMid", null),
+                obj.optInt("sdpMLineIndex", -1),
+                candidateSdp
             );
-            if (peerConnection != null) {
-                peerConnection.addIceCandidate(candidate);
+            if (peerConnection == null || !remoteDescriptionSet) {
+                pendingRemoteIceCandidates.add(candidate);
+                Log.d(TAG, "Queued remote ICE candidate");
+                return;
+            }
+            if (peerConnection.addIceCandidate(candidate)) {
                 Log.d(TAG, "Remote ICE candidate added");
+            } else {
+                Log.w(TAG, "Remote ICE candidate rejected");
             }
         } catch (JSONException e) {
             Log.e(TAG, "addRemoteIceCandidate JSON error: " + e.getMessage());
+        }
+    }
+
+    private void flushPendingRemoteIceCandidates() {
+        if (peerConnection == null || !remoteDescriptionSet || pendingRemoteIceCandidates.isEmpty()) {
+            return;
+        }
+        Log.d(TAG, "Flushing " + pendingRemoteIceCandidates.size() + " queued ICE candidates");
+        List<IceCandidate> candidates = new ArrayList<>(pendingRemoteIceCandidates);
+        pendingRemoteIceCandidates.clear();
+        for (IceCandidate candidate : candidates) {
+            if (!peerConnection.addIceCandidate(candidate)) {
+                Log.w(TAG, "Queued ICE candidate rejected");
+            }
         }
     }
 
@@ -277,6 +344,7 @@ public class WebRtcManager {
     }
 
     public void release() {
+        isReleased = true;
         try {
             if (videoCapturer != null) {
                 videoCapturer.stopCapture();
@@ -291,6 +359,10 @@ public class WebRtcManager {
             }
             if (factory != null) factory.dispose();
             if (eglBase != null) eglBase.release();
+            pendingRemoteIceCandidates.clear();
+            remoteDescriptionSet = false;
+            peerConnection = null;
+            factory = null;
         } catch (Exception e) {
             Log.e(TAG, "release error: " + e.getMessage());
         }

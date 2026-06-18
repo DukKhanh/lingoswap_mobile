@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @InstallIn(SingletonComponent.class)
 public class NetworkModule {
 
-    public static final String BASE_URL = "http://10.0.2.2:5000/";
+    public static final String BASE_URL = "https://lingoswap-backend.onrender.com/";
 
     @Provides @Singleton
     public AuthInterceptor provideAuthInterceptor(UserPreferences prefs) {
