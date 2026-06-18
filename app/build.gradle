@@ -5,6 +5,12 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+
 android {
     namespace 'com.lingoswap'
     compileSdk 34
@@ -17,6 +23,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "TURN_USERNAME",
+                "\"${localProps.getProperty('TURN_USERNAME', '')}\""
+        buildConfigField "String", "TURN_CREDENTIAL",
+                "\"${localProps.getProperty('TURN_CREDENTIAL', '')}\""
     }
 
     buildTypes {
@@ -37,6 +48,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
