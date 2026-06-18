@@ -39,9 +39,18 @@ public class WebRtcManager {
 
     private static final String TAG = "WebRtcManager";
 
+    // STUN cho trường hợp có thể P2P trực tiếp; TURN (relay) bắt buộc khi 2 máy
+    // sau NAT không gọi được nhau (vd 2 emulator cùng PC) → nếu không có TURN, ICE sẽ FAILED.
     private static final List<PeerConnection.IceServer> ICE_SERVERS = new ArrayList<PeerConnection.IceServer>() {{
         add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
         add(PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer());
+        // TURN miễn phí (Open Relay by Metered) — relay khi P2P bất khả thi.
+        add(PeerConnection.IceServer.builder("turn:openrelay.metered.ca:80")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer());
+        add(PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer());
+        add(PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443?transport=tcp")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer());
     }};
 
     public interface Callback {
@@ -172,9 +181,13 @@ public class WebRtcManager {
                 }
             }
             @Override public void onSignalingChange(PeerConnection.SignalingState s) {}
-            @Override public void onIceConnectionChange(PeerConnection.IceConnectionState s) {}
+            @Override public void onIceConnectionChange(PeerConnection.IceConnectionState s) {
+                Log.d(TAG, "ICE connection state: " + s);
+            }
             @Override public void onIceConnectionReceivingChange(boolean b) {}
-            @Override public void onIceGatheringChange(PeerConnection.IceGatheringState s) {}
+            @Override public void onIceGatheringChange(PeerConnection.IceGatheringState s) {
+                Log.d(TAG, "ICE gathering state: " + s);
+            }
             @Override public void onIceCandidatesRemoved(IceCandidate[] c) {}
             @Override public void onRemoveStream(MediaStream s) {}
             @Override public void onDataChannel(DataChannel d) {}
