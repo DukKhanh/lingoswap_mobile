@@ -118,12 +118,13 @@ public class MatchingActivity extends AppCompatActivity {
                 String partnerName = data.optString("partnerName", "LingoSwap User");
 
                 // Backend match_found không gửi isCaller → cả 2 máy đều false thì không
-                // ai tạo offer (deadlock). Chọn caller xác định: so sánh id của mình với
-                // partner — 2 máy tính ra ngược nhau nên đúng 1 máy làm caller.
+                // ai tạo offer (deadlock). Chọn caller xác định bằng cùng logic comparePeerIds
+                // như web (MeetingPage): id lớn hơn làm caller → đúng 1 máy tạo offer,
+                // đồng nhất kể cả khi web ↔ mobile ghép chéo.
                 String myId = userPreferences.getUserId();
                 boolean isCaller = data.has("isCaller")
                         ? data.optBoolean("isCaller", false)
-                        : (myId != null && myId.compareTo(partnerId) > 0);
+                        : (myId != null && comparePeerIds(myId, partnerId) > 0);
 
                 Intent intent = new Intent(this, VideoCallActivity.class);
                 intent.putExtra("sessionId",   sessionId);
@@ -163,6 +164,15 @@ public class MatchingActivity extends AppCompatActivity {
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             finish();
         }));
+    }
+
+    /** Cùng logic với comparePeerIds bên web: id số thì so sánh số, còn lại so sánh chuỗi. */
+    private static int comparePeerIds(String a, String b) {
+        try {
+            return Long.compare(Long.parseLong(a), Long.parseLong(b));
+        } catch (NumberFormatException e) {
+            return a.compareTo(b);
+        }
     }
 
     private void unregisterSocketListeners() {
