@@ -116,6 +116,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
         binding.btnFindPartner.setOnClickListener(v -> showLanguageChooser());
 
+        binding.layoutTotalSessions.setOnClickListener(v ->
+                startActivity(new Intent(this, com.lingoswap.presentation.friends.MatchHistoryActivity.class)));
+
         binding.navHome.setOnClickListener(v -> { /* đang ở Home */ });
         binding.navFriends.setOnClickListener(v ->
                 startActivity(new Intent(this, FriendsActivity.class)));
@@ -136,6 +139,12 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (userPreferences.isLoggedIn()) {
@@ -144,6 +153,11 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         }
         viewModel.loadDashboard();
         loadUnreadBadge();
+
+        if (getIntent() != null && getIntent().getBooleanExtra("start_match", false)) {
+            getIntent().removeExtra("start_match");
+            showLanguageChooser();
+        }
     }
 
     /** Tải số thông báo chưa đọc và hiển thị badge đỏ trên chuông. */

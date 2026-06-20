@@ -14,7 +14,9 @@ import com.lingoswap.R;
 import com.lingoswap.data.model.MatchHistoryResponse;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MatchHistoryAdapter
         extends RecyclerView.Adapter<MatchHistoryAdapter.ViewHolder> {
@@ -24,6 +26,8 @@ public class MatchHistoryAdapter
     }
 
     private List<MatchHistoryResponse> items = new ArrayList<>();
+    private Set<String> friendUserIds = new HashSet<>();
+    private Set<String> pendingUserIds = new HashSet<>();
     private final Listener listener;
 
     public MatchHistoryAdapter(Listener listener) {
@@ -32,6 +36,12 @@ public class MatchHistoryAdapter
 
     public void setItems(List<MatchHistoryResponse> items) {
         this.items = items != null ? items : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    public void setFriendsAndRequests(Set<String> friendUserIds, Set<String> pendingUserIds) {
+        this.friendUserIds = friendUserIds != null ? friendUserIds : new HashSet<>();
+        this.pendingUserIds = pendingUserIds != null ? pendingUserIds : new HashSet<>();
         notifyDataSetChanged();
     }
 
@@ -45,7 +55,7 @@ public class MatchHistoryAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(items.get(position), listener);
+        holder.bind(items.get(position), friendUserIds, pendingUserIds, listener);
     }
 
     @Override
@@ -66,7 +76,7 @@ public class MatchHistoryAdapter
             btnAddFriend  = itemView.findViewById(R.id.btnAddFriend);
         }
 
-        void bind(MatchHistoryResponse session, Listener listener) {
+        void bind(MatchHistoryResponse session, Set<String> friendUserIds, Set<String> pendingUserIds, Listener listener) {
             MatchHistoryResponse.Partner partner = session.partner;
             String name = partner != null ? partner.getFullName() : "User";
             String avatar = partner != null ? partner.getAvatar() : null;
@@ -99,16 +109,30 @@ public class MatchHistoryAdapter
             }
 
             btnAddFriend.setVisibility(View.VISIBLE);
-            btnAddFriend.setEnabled(true);
-            btnAddFriend.setText("Kết bạn");
-            btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
-            btnAddFriend.setCompoundDrawablePadding(6);
-            btnAddFriend.setAlpha(1f);
-            btnAddFriend.setOnClickListener(v -> {
+            if (friendUserIds.contains(partner.id)) {
+                btnAddFriend.setText("Bạn bè");
+                btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                btnAddFriend.setCompoundDrawablePadding(6);
                 btnAddFriend.setEnabled(false);
-                btnAddFriend.setText("Đang gửi...");
-                listener.onAddFriend(session);
-            });
+                btnAddFriend.setAlpha(0.6f);
+            } else if (pendingUserIds.contains(partner.id)) {
+                btnAddFriend.setText("Đã gửi");
+                btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                btnAddFriend.setCompoundDrawablePadding(6);
+                btnAddFriend.setEnabled(false);
+                btnAddFriend.setAlpha(0.6f);
+            } else {
+                btnAddFriend.setEnabled(true);
+                btnAddFriend.setText("Kết bạn");
+                btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+                btnAddFriend.setCompoundDrawablePadding(6);
+                btnAddFriend.setAlpha(1f);
+                btnAddFriend.setOnClickListener(v -> {
+                    btnAddFriend.setEnabled(false);
+                    btnAddFriend.setText("Đang gửi...");
+                    listener.onAddFriend(session);
+                });
+            }
         }
 
         public void markAsSent() {

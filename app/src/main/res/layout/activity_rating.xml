@@ -65,23 +65,44 @@
                         android:text="00:00" android:textColor="@color/text_light" android:textSize="12sp"/>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnAddFriend"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Kết bạn"
-                    android:textSize="12sp"
-                    android:textAllCaps="false"
-                    android:textColor="@color/blue"
-                    android:background="@drawable/bg_btn_outline"
-                    android:backgroundTint="@null"
-                    android:drawablePadding="6dp"
-                    app:drawableStartCompat="@drawable/ic_add"
-                    app:drawableTint="@color/blue"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:layout_marginBottom="20dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnAddFriend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Kết bạn"
+                        android:textSize="12sp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/blue"
+                        android:background="@drawable/bg_btn_outline"
+                        android:drawablePadding="6dp"
+                        app:drawableStartCompat="@drawable/ic_add"
+                        app:drawableTint="@color/blue"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnReport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Báo cáo"
+                        android:textSize="12sp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/red"
+                        android:background="@drawable/bg_btn_outline"
+                        android:drawablePadding="6dp"
+                        app:drawableStartCompat="@android:drawable/ic_menu_report_image"
+                        app:drawableTint="@color/red"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp" />
+                </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:background="@color/border_light"/>

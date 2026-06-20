@@ -18,6 +18,7 @@ import com.lingoswap.R;
 import com.lingoswap.data.api.FriendApiService;
 import com.lingoswap.data.api.MatchApiService;
 import com.lingoswap.data.model.ApiResponse;
+import com.lingoswap.data.model.FriendStatusResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,12 +85,30 @@ public class RatingActivity extends AppCompatActivity {
         }
 
         Button btnAddFriend = findViewById(R.id.btnAddFriend);
-        if (btnAddFriend != null) {
-            if (partnerId == null) {
-                btnAddFriend.setVisibility(View.GONE);
-            } else {
+        if (partnerId == null) {
+            if (btnAddFriend != null) btnAddFriend.setVisibility(View.GONE);
+        } else {
+            if (btnAddFriend != null) {
                 btnAddFriend.setVisibility(View.VISIBLE);
                 btnAddFriend.setOnClickListener(v -> sendFriendRequest(btnAddFriend));
+            }
+            checkFriendStatus(btnAddFriend);
+        }
+
+        Button btnReport = findViewById(R.id.btnReport);
+        if (btnReport != null) {
+            if (partnerId == null) {
+                btnReport.setVisibility(View.GONE);
+            } else {
+                btnReport.setVisibility(View.VISIBLE);
+                btnReport.setOnClickListener(v -> {
+                    Intent intent = new Intent(this, com.lingoswap.presentation.report.ReportActivity.class);
+                    intent.putExtra(com.lingoswap.presentation.report.ReportActivity.EXTRA_REPORTED_USER_ID, partnerId);
+                    if (sessionId != null) {
+                        intent.putExtra(com.lingoswap.presentation.report.ReportActivity.EXTRA_MATCH_SESSION_ID, sessionId);
+                    }
+                    startActivity(intent);
+                });
             }
         }
 
@@ -217,6 +236,38 @@ public class RatingActivity extends AppCompatActivity {
             chip.setTextColor(ContextCompat.getColor(this, R.color.blue));
             chip.setTypeface(null, Typeface.BOLD);
         }
+    }
+
+    private void checkFriendStatus(Button btnAddFriend) {
+        if (partnerId == null || btnAddFriend == null) return;
+
+        friendApiService.checkFriendStatus(partnerId).enqueue(new Callback<FriendStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<FriendStatusResponse> call,
+                                   @NonNull Response<FriendStatusResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String status = response.body().status;
+                    if ("friends".equals(status)) {
+                        btnAddFriend.setText("Bạn bè");
+                        btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                        btnAddFriend.setCompoundDrawablePadding(8);
+                        btnAddFriend.setEnabled(false);
+                        btnAddFriend.setAlpha(0.6f);
+                    } else if ("request_sent".equals(status) || "request_received".equals(status)) {
+                        btnAddFriend.setText("Đã gửi lời mời");
+                        btnAddFriend.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                        btnAddFriend.setCompoundDrawablePadding(8);
+                        btnAddFriend.setEnabled(false);
+                        btnAddFriend.setAlpha(0.6f);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<FriendStatusResponse> call, @NonNull Throwable t) {
+                // Ignore error, keep original state
+            }
+        });
     }
 
     private void goHome() {

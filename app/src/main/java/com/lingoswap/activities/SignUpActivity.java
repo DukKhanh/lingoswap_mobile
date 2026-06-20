@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
+
+import com.lingoswap.utils.GoogleSignInHelper;
+import com.lingoswap.utils.Resource;
 
 import com.lingoswap.R;
 import com.lingoswap.databinding.ActivitySignUpBinding;
@@ -28,7 +32,9 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
     @Inject HeartbeatManager heartbeatManager;
 
     private boolean pwVisible = false;
+    private boolean pwConfirmVisible = false;
     private SignUpViewModel viewModel;
+    private GoogleSignInHelper googleHelper;
 
     @Override
     protected ActivitySignUpBinding inflateBinding(LayoutInflater inflater) {
@@ -38,6 +44,7 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
+        googleHelper = new GoogleSignInHelper(this);
 
         setupObservers();
 
@@ -48,6 +55,17 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
                     : InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             binding.etPassword.setSelection(binding.etPassword.getText().length());
             binding.ivTogglePassword.setImageResource(pwVisible
+                    ? android.R.drawable.ic_menu_view
+                    : android.R.drawable.ic_secure);
+        });
+
+        binding.ivToggleConfirmPassword.setOnClickListener(v -> {
+            pwConfirmVisible = !pwConfirmVisible;
+            binding.etConfirmPassword.setInputType(pwConfirmVisible
+                    ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    : InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.etConfirmPassword.setSelection(binding.etConfirmPassword.getText().length());
+            binding.ivToggleConfirmPassword.setImageResource(pwConfirmVisible
                     ? android.R.drawable.ic_menu_view
                     : android.R.drawable.ic_secure);
         });
@@ -65,8 +83,9 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
         });
 
         binding.btnGoogleSignUp.setOnClickListener(v ->
-            Toast.makeText(this, "Google Sign-Up — chưa tích hợp", Toast.LENGTH_SHORT).show()
-        );
+                startActivityForResult(
+                        googleHelper.getSignInIntent(),
+                        GoogleSignInHelper.RC_GOOGLE_SIGN_IN));
 
         binding.tvSignIn.setOnClickListener(v -> finish());
     }
@@ -76,9 +95,10 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
             if (resource == null) return;
             switch (resource.getStatus()) {
                 case LOADING:
-                    // TODO: show progress bar
+                    setLoading(true);
                     break;
                 case SUCCESS:
+                    setLoading(false);
                     Toast.makeText(this, R.string.toast_profile_saved, Toast.LENGTH_SHORT).show();
                     socketManager.connect();
                     heartbeatManager.start();
@@ -86,10 +106,55 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
                     finish();
                     break;
                 case ERROR:
+                    setLoading(false);
                     Toast.makeText(this, resource.getMessage(), Toast.LENGTH_SHORT).show();
                     break;
             }
         });
+
+        viewModel.getGoogleLoginResult().observe(this, resource -> {
+            if (resource == null) return;
+            switch (resource.getStatus()) {
+                case LOADING:
+                    setLoading(true);
+                    break;
+                case SUCCESS:
+                    setLoading(false);
+                    Toast.makeText(this, R.string.toast_profile_saved, Toast.LENGTH_SHORT).show();
+                    socketManager.reconnectWithNewToken();
+                    heartbeatManager.start();
+                    startActivity(new Intent(this, HomeActivity.class));
+                    finish();
+                    break;
+                case ERROR:
+                    setLoading(false);
+                    Toast.makeText(this, resource.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
+    }
+
+    private void setLoading(boolean loading) {
+        binding.btnCreateAccount.setEnabled(!loading);
+        binding.btnGoogleSignUp.setEnabled(!loading);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GoogleSignInHelper.RC_GOOGLE_SIGN_IN) {
+            googleHelper.handleResult(data, new GoogleSignInHelper.Callback() {
+                @Override
+                public void onSuccess(String idToken) {
+                    Log.d("SignUpActivity", "ID Token nhận được từ Google → gửi lên backend");
+                    viewModel.googleLogin(idToken);
+                }
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private boolean validateInput(String name, String email, String pw, String pwConfirm) {

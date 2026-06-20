@@ -24,17 +24,6 @@
             android:textColor="@color/text_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/btnAddFriend"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_input"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_input_add"
-            android:clickable="true"
-            android:focusable="true"
-            app:tint="@color/blue" />
     </LinearLayout>
 
     <FrameLayout

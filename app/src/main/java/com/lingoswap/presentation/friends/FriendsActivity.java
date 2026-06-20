@@ -42,9 +42,6 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
 
-        binding.btnAddFriend.setOnClickListener(v ->
-                startActivity(new Intent(this, SearchUserActivity.class)));
-
         binding.btnFindNow.setOnClickListener(v ->
                 com.lingoswap.activities.LanguageChooserDialog.newInstance()
                         .show(getSupportFragmentManager(), "LanguageChooserDialog"));

@@ -138,7 +138,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.navHome.setOnClickListener(v -> goTo(com.lingoswap.activities.HomeActivity.class));
         binding.navFriends.setOnClickListener(v -> goTo(com.lingoswap.presentation.friends.FriendsActivity.class));
         binding.navMatch.setOnClickListener(v -> goTo(com.lingoswap.activities.HomeActivity.class));
-        binding.navChat.setOnClickListener(v -> goTo(com.lingoswap.presentation.friends.FriendsActivity.class));
+        binding.navChat.setOnClickListener(v -> goTo(com.lingoswap.presentation.chat.ConversationListActivity.class));
         binding.navProfile.setOnClickListener(v -> { /* đang ở Profile */ });
 
         binding.btnLogout.setOnClickListener(v -> confirmLogout());

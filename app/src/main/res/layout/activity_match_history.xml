@@ -24,17 +24,14 @@
             android:src="@android:drawable/ic_menu_revert"
             app:tint="@color/text_dark" />
 
-        <EditText
-            android:id="@+id/etSearch"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:hint="Tìm kiếm bạn bè..."
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lịch sử thực hành"
             android:textColor="@color/text_dark"
-            android:textSize="16sp"
-            android:inputType="text"
-            android:imeOptions="actionSearch" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 
     <FrameLayout
@@ -60,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Không tìm thấy người dùng"
+            android:text="Chưa có lịch sử matching."
             android:visibility="gone" />
     </FrameLayout>
 </LinearLayout>
