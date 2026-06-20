@@ -21,7 +21,7 @@ import okhttp3.Response;
 /**
  * AuthInterceptor — tự động:
  *  1. Đính kèm "Authorization: Bearer <token>" vào mọi request
- *  2. Khi nhận 401 → gọi POST /api/auth/token để lấy accessToken mới
+ *  2. Khi nhận 401 → gọi POST /api/auth/refresh-token để lấy accessToken mới
  *     (refreshToken nằm trong cookie httpOnly, cần gửi kèm Set-Cookie)
  *  3. Retry request ban đầu với token mới
  */
@@ -84,7 +84,7 @@ public class AuthInterceptor implements Interceptor {
     }
 
     /**
-     * Gọi POST /api/auth/token
+     * Gọi POST /api/auth/refresh-token
      * Backend đọc refreshToken từ httpOnly cookie.
      * Cần gửi kèm cookie đã lưu (nếu có).
      */
@@ -98,7 +98,7 @@ public class AuthInterceptor implements Interceptor {
 
             String baseUrl = com.lingoswap.di.NetworkModule.BASE_URL;
             okhttp3.Request refreshRequest = new okhttp3.Request.Builder()
-                    .url(baseUrl + "api/auth/token")
+                    .url(baseUrl + "api/auth/refresh-token")
                     .post(RequestBody.create("", MediaType.parse("application/json")))
                     .build();
 

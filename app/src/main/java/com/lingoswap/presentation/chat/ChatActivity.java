@@ -125,7 +125,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
         viewModel.getSentConfirmed().observe(this, msg -> {
             if (msg == null) return;
-            adapter.addMessage(msg); // _id chính thức từ DB, dedup theo _id trong adapter
+            adapter.addMessage(msg);
             scrollToBottom();
         });
 

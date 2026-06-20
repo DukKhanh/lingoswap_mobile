@@ -70,8 +70,6 @@ public class FriendsActivity extends BaseActivity<ActivityFriendsBinding> {
 
             @Override
             public void onCall(Friend friend) {
-                // Gọi trực tiếp qua signaling (cần sessionId từ match_found),
-                // KHÔNG mở thẳng VideoCallActivity (sẽ thiếu sessionId → đóng ngay).
                 Intent intent = new Intent(FriendsActivity.this,
                         com.lingoswap.activities.OutgoingCallActivity.class);
                 intent.putExtra(com.lingoswap.activities.OutgoingCallActivity.EXTRA_TARGET_ID, friend.id);

@@ -17,7 +17,7 @@ import okhttp3.HttpUrl;
  * vào SharedPreferences để tồn tại qua các lần mở app.
  *
  * Backend LingoSwap set:  Set-Cookie: refreshToken=xxx; httpOnly; ...
- * Android cần lưu và gửi lại cookie này khi gọi POST /api/auth/token
+ * Android cần lưu và gửi lại cookie này khi gọi POST /api/auth/refresh-token
  */
 public class PersistentCookieJar implements CookieJar {
 
