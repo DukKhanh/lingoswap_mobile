@@ -79,13 +79,18 @@ public class LanguageChooserDialog extends BottomSheetDialogFragment {
                 }
                 dismiss();
                 
-                if (getActivity() instanceof HomeActivity) {
-                    ((HomeActivity) getActivity()).startMatching(selectedLanguageCode);
-                } else {
-                    Intent intent = new Intent(getContext(), MatchingActivity.class);
-                    intent.putExtra("language", selectedLanguageCode);
-                    startActivity(intent);
-                }
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    androidx.fragment.app.FragmentActivity activity = getActivity();
+                    if (activity != null && !activity.isFinishing()) {
+                        if (activity instanceof HomeActivity) {
+                            ((HomeActivity) activity).startMatching(selectedLanguageCode);
+                        } else {
+                            Intent intent = new Intent(getContext(), MatchingActivity.class);
+                            intent.putExtra("language", selectedLanguageCode);
+                            startActivity(intent);
+                        }
+                    }
+                }, 200);
             });
         }
 
