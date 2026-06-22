@@ -77,20 +77,18 @@ public class LanguageChooserDialog extends BottomSheetDialogFragment {
                         getString(R.string.lang_chooser_select_prompt), Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // Lấy activity TRƯỚC khi dismiss: sau dismiss fragment detach → getActivity() = null.
+                final androidx.fragment.app.FragmentActivity activity = getActivity();
+                final String langCode = selectedLanguageCode;
                 dismiss();
-                
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    androidx.fragment.app.FragmentActivity activity = getActivity();
-                    if (activity != null && !activity.isFinishing()) {
-                        if (activity instanceof HomeActivity) {
-                            ((HomeActivity) activity).startMatching(selectedLanguageCode);
-                        } else {
-                            Intent intent = new Intent(getContext(), MatchingActivity.class);
-                            intent.putExtra("language", selectedLanguageCode);
-                            startActivity(intent);
-                        }
-                    }
-                }, 200);
+                if (activity == null || activity.isFinishing()) return;
+                if (activity instanceof HomeActivity) {
+                    ((HomeActivity) activity).startMatching(langCode);
+                } else {
+                    Intent intent = new Intent(activity, MatchingActivity.class);
+                    intent.putExtra("language", langCode);
+                    activity.startActivity(intent);
+                }
             });
         }
 

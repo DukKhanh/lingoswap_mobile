@@ -376,10 +376,13 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     public void startMatching(String language) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
+        boolean hasCam = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasMic = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED;
+        android.util.Log.d("MATCHFLOW", "startMatching lang=" + language
+                + " cam=" + hasCam + " mic=" + hasMic);
+        if (!hasCam || !hasMic) {
             pendingLanguage = language;
             ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 100);
@@ -405,6 +408,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     private void launchMatchingActivity(String language) {
+        android.util.Log.d("MATCHFLOW", "launchMatchingActivity lang=" + language);
         Intent intent = new Intent(this, MatchingActivity.class);
         intent.putExtra("language", language);
         startActivity(intent);

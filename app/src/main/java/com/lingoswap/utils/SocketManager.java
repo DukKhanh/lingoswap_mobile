@@ -244,11 +244,15 @@ public class SocketManager {
     }
 
     public void joinMatchQueue(String language) {
-        if (!isConnected()) return;
+        if (!isConnected()) {
+            Log.d("MATCHFLOW", "joinMatchQueue bỏ qua: socket chưa connect");
+            return;
+        }
         try {
             JSONObject data = new JSONObject();
             data.put("language", language);
             socket.emit("join_queue", data);
+            Log.d("MATCHFLOW", "emit join_queue lang=" + language);
         } catch (JSONException e) {
             Log.e(TAG, "JSON error joinMatchQueue: " + e.getMessage());
         }

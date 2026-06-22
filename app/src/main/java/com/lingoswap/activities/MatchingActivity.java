@@ -82,7 +82,10 @@ public class MatchingActivity extends AppCompatActivity {
     }
 
     private void joinQueueWhenReady() {
-        if (socketManager.isConnected()) {
+        boolean connected = socketManager.isConnected();
+        android.util.Log.d("MATCHFLOW", "MatchingActivity joinQueue lang=" + language
+                + " socketConnected=" + connected);
+        if (connected) {
             socketManager.joinMatchQueue(language);
         } else {
             startConnectTimeout();
